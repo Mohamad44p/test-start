@@ -1,7 +1,10 @@
 'use server'
 
 import db from '@/app/db/db'
+import { ApiResponse } from '@/types/hero'
+import { Stat } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
+import { cache } from 'react'
 import { z } from 'zod'
 
 
@@ -34,7 +37,20 @@ export async function deleteStat(id: string) {
   revalidatePath('/')
 }
 
-export async function getStats() {
-  return db.stat.findMany()
-}
 
+export const getStats = cache(async (): Promise<ApiResponse<Stat[]>> => {
+  try {
+    const stats = await db.stat.findMany()
+
+    return {
+      success: true,
+      data: stats,
+    }
+  } catch (error) {
+    console.error("Error fetching stats:", error)
+    return {
+      success: false,
+      error: "Failed to fetch stats",
+    }
+  }
+})

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import db from "@/app/db/db"
+import { cache } from "react"
 
 async function processFormData(formData: FormData) {
   return {
@@ -59,3 +60,30 @@ export async function deleteSafeguard(id: string) {
     return { success: false, error: "Failed to delete safeguard" }
   }
 }
+
+export const getSingleSafeguard = cache(async () => {
+  try {
+    const safeguard = await db.safeguard.findFirst({
+      orderBy: { createdAt: "desc" },
+    })
+
+    return { success: true, data: safeguard }
+  } catch (error) {
+    console.error("Fetch safeguard error:", error)
+    return { success: false, error: "Failed to fetch safeguard" }
+  }
+})
+
+
+export const getSafeguards = cache(async () => {
+  try {
+    const safeguards = await db.safeguard.findMany({
+      orderBy: { createdAt: "desc" },
+    })
+
+    return { success: true, data: safeguards }
+  } catch (error) {
+    console.error("Fetch safeguards error:", error)
+    return { success: false, error: "Failed to fetch safeguards" }
+  }
+})

@@ -27,54 +27,35 @@ const allowedFileTypes = {
 }
 
 export function FileUpload({ onUpload, defaultFiles = [], maxFiles = 3 }: FileUploadProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [uploading, setUploading] = useState(false)
   const [files, setFiles] = useState<string[]>(defaultFiles)
   const { toast } = useToast()
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      setUploading(true)
-      const newFiles = [...files]
-
-      for (const file of acceptedFiles) {
-        if (newFiles.length >= maxFiles) break
-
+      try {
         const formData = new FormData()
-        formData.append("file", file)
+        acceptedFiles.forEach((file) => {
+          formData.append('file', file)
+        })
 
-        try {
-          const response = await fetch("/api/upload-file", {
-            method: "POST",
-            body: formData,
-          })
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
 
-          const data = await response.json()
-
-          if (!response.ok) {
-            throw new Error(data.error || "Upload failed")
-          }
-
-          newFiles.push(data.url)
-
-          toast({
-            title: "File uploaded",
-            description: `${file.name} has been successfully uploaded.`,
-          })
-        } catch (error) {
-          console.error("Upload error:", error)
-          toast({
-            title: "Upload failed",
-            description: `Failed to upload ${file.name}: ${error instanceof Error ? error.message : "Unknown error"}`,
-            variant: "destructive",
-          })
+        if (!response.ok) {
+          throw new Error('Upload failed')
         }
-      }
 
-      setFiles(newFiles)
-      onUpload(newFiles)
-      setUploading(false)
+        const data = await response.json()
+        onUpload(data.urls)
+      } catch (error) {
+        console.error('Upload error:', error)
+      }
     },
-    [files, maxFiles, onUpload, toast],
+    [onUpload]
   )
 
   const handleRemove = async (e: React.MouseEvent, fileUrl: string) => {

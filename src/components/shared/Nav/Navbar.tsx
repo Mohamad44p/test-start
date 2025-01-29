@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useLayoutEffect, useRef, useEffect } from "react";
+import React, { useLayoutEffect, useRef, useEffect, useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import Link from "next/link";
 import { Menu } from "lucide-react";
@@ -11,11 +11,10 @@ import ShinyButton from "@/components/ui/shiny-button";
 import MobileMenu from "./mobile/MobileMenu";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
-
-type Language = "en" | "ar";
+import { useLanguage } from "@/context/LanguageContext";
 
 export const Navbar: React.FC = () => {
-  const [language, setLanguage] = useState<Language>("en");
+  const { currentLang, setLanguage } = useLanguage();
   const [isMounted, setIsMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -24,6 +23,10 @@ export const Navbar: React.FC = () => {
   const { scrollY } = useScroll();
   const lastYRef = useRef(0);
   const heroRef = useRef<HTMLElement | null>(null);
+
+  const toggleLanguage = () => {
+    setLanguage(currentLang === "en" ? "ar" : "en");
+  };
 
   useMotionValueEvent(scrollY, "change", (y) => {
     const difference = y - lastYRef.current;
@@ -41,10 +44,6 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     heroRef.current = document.querySelector("#hero-section");
   }, []);
-
-  const toggleLanguage = () => {
-    setLanguage((prev) => (prev === "en" ? "ar" : "en"));
-  };
 
   return (
     <>
@@ -76,10 +75,10 @@ export const Navbar: React.FC = () => {
               >
                 <span
                   className={`text-white font-semibold text-sm ${
-                    language === "en" ? "rtl:mr-1" : "ltr:ml-1"
+                    currentLang === "en" ? "rtl:mr-1" : "ltr:ml-1"
                   }`}
                 >
-                  {language === "en" ? "ع" : "EN"}
+                  {currentLang === "en" ? "ع" : "EN"}
                 </span>
               </ShinyButton>
               <button

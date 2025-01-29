@@ -7,14 +7,15 @@ import { Loader2, Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-interface ImageUploadProps {
-  onUpload: (url: string | null) => void
-  defaultImage?: string | null
+export interface ImageUploadProps {
+  onUpload: (url: string | null) => void;
+  defaultValue?: string;
+  maxFiles?: number;
 }
 
-export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
+export function ImageUpload({ onUpload, defaultValue }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
-  const [preview, setPreview] = useState<string | null>(defaultImage || null)
+  const [preview, setPreview] = useState<string | null>(defaultValue || null)
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true)
@@ -61,7 +62,6 @@ export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
         onUpload(null)
       } catch (error) {
         console.error('Delete error:', error)
-        // Handle error (e.g., show a toast notification)
       } finally {
         setUploading(false)
       }
@@ -115,6 +115,7 @@ export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
         ) : (
           <div className="flex flex-col items-center justify-center py-4">
             <Upload className="h-10 w-10 text-gray-400 mb-2" />
+              Drag &apos;n&apos; drop an image here, or click to select one
             <p className="text-sm text-gray-600">
               Drag &apos;n&apos; drop an image here, or click to select one
             </p>
@@ -122,5 +123,4 @@ export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
         )}
       </div>
     </div>
-  )
-}
+  )}

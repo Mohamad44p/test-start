@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import React from "react"
@@ -30,8 +29,9 @@ const safeguardSchema = z.object({
   description_ar: z.string().min(1, "Arabic description is required"),
   longDescription_en: z.string().optional(),
   longDescription_ar: z.string().optional(),
-  bgColor: z.string().regex(/^from-\[#[0-9A-Fa-f]{6}\]\sto-\[#[0-9A-Fa-f]{6}\]$/, "Invalid background color format"),
+  bgColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid background color format"),
   attachmentUrl: z.string().optional(),
+  imageUrl: z.string().optional(),
 })
 
 type SafeguardFormInput = z.infer<typeof safeguardSchema>
@@ -60,8 +60,9 @@ export function SafeguardForm({ initialData, mode, id, buttonText = "Save Safegu
       description_ar: "",
       longDescription_en: "",
       longDescription_ar: "",
-      bgColor: "from-[#c0c0c0] to-[#d3d3d3]",
+      bgColor: "#f0f0f0",
       attachmentUrl: "",
+      imageUrl: "",
     },
   })
 
@@ -69,22 +70,14 @@ export function SafeguardForm({ initialData, mode, id, buttonText = "Save Safegu
     setIsSubmitting(true)
     const formData = new FormData()
 
-    // Handle all form fields except files
     Object.entries(data).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && key !== 'attachmentUrl') {
+      if (value !== null && value !== undefined) {
         formData.append(key, value.toString())
       }
     })
 
-    // Handle attachment files
-    if (data.attachmentUrl) {
-      formData.append('attachmentUrl', data.attachmentUrl)
-    }
-
     try {
-      const result = mode === "edit" && id 
-        ? await updateSafeguard(id, formData)
-        : await createSafeguard(formData)
+      const result = mode === "edit" && id ? await updateSafeguard(id, formData) : await createSafeguard(formData)
 
       if (result.success) {
         toast({ title: "Success", description: "Safeguard saved successfully" })
@@ -129,29 +122,11 @@ export function SafeguardForm({ initialData, mode, id, buttonText = "Save Safegu
               name="bgColor"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Background Color Gradient</FormLabel>
+                  <FormLabel>Background Color</FormLabel>
                   <FormControl>
-                    <div className="flex space-x-4">
-                      <div>
-                        <label>From:</label>
-                        <HexColorPicker
-                          color={field.value.split(" ")[0].replace("from-[", "").replace("]", "")}
-                          onChange={(color) => {
-                            const [_, to] = field.value.split(" ")
-                            field.onChange(`from-[${color}] ${to}`)
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label>To:</label>
-                        <HexColorPicker
-                          color={field.value.split(" ")[1].replace("to-[", "").replace("]", "")}
-                          onChange={(color) => {
-                            const [from, _] = field.value.split(" ")
-                            field.onChange(`${from} to-[${color}]`)
-                          }}
-                        />
-                      </div>
+                    <div className="flex items-center space-x-4">
+                      <HexColorPicker color={field.value} onChange={field.onChange} />
+                      <Input {...field} />
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -169,6 +144,24 @@ export function SafeguardForm({ initialData, mode, id, buttonText = "Save Safegu
                     <FileUpload
                       onUpload={(urls) => field.onChange(urls[0] || "")}
                       defaultFiles={field.value ? [field.value] : []}
+                      maxFiles={1}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="imageUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image</FormLabel>
+                  <FormControl>
+                    <ImageUpload
+                      onUpload={(url) => field.onChange(url)}
+                      defaultValue={field.value || undefined}
                       maxFiles={1}
                     />
                   </FormControl>

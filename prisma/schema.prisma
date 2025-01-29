@@ -351,12 +351,15 @@ model Safeguard {
   description_ar     String   @db.Text
   longDescription_en String?  @db.Text
   longDescription_ar String?  @db.Text
-  bgColor            String 
+  bgColor            String   @default("#f3f4f6")  // Default light gray color
   attachmentUrl      String?
   imageUrl           String?
+  order              Int      @default(0)          // Add order field for sorting
+  status             String   @default("DRAFT")    // Add status field
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
+  @@index([order])
   @@map("safeguards")
 }
 

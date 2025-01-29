@@ -2,11 +2,13 @@
 
 import { usePathname } from 'next/navigation'
 import { Navbar } from './Navbar'
+import { useLanguage } from '@/context/LanguageContext'
 
 export function ConditionalNavbar() {
   const pathname = usePathname()
+  const { currentLang } = useLanguage()
 
-  if (pathname === '/') {
+  if (pathname === `/${currentLang}`) {
     return null
   }
 
