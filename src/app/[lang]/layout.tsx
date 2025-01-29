@@ -13,20 +13,20 @@ export const metadata: Metadata = {
     "Tech Start is a tech company that provides advanced training programs.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   params,
-}: Readonly<{
+}: {
   children: React.ReactNode;
   params: { lang: string };
-}>) {
-  const dir = params.lang === 'ar' ? 'rtl' : 'ltr';
+}) {
+  const dir = params.lang === "ar" ? "rtl" : "ltr";
 
   return (
     <html lang={params.lang} dir={dir} className="lenis lenis-smooth">
       <body>
         <LoadingProvider>
-          <LanguageProvider>
+          <LanguageProvider defaultLang={params.lang}>
             <Preloader>
               <LenisProvider>
                 <div className="flex min-h-screen flex-col">

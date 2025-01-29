@@ -1,60 +1,66 @@
-"use client"
+"use client";
 
-import { useRef, useEffect, useState } from "react"
-import { motion, useScroll } from "framer-motion"
-import { SafeAnimation } from "./safe-animation"
-import type { Safeguard } from "@/types/safeguard"
-import { useLanguage } from "@/context/LanguageContext"
+import { useRef, useEffect, useState } from "react";
+import { motion, useScroll } from "framer-motion";
+import { SafeAnimation } from "./safe-animation";
+import type { Safeguard } from "@/types/safeguard";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface SafeScrollProps {
-  safeguards: Safeguard[]
+  safeguards: Safeguard[] | undefined;
+  initialLang: string;
 }
 
 const handleDownload = async (url: string, filename: string) => {
   try {
-    const response = await fetch(url)
-    const blob = await response.blob()
-    const downloadUrl = window.URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = downloadUrl
-    link.download = filename || 'document'
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    window.URL.revokeObjectURL(downloadUrl)
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = filename || "document";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(downloadUrl);
   } catch (error) {
-    console.error('Download failed:', error)
+    console.error("Download failed:", error);
   }
-}
+};
 
-export function SafeScroll({ safeguards }: SafeScrollProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const { currentLang } = useLanguage()
+export function SafeScroll({ safeguards = [], initialLang }: SafeScrollProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const { currentLang = initialLang } = useLanguage();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
-  })
+  });
 
   useEffect(() => {
     const unsubscribe = scrollYProgress.onChange((latest) => {
-      const newIndex = Math.floor(latest * safeguards.length)
+      const newIndex = Math.floor(latest * safeguards.length);
       if (newIndex !== currentIndex && newIndex < safeguards.length) {
-        setCurrentIndex(newIndex)
+        setCurrentIndex(newIndex);
       }
-    })
+    });
 
-    return () => unsubscribe()
-  }, [scrollYProgress, currentIndex, safeguards.length])
+    return () => unsubscribe();
+  }, [scrollYProgress, currentIndex, safeguards.length]);
 
   return (
     <div ref={containerRef} className="relative">
-      {safeguards.map((safeguard, index) => (
-        <div key={index} className="h-screen flex items-center justify-center sticky top-0">
+      {(safeguards || []).map((safeguard, index) => (
+        <div
+          key={index}
+          className="h-screen flex items-center justify-center sticky top-0"
+        >
           <motion.div
             className="w-full h-full absolute inset-0"
-            style={{ background: `linear-gradient(to bottom right, ${safeguard.bgColor}, ${safeguard.bgColor}cc)` }}
+            style={{
+              background: `linear-gradient(to bottom right, ${safeguard.bgColor}, ${safeguard.bgColor}cc)`,
+            }}
             initial={{ opacity: 0 }}
             animate={{ opacity: currentIndex === index ? 1 : 0 }}
             transition={{ duration: 0.5 }}
@@ -70,15 +76,23 @@ export function SafeScroll({ safeguards }: SafeScrollProps) {
                 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <span className="text-gray-600 text-lg font-semibold">{safeguard.domain}</span>
+                <span className="text-gray-600 text-lg font-semibold">
+                  {safeguard.domain}
+                </span>
                 <h2 className="text-4xl md:text-5xl font-bold text-gray-800">
-                  {currentLang === "ar" ? safeguard.title_ar : safeguard.title_en}
+                  {currentLang === "ar"
+                    ? safeguard.title_ar
+                    : safeguard.title_en}
                 </h2>
                 <p className="text-lg text-gray-600">
-                  {currentLang === "ar" ? safeguard.tagline_ar : safeguard.tagline_en}
+                  {currentLang === "ar"
+                    ? safeguard.tagline_ar
+                    : safeguard.tagline_en}
                 </p>
                 <p className="text-base text-gray-700">
-                  {currentLang === "ar" ? safeguard.description_ar : safeguard.description_en}
+                  {currentLang === "ar"
+                    ? safeguard.description_ar
+                    : safeguard.description_en}
                 </p>
                 {safeguard.attachmentUrl && (
                   <motion.div
@@ -88,13 +102,22 @@ export function SafeScroll({ safeguards }: SafeScrollProps) {
                   >
                     <button
                       onClick={() => {
-                        const filename = safeguard.attachmentUrl?.split('/').pop() || 'document'
-                        handleDownload(`/api/download?url=${encodeURIComponent(safeguard.attachmentUrl!)}`, filename)
+                        const filename =
+                          safeguard.attachmentUrl?.split("/").pop() ||
+                          "document";
+                        handleDownload(
+                          `/api/download?url=${encodeURIComponent(
+                            safeguard.attachmentUrl!
+                          )}`,
+                          filename
+                        );
                       }}
-                      className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      className="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-[#152756] to-[#862996] text-white rounded-lg 
+                      hover:from-[#1a326e] hover:to-[#9d31b3] transition-all duration-300 shadow-lg hover:shadow-xl 
+                      transform hover:scale-105 active:scale-95 font-medium"
                     >
                       <svg
-                        className="w-5 h-5 mr-2"
+                        className="w-5 h-5 mr-3"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -106,19 +129,26 @@ export function SafeScroll({ safeguards }: SafeScrollProps) {
                           d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                         />
                       </svg>
-                      {currentLang === "ar" ? "تحميل المستند" : "Download Document"}
+                      <span className="tracking-wide">
+                        {currentLang === "ar"
+                          ? "تحميل المستند"
+                          : "Download Document"}
+                      </span>
                     </button>
                   </motion.div>
                 )}
               </motion.div>
             </div>
             <div className="w-full md:w-1/2">
-              <SafeAnimation imageUrl={safeguard.imageUrl} index={index} currentIndex={currentIndex} />
+              <SafeAnimation
+                imageUrl={safeguard.imageUrl}
+                index={index}
+                currentIndex={currentIndex}
+              />
             </div>
           </div>
         </div>
       ))}
     </div>
-  )
+  );
 }
-

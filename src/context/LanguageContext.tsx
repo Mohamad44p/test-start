@@ -6,25 +6,30 @@ import type { LanguageType } from '@/types/stats';
 
 interface LanguageContextType {
   currentLang: LanguageType;
-  setLanguage: (lang: LanguageType) => void;
+  setLanguage: (lang: LanguageType) => void;  // Keep this name consistent
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
+interface LanguageProviderProps {
+  children: React.ReactNode;
+  defaultLang: string;
+}
+
+export function LanguageProvider({ children, defaultLang }: LanguageProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [currentLang, setCurrentLang] = useState<LanguageType>('en');
+  const [currentLang, setCurrentLang] = useState<LanguageType>(defaultLang as LanguageType);
 
   useEffect(() => {
-    const pathLang = pathname.split('/')[1];
-    const savedLang = localStorage.getItem('NEXT_LOCALE') || pathLang || 'en';
+    const pathLang = pathname.split('/')[1] as LanguageType;
+    const savedLang = (localStorage.getItem('NEXT_LOCALE') as LanguageType) || pathLang || defaultLang;
     setCurrentLang(savedLang);
     document.documentElement.dir = savedLang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = savedLang;
-  }, [pathname]);
+  }, [defaultLang, pathname]);
 
-  const switchLanguage = (lang: LanguageType) => {
+  const setLanguage = (lang: LanguageType) => {
     localStorage.setItem('NEXT_LOCALE', lang);
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
@@ -35,7 +40,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ currentLang, switchLanguage }}>
+    <LanguageContext.Provider value={{ currentLang, setLanguage }}>
       {children}
     </LanguageContext.Provider>
   );
