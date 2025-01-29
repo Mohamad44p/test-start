@@ -9,13 +9,13 @@ import { cn } from '@/lib/utils'
 
 export interface ImageUploadProps {
   onUpload: (url: string | null) => void;
-  defaultValue?: string;
+  defaultImage?: string;
   maxFiles?: number;
 }
 
-export function ImageUpload({ onUpload, defaultValue }: ImageUploadProps) {
+export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
-  const [preview, setPreview] = useState<string | null>(defaultValue || null)
+  const [preview, setPreview] = useState<string | null>(defaultImage || null)
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true)
@@ -123,4 +123,5 @@ export function ImageUpload({ onUpload, defaultValue }: ImageUploadProps) {
         )}
       </div>
     </div>
-  )}
+  )
+}

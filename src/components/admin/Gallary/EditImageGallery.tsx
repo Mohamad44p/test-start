@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -66,9 +66,29 @@ export default function EditImageGallery({ gallery }: EditImageGalleryProps) {
 
   const handleFeaturedChange = (index: number, checked: boolean) => {
     const currentFeatured = form.getValues("imageFeatured");
-    const newFeatured = currentFeatured.map((_, i) => i === index ? checked : false);
+    let newFeatured;
+    if (checked) {
+      // If checking a new one, uncheck all others
+      newFeatured = currentFeatured.map((_, i) => i === index);
+    } else {
+      // If unchecking, check the first image if no other is checked
+      newFeatured = currentFeatured.map((value, i) => {
+        if (i === index) return false;
+        if (!currentFeatured.some(Boolean) && i === 0) return true;
+        return value;
+      });
+    }
     form.setValue("imageFeatured", newFeatured);
   };
+
+  useEffect(() => {
+    const images = form.watch("imageUrls");
+    const featured = form.getValues("imageFeatured");
+    if (images.length > 0 && !featured.some(Boolean)) {
+      const newFeatured = images.map((_, index) => index === 0);
+      form.setValue("imageFeatured", newFeatured);
+    }
+  }, [form]);
 
   async function onSubmit(data: EditGalleryInput) {
     setIsSubmitting(true);

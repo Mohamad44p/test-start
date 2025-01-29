@@ -5,28 +5,34 @@ import { revalidatePath } from "next/cache";
 import db from "../db/db";
 import fs from 'fs/promises';
 import path from 'path';
+import { cache } from "react";
 
 export async function createGallery(formData: FormData) {
-  const rawData = {
-    title_en: formData.get("title_en"),
-    title_ar: formData.get("title_ar"),
-    date: formData.get("date"),
-    imageUrls: formData.getAll("imageUrls"),
-    imageTitles_en: formData.getAll("imageTitles_en"),
-    imageTitles_ar: formData.getAll("imageTitles_ar"),
-    imageFeatured: formData.getAll("imageFeatured").map(value => value === "true"),
-  };
-
-  const validatedFields = createGallerySchema.safeParse(rawData);
-
-  if (!validatedFields.success) {
-    return {
-      success: false,
-      error: validatedFields.error.flatten().fieldErrors,
-    };
-  }
-
   try {
+    const imageUrls = formData.getAll("imageUrls") as string[];
+    const imageTitles_en = formData.getAll("imageTitles_en") as string[];
+    const imageTitles_ar = formData.getAll("imageTitles_ar") as string[];
+    const imageFeatured = formData.getAll("imageFeatured").map(value => value === "true");
+
+    const rawData = {
+      title_en: formData.get("title_en"),
+      title_ar: formData.get("title_ar"),
+      date: formData.get("date"),
+      imageUrls,
+      imageTitles_en,
+      imageTitles_ar,
+      imageFeatured,
+    };
+
+    const validatedFields = createGallerySchema.safeParse(rawData);
+
+    if (!validatedFields.success) {
+      return {
+        success: false,
+        error: validatedFields.error.flatten().fieldErrors,
+      };
+    }
+
     const gallery = await db.gallery.create({
       data: {
         title_en: validatedFields.data.title_en,
@@ -56,7 +62,6 @@ export async function createGallery(formData: FormData) {
 
 export async function deleteGallery(id: string) {
   try {
-    // Use transaction for atomic operations
     const result = await db.$transaction(async (tx) => {
       const gallery = await tx.gallery.findUnique({
         where: { id },
@@ -67,12 +72,10 @@ export async function deleteGallery(id: string) {
         throw new Error('Gallery not found');
       }
 
-      // Delete all images first
       await tx.image.deleteMany({
         where: { galleryId: id },
       });
 
-      // Then delete the gallery
       await tx.gallery.delete({
         where: { id },
       });
@@ -80,7 +83,6 @@ export async function deleteGallery(id: string) {
       return gallery;
     });
 
-    // Delete files after successful DB operation
     if (result.images) {
       for (const image of result.images) {
         if (!image.url) continue;
@@ -106,3 +108,39 @@ export async function deleteGallery(id: string) {
     };
   }
 }
+
+
+export const getFeaturedImages = cache(async (limit = 4) => {
+  try {
+    console.log("Fetching featured images with limit:", limit)
+    
+    const featuredImages = await db.image.findMany({
+      where: { 
+        featured: true,
+      },
+      take: limit,
+      orderBy: { 
+        createdAt: "desc" 
+      },
+      include: {
+        gallery: {
+          select: {
+            title_en: true,
+            title_ar: true
+          }
+        }
+      }
+    })
+
+    console.log("Found featured images:", JSON.stringify(featuredImages, null, 2))
+
+    if (!featuredImages.length) {
+      console.log("No featured images found in database")
+    }
+
+    return { success: true, data: featuredImages }
+  } catch (error) {
+    console.error("Fetch featured images error:", error)
+    return { success: false, error: "Failed to fetch featured images" }
+  }
+})

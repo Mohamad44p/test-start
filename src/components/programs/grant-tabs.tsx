@@ -8,7 +8,7 @@ import { StudentInternshipContent } from './content/StudentInternshipContent'
 import { TrainToHireContent } from './content/TrainToHireContent'
 import { OnTheJobContent } from './content/OnTheJobContent'
 import { ExpatriateContent } from './content/ExpatriateContent'
-import FAQsPage from '@/app/(Front)/FAQs/page'
+import FAQsPage from '@/app/[lang]/FAQs/page'
 
 export default function GrantTabs({ defaultTab = "overview" }) {
     const [activeTab, setActiveTab] = React.useState(defaultTab)

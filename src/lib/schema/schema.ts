@@ -37,29 +37,21 @@ export type CreateTagInput = z.infer<typeof createTagSchema>
 
 
 export const createGallerySchema = z.object({
-  title_en: z.string().min(1, "English title is required"),
-  title_ar: z.string().min(1, "Arabic title is required"),
+  title_en: z.string().min(1, "Title in English is required"),
+  title_ar: z.string().min(1, "Title in Arabic is required"),
   date: z.string(),
   imageUrls: z.array(z.string()).min(1, "At least one image is required"),
   imageTitles_en: z.array(z.string().nullable()),
   imageTitles_ar: z.array(z.string().nullable()),
-  imageFeatured: z.array(z.boolean()).refine((data) => data.filter(Boolean).length === 1, {
-    message: "Exactly one image must be featured",
-  }),
+  imageFeatured: z.array(z.boolean()).refine(
+    (featured) => featured.filter(Boolean).length === 1,
+    "Exactly one image must be featured"
+  ),
 });
 
 export type CreateGalleryInput = z.infer<typeof createGallerySchema>;
 
-export const editGallerySchema = z.object({
-  title_en: z.string().min(1, "English title is required"),
-  title_ar: z.string().min(1, "Arabic title is required"),
-  date: z.string(),
-  imageUrls: z.array(z.string()).min(1, "At least one image is required"),
-  imageTitles_en: z.array(z.string().nullable()),
-  imageTitles_ar: z.array(z.string().nullable()),
-  imageFeatured: z.array(z.boolean()).refine((data) => data.filter(Boolean).length === 1, {
-    message: "Exactly one image must be featured",
-  }),
+export const editGallerySchema = createGallerySchema.extend({
   deletedImageIds: z.array(z.string()),
 });
 

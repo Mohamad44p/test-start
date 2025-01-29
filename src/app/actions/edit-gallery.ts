@@ -37,7 +37,6 @@ export async function editGallery(id: string, formData: FormData) {
       return { success: false, error: "Gallery not found" };
     }
 
-    // Handle image deletions
     for (const imageId of validatedFields.data.deletedImageIds) {
       const imageToDelete = existingGallery.images.find(img => img.id === imageId);
       if (imageToDelete) {
@@ -50,7 +49,6 @@ export async function editGallery(id: string, formData: FormData) {
       }
     }
 
-    // Update gallery and images
     const updatedGallery = await db.gallery.update({
       where: { id },
       data: {

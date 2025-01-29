@@ -97,9 +97,8 @@ export function GalleryTable({ initialGalleries }: GalleryTableProps) {
                     <Image
                       src={image.url}
                       alt={`Preview of ${image.title_en || gallery.title_en}`}
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded"
+                       fill
+                      className="rounded object-cover"
                     />
                   </div>
                 ))}

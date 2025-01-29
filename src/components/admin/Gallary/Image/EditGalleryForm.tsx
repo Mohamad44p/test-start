@@ -209,9 +209,8 @@ export default function EditGalleryForm({ gallery }: EditGalleryFormProps) {
                                                 <Image
                                                     src={image.url}
                                                     alt={`Gallery image ${index + 1}`}
-                                                    layout="fill"
-                                                    objectFit="cover"
-                                                    className="rounded-md"
+                                                    fill
+                                                    className="rounded-md object-cover"
                                                 />
                                                 <Button
                                                     type="button"

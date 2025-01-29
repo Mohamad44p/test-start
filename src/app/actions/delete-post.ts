@@ -15,14 +15,12 @@ export async function deletePost(id: number) {
       return { error: "Post not found" };
     }
 
-    // Delete the associated image if it exists
     if (post.imageUrl) {
       const imagePath = path.join(process.cwd(), 'public', post.imageUrl);
       try {
         await unlink(imagePath);
       } catch (error) {
         console.error("Failed to delete image file:", error);
-        // Continue with post deletion even if image deletion fails
       }
     }
 

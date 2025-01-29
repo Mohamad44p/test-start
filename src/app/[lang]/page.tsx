@@ -1,10 +1,10 @@
 
 import React from "react"
-import { MediaCenter } from "@/components/shared/Hero/MediaCenter"
 import HeroWrapper from "@/components/shared/Hero/HeroWrapper"
 import StatsWrapper from "@/components/Stats/StatsWrapper"
 import ProgramsWrapper from "@/components/shared/program/ProgramsWrapper"
 import SafeguardsBannerWrapper from "@/components/shared/banners/SafeguardsBannerWrapper"
+import MediaCenterWrapper from "@/components/shared/Hero/MediaCenterWrapper"
 
 export default function Page() {
   return (
@@ -17,7 +17,7 @@ export default function Page() {
         <ProgramsWrapper />
       </section>
       <section>
-        <MediaCenter />
+        <MediaCenterWrapper />
       </section>
       <SafeguardsBannerWrapper />
     </main>

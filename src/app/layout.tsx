@@ -1,24 +1,36 @@
 import './globals.css'
 import { LanguageProvider } from '@/context/LanguageContext'
 import type { Metadata } from 'next'
+import { Montserrat } from "next/font/google";
 
 export const metadata: Metadata = {
   title: 'Tech Start',
   description: 'Tech Start Platform',
 }
 
-export default function RootLayout({
-  children,
-  params
-}: {
-  children: React.ReactNode
-  params: { lang: string }
-}) {
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
+
+export default async function RootLayout(
+  props: {
+    children: React.ReactNode
+    params: Promise<{ lang: string }>
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <LanguageProvider defaultLang={params.lang}>
-          <main>{children}</main>
+    <html lang="en" className="lenis lenis-smooth" suppressHydrationWarning>
+      <body className={`${montserrat.variable} font-sans antialiased`}>
+      <LanguageProvider defaultLang={params.lang}>
+         {children}
         </LanguageProvider>
       </body>
     </html>

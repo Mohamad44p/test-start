@@ -13,13 +13,18 @@ export const metadata: Metadata = {
     "Tech Start is a tech company that provides advanced training programs.",
 };
 
-export default function LanguageLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode
-  params: { lang: string }
-}) {
+export default async function LanguageLayout(
+  props: {
+    children: React.ReactNode
+    params: Promise<{ lang: string }>
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   return (
     <div dir={params.lang === 'ar' ? 'rtl' : 'ltr'} lang={params.lang}>
       <LoadingProvider>

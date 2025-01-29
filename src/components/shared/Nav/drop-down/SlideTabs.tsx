@@ -22,7 +22,7 @@ export const SlideTabs: React.FC = () => {
   const translations = navbarTranslations[currentLang];
   
   if (!translations) {
-    return null; // or some loading state
+    return null; 
   }
 
   return (

@@ -64,11 +64,10 @@ const SafeguardsBanner: React.FC<SafeguardsBannerProps> = ({ safeguard }) => {
                   <Image
                     src={safeguard.imageUrl || "/placeholder.svg"}
                     alt={title}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-lg filter drop-shadow-lg"
+                    fill
+                    className="rounded-lg filter drop-shadow-lg object-cover"
                     placeholder="blur"
-                    blurDataURL="/placeholder.svg"
+                    blurDataURL="/card-front.jpg"
                   />
                 </div>
               ) : (

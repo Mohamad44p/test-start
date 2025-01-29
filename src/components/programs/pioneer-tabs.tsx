@@ -4,11 +4,11 @@ import React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { motion } from 'framer-motion'
 import { PioneerOverview } from './content/PioneerOverview'
-import FAQsPage from '@/app/(Front)/FAQs/page'
 import { NewITServiceContent } from './content/NewITServiceContent'
 import { ITTrainingContent } from './content/ITTrainingContent'
 import { HRServiceContent } from './content/HRServiceContent'
 import { InfrastructureContent } from './content/InfrastructureContent'
+import FAQsPage from '@/app/[lang]/FAQs/page'
 
 export default function PioneerTabs({ defaultTab = "overview" }) {
     const [activeTab, setActiveTab] = React.useState(defaultTab)

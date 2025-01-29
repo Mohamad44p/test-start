@@ -75,7 +75,7 @@ export function MultiImageUpload({ onUpload, defaultImages = [], onDelete }: Mul
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif']
+      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.avif', '.svg', '.bmp', '.tiff', '.ico']
     },
     multiple: true
   })
@@ -114,6 +114,9 @@ export function MultiImageUpload({ onUpload, defaultImages = [], onDelete }: Mul
                 width={200}
                 height={200}
                 className="object-cover rounded-lg"
+                quality={100}
+                priority={index < 4}
+                unoptimized={preview.endsWith('.svg')}
               />
               <Button
                 variant="destructive"
