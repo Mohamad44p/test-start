@@ -1,0 +1,58 @@
+export interface NavTranslations {
+  programs: string;
+  aboutUs: string;
+  mediaCenter: string;
+  safeguards: string;
+  contactUs: string;
+  menuItems: {
+    programs: ProgramMenuItems;
+    aboutUs: AboutUsMenuItems;
+    mediaCenter: MediaCenterMenuItems;
+    contactUs: ContactUsMenuItems;
+  };
+}
+
+export interface ProgramMenuItems {
+  buildingCapabilities: string;
+  upskill: string;
+  elevate: string;
+  femtech: string;
+  improvingEcosystem: string;
+  pioneer: string;
+  marketAccess: string;
+  horizon: string;
+}
+
+export interface AboutUsMenuItems {
+  whoWeAre: string;
+  partners: string;
+  itLeads: string;
+  workWithUs: string;
+}
+
+export interface MediaCenterMenuItems {
+  gallery: string;
+  photoGallery: string;
+  videos: string;
+  news: string;
+  newsPress: string;
+  publications: string;
+  announcements: string;
+}
+
+export interface ContactUsMenuItems {
+  contact: string;
+  complaints: string;
+  faqs: string;
+}
+
+export interface Position {
+  left: number;
+  width: number;
+  opacity: number;
+}
+
+export interface DropdownProps {
+  setPosition: React.Dispatch<React.SetStateAction<Position>>;
+  translations: NavTranslations;
+}

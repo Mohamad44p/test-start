@@ -3,12 +3,13 @@ import { notFound } from "next/navigation";
 import EditProgramForm from "./EditProgramForm";
 
 interface EditProgramPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default async function EditProgram({ params }: EditProgramPageProps) {
+export default async function EditProgram(props: EditProgramPageProps) {
+  const params = await props.params;
   const { data: program, success } = await getProgram(params.id);
 
   if (!success || !program) {

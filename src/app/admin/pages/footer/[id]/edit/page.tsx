@@ -2,7 +2,8 @@ import { notFound } from "next/navigation"
 import EditFooterForm from "./EditFooterForm"
 import db from "@/app/db/db"
 
-export default async function EditFooterPage({ params }: { params: { id: string } }) {
+export default async function EditFooterPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const footer = await db.footer.findUnique({
     where: { id: params.id },
     include: { partners: true },

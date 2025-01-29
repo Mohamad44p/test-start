@@ -14,7 +14,8 @@ async function fetchBlogById(id: number) {
   }
   
 
-export default async function EditBlog({ params }: { params: { id: string } }) {
+export default async function EditBlog(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = parseInt(params.id, 10)
   const blog = await fetchBlogById(id)
 

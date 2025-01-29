@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation'
 import { getFaqCategoryById } from '@/app/actions/pages/faqActions'
 import { FaqCategoryForm } from '@/components/admin/faq/faq-category-form'
 
-export default async function EditFaqCategoryPage({ params }: { params: { id: string } }) {
+export default async function EditFaqCategoryPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const category = await getFaqCategoryById(params.id)
 
   if (!category) {

@@ -10,7 +10,8 @@ import type { FaqCategory } from '@/types/faq'
 // Enable ISR with 30-second revalidation
 export const revalidate = 30
 
-export default async function FaqCategoryPage({ params }: { params: { id: string } }) {
+export default async function FaqCategoryPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const category = await getFaqCategoryById(params.id) as FaqCategory | null
 
   if (!category) {

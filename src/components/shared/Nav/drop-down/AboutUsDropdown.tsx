@@ -1,45 +1,33 @@
 "use client";
 
-import React, { useState, useRef, Dispatch, SetStateAction } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { DropdownProps } from "@/types/navbar";
 
-type Position = {
-  left: number;
-  width: number;
-  opacity: number;
-};
-
-export const AboutUsDropdown = ({
-  setPosition,
-}: {
-  setPosition: Dispatch<SetStateAction<Position>>;
-}) => {
+export const AboutUsDropdown: React.FC<DropdownProps> = ({ setPosition, translations }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState<string | null>(null);
   const ref = useRef<null | HTMLLIElement>(null);
 
   const menuItems = [
     {
       id: "who-we-are",
-      name: "Who we are",
+      name: translations.menuItems.aboutUs.whoWeAre,
       href: "/About-us",
     },
     {
       id: "partners",
-      name: "Our Partners",
-      hasSubLinks: false,
+      name: translations.menuItems.aboutUs.partners,
       href: "/partners",
     },
     {
       id: "Palestinian-IT-leads",
-      name: "Palestinian IT leads",
-      hasSubLinks: false,
+      name: translations.menuItems.aboutUs.itLeads,
       href: "/Palestinian-IT-leads",
     },
     {
       id: "work-with-us",
-      name: "Work with us",
+      name: translations.menuItems.aboutUs.workWithUs,
       href: "/work-with-us",
     },
   ];
@@ -59,11 +47,10 @@ export const AboutUsDropdown = ({
       }}
       onMouseLeave={() => {
         setIsOpen(false);
-        setActiveItem(null);
       }}
       className="relative z-10 block cursor-pointer px-3 py-1.5 text-base font-medium text-[#1b316e] transition-colors hover:text-white"
     >
-      About Us
+      {translations.aboutUs}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -75,35 +62,13 @@ export const AboutUsDropdown = ({
           >
             <div className="py-1">
               {menuItems.map((item) => (
-                <div key={item.id}>
-                  {item.hasSubLinks ? (
-                    <>
-                      <button
-                        onClick={() =>
-                          setActiveItem(activeItem === item.id ? null : item.id)
-                        }
-                        className="w-full text-left px-4 py-2.5 text-sm text-[#1b316e] hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 hover:text-[#1b316e] transition-all group flex items-center justify-between"
-                      >
-                        {item.name}
-                        <motion.span
-                          animate={{
-                            rotate: activeItem === item.id ? 180 : 0,
-                          }}
-                          className="text-xs opacity-50 group-hover:opacity-100"
-                        >
-                          ▼
-                        </motion.span>
-                      </button>
-                    </>
-                  ) : (
-                    <Link
-                      href={item.href || "#"}
-                      className="block px-4 py-2.5 text-sm text-[#1b316e] hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 hover:text-[#1b316e] transition-all"
-                    >
-                      {item.name}
-                    </Link>
-                  )}
-                </div>
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className="block px-4 py-2.5 text-sm text-[#1b316e] hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 hover:text-[#1b316e] transition-all"
+                >
+                  {item.name}
+                </Link>
               ))}
             </div>
           </motion.div>

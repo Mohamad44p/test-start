@@ -1,10 +1,8 @@
 import db from '@/app/db/db'
 import { NextResponse } from 'next/server'
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const data = await req.json()
     const complaint = await db.complaint.update({
@@ -27,10 +25,8 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     await db.complaint.delete({
       where: { id: params.id },

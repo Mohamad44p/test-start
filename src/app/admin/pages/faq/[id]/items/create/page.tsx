@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation'
 import { getFaqCategoryById } from '@/app/actions/pages/faqActions'
 import { FaqItemForm } from '@/components/admin/faq/faq-item-form'
 
-export default async function CreateFaqItemPage({ params }: { params: { id: string } }) {
+export default async function CreateFaqItemPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const category = await getFaqCategoryById(params.id)
 
   if (!category) {

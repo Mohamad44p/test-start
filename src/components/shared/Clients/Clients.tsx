@@ -1,45 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+"use client"
 
-import React from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
+import type React from "react"
+import Image from "next/image"
+import { motion } from "framer-motion"
+import { useLanguage } from "@/context/LanguageContext"
+import type { Partner } from "@/types/footer"
 
-const clients = [
-  {
-    src: "/Clients/mtde.png",
-    alt: "MTDE",
-    label: "A Project of",
-    showLabel: true,
-  },
-  {
-    src: "/Clients/WordBank.jpg",
-    alt: "World Bank",
-    label: "Funded By",
-    showLabel: false,
-  },
-  {
-    src: "/Clients/NethGov.jpg",
-    alt: "Netherlands Government",
-    label: "Funded By",
-    showLabel: false,
-  },
-  {
-    src: "/Clients/Eur.jpg",
-    alt: "European Union",
-    label: "Funded By",
-    showLabel: false,
-  },
-  { src: "/Clients/Sc.png", alt: "SC", label: "Funded By", showLabel: false },
-  {
-    src: "/Clients/DAI.png",
-    alt: "DAI",
-    label: "Implemented By",
-    showLabel: true,
-  },
-];
+interface ClientsProps {
+  partners: Partner[]
+}
 
-const Clients = () => {
+const Clients: React.FC<ClientsProps> = ({ partners }) => {
+  const { currentLang } = useLanguage()
+
+  const projectPartners = partners.filter((p) => p.type === "PROJECT_OF")
+  const fundedPartners = partners.filter((p) => p.type === "FUNDED_BY")
+  const implementedPartners = partners.filter((p) => p.type === "IMPLEMENTED_BY")
+
   return (
     <section className="relative">
       <div className="container mx-auto">
@@ -52,7 +29,7 @@ const Clients = () => {
               transition={{ duration: 0.5 }}
               className="text-lg text-[#1b316e] font-semibold"
             >
-              A Project of
+              {currentLang === "ar" ? "مشروع من" : "A Project of"}
             </motion.span>
             <motion.span
               initial={{ opacity: 0, y: 20 }}
@@ -60,7 +37,7 @@ const Clients = () => {
               transition={{ duration: 0.5 }}
               className="text-lg text-[#1b316e] font-semibold"
             >
-              Funded By
+              {currentLang === "ar" ? "بتمويل من" : "Funded By"}
             </motion.span>
             <motion.span
               initial={{ opacity: 0, y: 20 }}
@@ -68,33 +45,38 @@ const Clients = () => {
               transition={{ duration: 0.5 }}
               className="text-lg text-[#1b316e] font-semibold"
             >
-              Implemented By
+              {currentLang === "ar" ? "تنفيذ" : "Implemented By"}
             </motion.span>
           </div>
 
           {/* Logos row */}
           <div className="flex justify-between items-center">
-            {/* MTDE Logo */}
+            {/* Project Partners */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="w-[200px]"
             >
-              <div className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300">
-                <div className="relative h-[100px]">
-                  <Image
-                    src="/Clients/mtde.png"
-                    alt="MTDE"
-                    fill
-                    className="object-contain"
-                    priority
-                  />
+              {projectPartners.map((partner, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="relative h-[100px]">
+                    <Image
+                      src={partner.imageUrl || "/placeholder.svg"}
+                      alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
+                      fill
+                      className="object-contain"
+                      priority
+                    />
+                  </div>
                 </div>
-              </div>
+              ))}
             </motion.div>
 
-            {/* Funders Logos */}
+            {/* Funded Partners */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -103,11 +85,11 @@ const Clients = () => {
             >
               <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {clients.slice(1, 5).map((client, index) => (
+                  {fundedPartners.map((partner, index) => (
                     <div key={index} className="relative h-[80px]">
                       <Image
-                        src={client.src}
-                        alt={client.alt}
+                        src={partner.imageUrl || "/placeholder.svg"}
+                        alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
                         fill
                         className="object-contain"
                         priority={index < 2}
@@ -118,30 +100,35 @@ const Clients = () => {
               </div>
             </motion.div>
 
-            {/* DAI Logo */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="w-[200px]"
             >
-              <div className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300">
-                <div className="relative h-[100px]">
-                  <Image
-                    src="/Clients/DAI.png"
-                    alt="DAI"
-                    fill
-                    className="object-contain"
-                    priority
-                  />
+              {implementedPartners.map((partner, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="relative h-[100px]">
+                    <Image
+                      src={partner.imageUrl || "/placeholder.svg"}
+                      alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
+                      fill
+                      className="object-contain"
+                      priority
+                    />
+                  </div>
                 </div>
-              </div>
+              ))}
             </motion.div>
           </div>
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Clients;
+export default Clients
+

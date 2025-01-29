@@ -2,7 +2,8 @@ import { getTeamMemberById } from "@/app/actions/pages/team-actions"
 import { TeamMemberForm } from "@/components/admin/team/team-member-form"
 import { notFound } from "next/navigation"
 
-export default async function EditTeamMemberPage({ params }: { params: { id: string } }) {
+export default async function EditTeamMemberPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const teamMember = await getTeamMemberById(params.id)
 
   if (!teamMember) {

@@ -2,7 +2,8 @@ import { getAboutUsById } from '@/app/actions/pages/about-us-actions'
 import { AboutUsForm } from '@/components/admin/about/about-us-form'
 import { notFound } from 'next/navigation'
 
-export default async function EditAboutUsPage({ params }: { params: { id: string } }) {
+export default async function EditAboutUsPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const aboutUs = await getAboutUsById(params.id)
 
   if (!aboutUs) {

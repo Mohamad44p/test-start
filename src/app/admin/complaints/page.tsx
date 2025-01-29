@@ -59,11 +59,12 @@ const getComplaints = cache(async (status?: string): Promise<Complaint[]> => {
   return complaints
 })
 
-export default async function ComplaintsPage({
-  searchParams,
-}: {
-  searchParams?: { status?: string }
-}) {
+export default async function ComplaintsPage(
+  props: {
+    searchParams?: Promise<{ status?: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
   const stats = await getComplaintStats()
   const complaints = await getComplaints(searchParams?.status)
 

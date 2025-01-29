@@ -5,10 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { X, ChevronRight, Home, Book, Users, Newspaper, Shield, HelpCircle, Phone } from 'lucide-react';
 import { LogoAnimation } from '../../Hero/LogoAnimation';
+import { NavTranslations } from "@/types/navbar";
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  translations: NavTranslations;
 }
 
 const menuItems = [

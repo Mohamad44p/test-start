@@ -1,28 +1,26 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Montserrat } from "next/font/google";
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  variable: "--font-montserrat",
-  display: "swap",
-});
+import './globals.css'
+import { LanguageProvider } from '@/context/LanguageContext'
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Tech Start",
-  description: "Tech Start is a tech company that provides advanced training programs.",
-};
+  title: 'Tech Start',
+  description: 'Tech Start Platform',
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+  params
+}: {
+  children: React.ReactNode
+  params: { lang: string }
+}) {
   return (
-    <html lang="en" className="lenis lenis-smooth" suppressHydrationWarning>
-      <body className={`${montserrat.variable} font-sans antialiased`}>
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <LanguageProvider defaultLang={params.lang}>
+          <main>{children}</main>
+        </LanguageProvider>
       </body>
     </html>
-  );
+  )
 }

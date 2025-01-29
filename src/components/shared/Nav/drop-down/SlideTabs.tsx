@@ -7,22 +7,27 @@ import { ProgramsDropdown } from "./ProgramsDropdown";
 import { AboutUsDropdown } from "./AboutUsDropdown";
 import { ContactUsDropdown } from "./ContactUsDropdown";
 import { MediaCenterDropdown } from "./MediaCenterDropdown";
+import { useLanguage } from "@/context/LanguageContext";
+import { Position } from "@/types/navbar";
+import navbarTranslations from "@/translations/navbar";
 
-type Position = {
-  left: number;
-  width: number;
-  opacity: number;
-};
-
-export const SlideTabs = () => {
+export const SlideTabs: React.FC = () => {
+  const { currentLang } = useLanguage();
   const [position, setPosition] = useState<Position>({
     left: 0,
     width: 0,
     opacity: 0,
   });
 
+  const translations = navbarTranslations[currentLang];
+  
+  if (!translations) {
+    return null; // or some loading state
+  }
+
   return (
     <ul
+      dir={currentLang === "ar" ? "rtl" : "ltr"}
       onMouseLeave={() => {
         setPosition((pv) => ({
           ...pv,
@@ -31,14 +36,13 @@ export const SlideTabs = () => {
       }}
       className="relative mx-auto flex w-fit rounded-full border border-gray-200/50 bg-white/80 p-1 backdrop-blur-md shadow-lg shadow-purple-500/5"
     >
-      <AboutUsDropdown setPosition={setPosition} />
-      <ProgramsDropdown setPosition={setPosition} />
-      <MediaCenterDropdown setPosition={setPosition} />
+      <AboutUsDropdown setPosition={setPosition} translations={translations} />
+      <ProgramsDropdown setPosition={setPosition} translations={translations} />
+      <MediaCenterDropdown setPosition={setPosition} translations={translations} />
       <Link href="/Safeguards">
-        <Tab setPosition={setPosition}>Safeguards</Tab>
+        <Tab setPosition={setPosition}>{translations.safeguards}</Tab>
       </Link>
-      <ContactUsDropdown setPosition={setPosition} />
-
+      <ContactUsDropdown setPosition={setPosition} translations={translations} />
       <Cursor position={position} />
     </ul>
   );

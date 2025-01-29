@@ -3,11 +3,17 @@ import { notFound } from "next/navigation"
 import db from "@/app/db/db"
 import { SafeguardForm } from "../components/SafeguardForm"
 
-export default async function EditSafeguardPage({
-  params: { id },
-}: {
-  params: { id: string }
-}) {
+export default async function EditSafeguardPage(
+  props: {
+    params: Promise<{ id: string }>
+  }
+) {
+  const params = await props.params;
+
+  const {
+    id
+  } = params;
+
   const safeguard = await db.safeguard.findUnique({
     where: { id },
   })

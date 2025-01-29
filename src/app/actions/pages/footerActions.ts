@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { FooterFormInput } from "@/lib/schema/footerSchema";
 import db from "@/app/db/db";
 import { PartnerType } from "@prisma/client";
+import { cache } from "react";
 
 export async function createFooter(data: FooterFormInput) {
   try {
@@ -119,3 +120,19 @@ export async function deleteFooter(id: string) {
     return { success: false, error: "Failed to delete footer" };
   }
 }
+
+
+export const getFooter = cache(async () => {
+  try {
+    const footer = await db.footer.findFirst({
+      include: {
+        partners: true,
+      },
+    })
+
+    return { success: true, data: footer }
+  } catch (error) {
+    console.error("Fetch footer error:", error)
+    return { success: false, error: "Failed to fetch footer" }
+  }
+})

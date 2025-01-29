@@ -8,7 +8,8 @@ import { ComplaintNotes } from './complaint-notes'
 import { ComplaintAttachments } from './complaint-attachments'
 import { Complaint } from '@/types/complaint'
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const complaint = await db.complaint.findUnique({
     where: { id: params.id },
     select: { complaintNumber: true }
@@ -36,7 +37,8 @@ async function getComplaint(id: string) {
   return complaint;
 }
 
-export default async function ComplaintPage({ params }: { params: { id: string } }) {
+export default async function ComplaintPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const complaint = await getComplaint(params.id)
 
   return (

@@ -1,37 +1,28 @@
 "use client";
 
-import React, { useState, useRef, Dispatch, SetStateAction } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { DropdownProps } from "@/types/navbar";
 
-type Position = {
-  left: number;
-  width: number;
-  opacity: number;
-};
-
-export const ContactUsDropdown = ({
-  setPosition,
-}: {
-  setPosition: Dispatch<SetStateAction<Position>>;
-}) => {
+export const ContactUsDropdown: React.FC<DropdownProps> = ({ setPosition, translations }) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<null | HTMLLIElement>(null);
 
   const menuItems = [
     {
       id: "contact-us",
-      name: "Contact Us",
+      name: translations.menuItems.contactUs.contact,
       href: "/Contact-us",
     },
     {
       id: "complaints",
-      name: "Complaints",
+      name: translations.menuItems.contactUs.complaints,
       href: "/submit-complaint",
     },
     {
       id: "faqs",
-      name: "FAQs",
+      name: translations.menuItems.contactUs.faqs,
       href: "/FAQs",
     },
   ];
@@ -54,7 +45,7 @@ export const ContactUsDropdown = ({
       }}
       className="relative z-10 block cursor-pointer px-3 py-1.5 text-base font-medium text-[#1b316e] transition-colors hover:text-white"
     >
-      Contact Us
+      {translations.contactUs}
       <AnimatePresence>
         {isOpen && (
           <motion.div

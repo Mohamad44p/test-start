@@ -16,7 +16,8 @@ async function getGallery(id: string) {
   };
 }
 
-export default async function EditGalleryPage({ params }: { params: { id: string } }) {
+export default async function EditGalleryPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const gallery = await getGallery(params.id);
 
   if (!gallery) {

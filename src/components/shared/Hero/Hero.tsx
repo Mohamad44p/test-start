@@ -185,8 +185,8 @@ const Hero = ({ steps }: HeroProps) => {
                 <Image
                   src={currentSteps[currentStep].imageUrl || "/placeholder.svg"}
                   alt={currentSteps[currentStep].title}
-                  layout="fill"
-                  objectFit="cover"
+                  fill
+                  className="object-cover"
                 />
                 <div
                   className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"

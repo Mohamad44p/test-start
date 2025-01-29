@@ -2,7 +2,8 @@ import { getWorkWithUsListingById } from "@/app/actions/pages/work-with-us-actio
 import { WorkWithUsForm } from "@/components/admin/pages/work-with-us-form"
 import { notFound } from "next/navigation"
 
-export default async function EditWorkWithUsPage({ params }: { params: { id: string } }) {
+export default async function EditWorkWithUsPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const listing = await getWorkWithUsListingById(params.id)
 
   if (!listing) {

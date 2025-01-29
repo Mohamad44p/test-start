@@ -1,20 +1,11 @@
 "use client";
 
-import React, { useState, useRef, Dispatch, SetStateAction } from "react";
+import React, { useState, useRef} from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { DropdownProps } from "@/types/navbar";
 
-type Position = {
-    left: number;
-    width: number;
-    opacity: number;
-};
-
-export const MediaCenterDropdown = ({
-    setPosition,
-}: {
-    setPosition: Dispatch<SetStateAction<Position>>;
-}) => {
+export const MediaCenterDropdown: React.FC<DropdownProps> = ({ setPosition, translations }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeItem, setActiveItem] = useState<string | null>(null);
     const ref = useRef<null | HTMLLIElement>(null);
@@ -22,19 +13,19 @@ export const MediaCenterDropdown = ({
     const menuItems = [
         {
             id: "gallery",
-            name: "Gallery",
+            name: translations.menuItems.mediaCenter.gallery,
             subItems: [
-                { id: "photo-gallery", name: "Photo Gallery", href: "/media-center/gallery/photos" },
-                { id: "videos", name: "Videos", href: "/media-center/gallery/videos" },
+                { id: "photo-gallery", name: translations.menuItems.mediaCenter.photoGallery, href: "/media-center/gallery/photos" },
+                { id: "videos", name: translations.menuItems.mediaCenter.videos, href: "/media-center/gallery/videos" },
             ],
         },
         {
             id: "news",
-            name: "News",
+            name: translations.menuItems.mediaCenter.news,
             subItems: [
-                { id: "news-press", name: "News & Press Releases", href: "/media-center/news" },
-                { id: "publications", name: "Publications", href: "/media-center/news/publications" },
-                { id: "announcements", name: "Announcements", href: "/media-center/news/announcements" }
+                { id: "news-press", name: translations.menuItems.mediaCenter.newsPress, href: "/media-center/news" },
+                { id: "publications", name: translations.menuItems.mediaCenter.publications, href: "/media-center/news/publications" },
+                { id: "announcements", name: translations.menuItems.mediaCenter.announcements, href: "/media-center/news/announcements" }
             ],
         },
     ];
@@ -58,7 +49,7 @@ export const MediaCenterDropdown = ({
             }}
             className="relative z-10 block cursor-pointer px-3 py-1.5 text-base font-medium text-[#1b316e] transition-colors hover:text-white"
         >
-            Media Center
+            {translations.mediaCenter}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div

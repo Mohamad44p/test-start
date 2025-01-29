@@ -1,20 +1,11 @@
 "use client";
 
-import React, { useState, useRef, Dispatch, SetStateAction } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { DropdownProps } from "@/types/navbar";
 
-type Position = {
-  left: number;
-  width: number;
-  opacity: number;
-};
-
-export const ProgramsDropdown = ({
-  setPosition,
-}: {
-  setPosition: Dispatch<SetStateAction<Position>>;
-}) => {
+export const ProgramsDropdown: React.FC<DropdownProps> = ({ setPosition, translations }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [activeSubItem, setActiveSubItem] = useState<string | null>(null);
@@ -36,11 +27,11 @@ export const ProgramsDropdown = ({
   const programs: Program[] = [
     {
       id: "building-capabilities",
-      name: "Building Capabilities",
+      name: translations.menuItems.programs.buildingCapabilities,
       subPrograms: [
         {
           id: "upskill",
-          name: "UPSKILL",
+          name: translations.menuItems.programs.upskill,
           href: "/programs/upskill",
           pilotPoints: [
             { name: "Overview", href: "/programs/upskill#overview" },
@@ -53,7 +44,7 @@ export const ProgramsDropdown = ({
         },
         {
           id: "elevate",
-          name: "Elevate",
+          name: translations.menuItems.programs.elevate,
           pilotPoints: [
             { name: "Pilot Point 1", href: "/programs/elevate/1" },
             { name: "Pilot Point 2", href: "/programs/elevate/2" },
@@ -61,7 +52,7 @@ export const ProgramsDropdown = ({
         },
         {
           id: "femtech",
-          name: "FemTech",
+          name: translations.menuItems.programs.femtech,
           pilotPoints: [
             { name: "Pilot Point 1", href: "/programs/femtech/1" },
             { name: "Pilot Point 2", href: "/programs/femtech/2" },
@@ -71,11 +62,11 @@ export const ProgramsDropdown = ({
     },
     {
       id: "improving-ecosystem",
-      name: "Improving IT Ecosystem",
+      name: translations.menuItems.programs.improvingEcosystem,
       subPrograms: [
         {
           id: "pioneer",
-          name: "Pioneer",
+          name: translations.menuItems.programs.pioneer,
           href: "/programs/pioneer",
           pilotPoints: [
             { name: "Overview", href: "/programs/pioneer#overview" },
@@ -88,7 +79,7 @@ export const ProgramsDropdown = ({
         },
         {
           id: "market-access",
-          name: "Market Access",
+          name: translations.menuItems.programs.marketAccess,
           pilotPoints: [
             { name: "Pilot Point 1", href: "/programs/market-access/1" },
             { name: "Pilot Point 2", href: "/programs/market-access/2" },
@@ -96,7 +87,7 @@ export const ProgramsDropdown = ({
         },
         {
           id: "horizon",
-          name: "Horizon",
+          name: translations.menuItems.programs.horizon,
           pilotPoints: [
             { name: "Pilot Point 1", href: "/programs/horizon/1" },
             { name: "Pilot Point 2", href: "/programs/horizon/2" },
@@ -126,7 +117,7 @@ export const ProgramsDropdown = ({
       }}
       className="relative z-10 block cursor-pointer px-3 py-1.5 text-base font-medium text-[#1b316e] transition-colors hover:text-white"
     >
-      Programs
+      {translations.programs}
       <AnimatePresence>
         {isOpen && (
           <motion.div

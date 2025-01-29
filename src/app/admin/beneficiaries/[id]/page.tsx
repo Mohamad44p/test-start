@@ -2,11 +2,17 @@ import { notFound } from "next/navigation"
 import db from "@/app/db/db"
 import { BeneficiaryForm } from "../components/BeneficiaryForm"
 
-export default async function EditBeneficiaryPage({
-  params: { id },
-}: {
-  params: { id: string }
-}) {
+export default async function EditBeneficiaryPage(
+  props: {
+    params: Promise<{ id: string }>
+  }
+) {
+  const params = await props.params;
+
+  const {
+    id
+  } = params;
+
   const [beneficiary, categories] = await Promise.all([
     db.beneficiary.findUnique({
       where: { id },

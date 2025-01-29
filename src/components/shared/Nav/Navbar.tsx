@@ -12,6 +12,7 @@ import MobileMenu from "./mobile/MobileMenu";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/context/LanguageContext";
+import navbarTranslations from "@/translations/navbar";
 
 export const Navbar: React.FC = () => {
   const { currentLang, setLanguage } = useLanguage();
@@ -27,6 +28,8 @@ export const Navbar: React.FC = () => {
   const toggleLanguage = () => {
     setLanguage(currentLang === "en" ? "ar" : "en");
   };
+
+  const t = navbarTranslations[currentLang];
 
   useMotionValueEvent(scrollY, "change", (y) => {
     const difference = y - lastYRef.current;
@@ -55,6 +58,7 @@ export const Navbar: React.FC = () => {
               ? "bg-white/80 backdrop-blur-md shadow-md rounded-full my-2"
               : "bg-transparent"
           )}
+          dir={currentLang === "ar" ? "rtl" : "ltr"}
         >
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
@@ -98,6 +102,7 @@ export const Navbar: React.FC = () => {
             key="mobile-menu"
             isOpen={isMobileMenuOpen}
             onClose={() => setIsMobileMenuOpen(false)}
+            translations={t}
           />,
           document.getElementById("modal-root") || document.body
         )}

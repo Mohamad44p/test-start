@@ -2,11 +2,12 @@ import { getFocusareaById } from "@/app/actions/pages/focusareas-actions";
 import { FocusareaForm } from "@/components/admin/focusareas/focusarea-form";
 import { notFound } from "next/navigation";
 
-export default async function EditFocusareaPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function EditFocusareaPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const focusarea = await getFocusareaById(params.id);
 
   if (!focusarea) {
