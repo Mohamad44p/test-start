@@ -23,8 +23,6 @@ export async function POST(request: NextRequest) {
     const filepath = path.join(uploadDir, filename)
 
     await writeFile(filepath, buffer)
-    console.log(`File saved successfully: ${filepath}`)
-
     return NextResponse.json({ success: true, url: `/videos/${filename}` })
   } catch (error) {
     console.error('Error in upload-video route:', error)

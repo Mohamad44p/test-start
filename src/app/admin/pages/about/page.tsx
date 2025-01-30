@@ -90,28 +90,6 @@ export default async function AboutPage() {
               )
             })}
           </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Who We Are</CardTitle>
-            </CardHeader>
-            <CardContent className="grid md:grid-cols-3 gap-6">
-              {aboutUs.whoWeAre.map((item) => (
-                <div key={item.id} className="space-y-4">
-                  <div>
-                    <h3 className="font-semibold mb-2">{item.titleEn}</h3>
-                    <p className="text-sm text-muted-foreground">{item.descriptionEn}</p>
-                  </div>
-                  <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-2 text-right" dir="rtl">{item.titleAr}</h3>
-                    <p className="text-sm text-muted-foreground text-right" dir="rtl">
-                      {item.descriptionAr}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
         </div>
       ) : (
         <div className="text-center py-12">

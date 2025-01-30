@@ -1,21 +1,30 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import Image from 'next/image'
 import { Loader2, Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { toast } from '@/hooks/use-toast'
 
 export interface ImageUploadProps {
   onUpload: (url: string | null) => void;
   defaultImage?: string;
-  maxFiles?: number;
+  value?: string;
 }
 
-export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
+export function ImageUpload({ onUpload, defaultImage, value }: ImageUploadProps) {
+  const currentImage = value || defaultImage;
   const [uploading, setUploading] = useState(false)
-  const [preview, setPreview] = useState<string | null>(defaultImage || null)
+  const [preview, setPreview] = useState<string | null>(null) // Initialize as null
+
+  // Update preview when component mounts or defaultImage changes
+  useEffect(() => {
+    if (currentImage) {
+      setPreview(currentImage)
+    }
+  }, [currentImage])
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true)
@@ -34,11 +43,12 @@ export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
       if (!response.ok) throw new Error('Upload failed')
 
       const data = await response.json()
-      setPreview(data.url)
-      onUpload(data.url)
+      const imageUrl = data.url // Changed from data.urls to data.url
+      setPreview(imageUrl)
+      onUpload(imageUrl)
     } catch (error) {
       console.error('Upload error:', error)
-      // Handle error (e.g., show a toast notification)
+      onUpload(null)
     } finally {
       setUploading(false)
     }
@@ -56,12 +66,20 @@ export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
           body: JSON.stringify({ imageUrl: preview }),
         })
 
-        if (!response.ok) throw new Error('Delete failed')
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Delete failed');
+        }
 
         setPreview(null)
         onUpload(null)
       } catch (error) {
         console.error('Delete error:', error)
+        toast?.({
+          title: "Error",
+          description: "Failed to delete image",
+          variant: "destructive",
+        })
       } finally {
         setUploading(false)
       }
@@ -99,12 +117,15 @@ export function ImageUpload({ onUpload, defaultImage }: ImageUploadProps) {
               alt="Preview"
               fill
               className="object-cover rounded-lg"
+              suppressHydrationWarning
             />
             <Button
+              type="button" // Add type="button" to prevent form submission
               variant="destructive"
               size="icon"
               className="absolute top-2 right-2"
               onClick={(e) => {
+                e.preventDefault()
                 e.stopPropagation()
                 handleRemove()
               }}

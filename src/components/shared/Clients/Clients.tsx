@@ -21,7 +21,6 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
     <section className="relative">
       <div className="container mx-auto">
         <div className="max-w-7xl mx-auto">
-          {/* Labels row */}
           <div className="flex justify-between items-center mb-6 px-4">
             <motion.span
               initial={{ opacity: 0, y: 20 }}

@@ -105,8 +105,6 @@ export async function updateVideoGallery(
 export async function createVideoGallery(
   data: CreateVideoGalleryInput,
 ): Promise<{ success: boolean; gallery?: VideoGallery; error?: string }> {
-  console.log("Received data in createVideoGallery:", JSON.stringify(data, null, 2))
-
   if (!data || typeof data !== "object") {
     console.error("Invalid input data:", data)
     return { success: false, error: "Invalid input data" }

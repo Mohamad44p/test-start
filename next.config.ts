@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
     ppr: true,
     reactCompiler: true,
   },
+  bundlePagesRouterDependencies: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },

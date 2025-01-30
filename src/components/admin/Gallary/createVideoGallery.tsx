@@ -37,17 +37,11 @@ export default function CreateVideoGallery() {
       if (!data || typeof data !== "object") {
         throw new Error("Invalid form data")
       }
-
-      console.log("Submitting data:", JSON.stringify(data, null, 2))
-
       if (!data.videos || data.videos.length === 0) {
         throw new Error("Please add at least one video")
       }
 
       const result = await createVideoGallery(data)
-
-      console.log("Server response:", result)
-
       if (result.success) {
         toast({
           title: "Success",
@@ -82,7 +76,6 @@ export default function CreateVideoGallery() {
             <form
               onSubmit={(e) => {
                 e.preventDefault()
-                console.log("Form values before submission:", form.getValues())
                 form.handleSubmit(onSubmit)(e)
               }}
               className="space-y-8"

@@ -8,8 +8,6 @@ export type TeamMemberData = {
   nameAr: string
   jobTitleEn: string
   jobTitleAr: string
-  descriptionEn: string
-  descriptionAr: string
   imageUrl: string
 }
 

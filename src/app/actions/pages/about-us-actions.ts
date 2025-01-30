@@ -9,6 +9,9 @@ export type AboutUsData = {
   descriptionEn: string;
   descriptionAr: string;
   imageUrl: string | null;
+  card1Visible: boolean;
+  card2Visible: boolean;
+  card3Visible: boolean;
   cards: {
     titleEn: string;
     titleAr: string;
@@ -16,19 +19,12 @@ export type AboutUsData = {
     descriptionAr: string;
     icon: string;
   }[];
-  whoWeAre: {
-    titleEn: string;
-    titleAr: string;
-    descriptionEn: string;
-    descriptionAr: string;
-  }[];
 };
 
 export async function getAboutUs() {
   return db.aboutUs.findFirst({
     include: {
       cards: true,
-      whoWeAre: true,
     },
   });
 }
@@ -38,22 +34,18 @@ export async function getAboutUsById(id: string) {
     where: { id },
     include: {
       cards: true,
-      whoWeAre: true,
     },
   });
 }
 
 export async function createAboutUs(data: AboutUsData) {
-  const { cards, whoWeAre, ...aboutUsData } = data;
+  const { cards, ...aboutUsData } = data;
 
   const createdAboutUs = await db.aboutUs.create({
     data: {
       ...aboutUsData,
       cards: {
         create: cards,
-      },
-      whoWeAre: {
-        create: whoWeAre,
       },
     },
   });
@@ -63,7 +55,7 @@ export async function createAboutUs(data: AboutUsData) {
 }
 
 export async function updateAboutUs(id: string, data: AboutUsData) {
-  const { cards, whoWeAre, ...aboutUsData } = data;
+  const { cards, ...aboutUsData } = data;
 
   const updatedAboutUs = await db.aboutUs.update({
     where: { id },
@@ -72,10 +64,6 @@ export async function updateAboutUs(id: string, data: AboutUsData) {
       cards: {
         deleteMany: {},
         create: cards,
-      },
-      whoWeAre: {
-        deleteMany: {},
-        create: whoWeAre,
       },
     },
   });

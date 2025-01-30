@@ -35,10 +35,10 @@ model Post {
 }
 
 model Tag {
-  id      Int      @id @default(autoincrement())
-  name_en String   
+  id      Int    @id @default(autoincrement())
+  name_en String
   name_ar String
-  slug    String   @unique
+  slug    String @unique
   posts   Post[]
 }
 
@@ -190,16 +190,18 @@ model Category {
 }
 
 model AboutUs {
-  id            String     @id @default(cuid())
+  id            String   @id @default(cuid())
   titleEn       String
   titleAr       String
-  descriptionEn String     @db.Text
-  descriptionAr String     @db.Text
+  descriptionEn String   @db.Text
+  descriptionAr String   @db.Text
   imageUrl      String?
+  card1Visible  Boolean  @default(true)
+  card2Visible  Boolean  @default(true)
+  card3Visible  Boolean  @default(true)
   cards         Card[]
-  whoWeAre      WhoWeAre[]
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Card {
@@ -213,51 +215,37 @@ model Card {
   aboutUsId     String
 }
 
-model WhoWeAre {
-  id            String  @id @default(cuid())
-  titleEn       String
-  titleAr       String
-  descriptionEn String
-  descriptionAr String
-  aboutUs       AboutUs @relation(fields: [aboutUsId], references: [id], onDelete: Cascade)
-  aboutUsId     String
-}
-
 model Focusarea {
   id            String          @id @default(cuid())
   titleEn       String
   titleAr       String
-  descriptionEn String
-  descriptionAr String
+  descriptionEn String          @default("") // Add default empty string
+  descriptionAr String          @default("") // Add default empty string
   cards         FocusareaCard[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @default(now())
 }
 
 model FocusareaCard {
-  id            String    @id @default(cuid())
-  titleEn       String
-  titleAr       String
-  descriptionEn String
-  descriptionAr String
-  imageUrl      String
-  focusarea     Focusarea @relation(fields: [focusareaId], references: [id], onDelete: Cascade)
-  focusareaId   String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now())
+  id          String    @id @default(cuid())
+  titleEn     String
+  titleAr     String
+  imageUrl    String
+  focusarea   Focusarea @relation(fields: [focusareaId], references: [id], onDelete: Cascade)
+  focusareaId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
 }
 
 model TeamMember {
-  id            String   @id @default(cuid())
-  nameEn        String
-  nameAr        String
-  jobTitleEn    String
-  jobTitleAr    String
-  descriptionEn String
-  descriptionAr String
-  imageUrl      String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
+  id         String   @id @default(cuid())
+  nameEn     String
+  nameAr     String
+  jobTitleEn String
+  jobTitleAr String
+  imageUrl   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
 
 enum WorkType {
@@ -292,7 +280,7 @@ model Complaint {
   id                      String                @id @default(cuid())
   complaintNumber         String                @unique
   type                    String
-  status                  String                @default("PENDING") 
+  status                  String                @default("PENDING")
   submittedAt             DateTime              @default(now())
   updatedAt               DateTime              @updatedAt
   complainantType         String?
@@ -342,20 +330,20 @@ model ComplaintNote {
 
 model Safeguard {
   id                 String   @id @default(cuid())
-  domain             String 
+  domain             String
   title_en           String
   title_ar           String
-  tagline_en         String 
+  tagline_en         String
   tagline_ar         String
   description_en     String   @db.Text
   description_ar     String   @db.Text
   longDescription_en String?  @db.Text
   longDescription_ar String?  @db.Text
-  bgColor            String   @default("#f3f4f6")  // Default light gray color
+  bgColor            String   @default("#f3f4f6") // Default light gray color
   attachmentUrl      String?
   imageUrl           String?
-  order              Int      @default(0)          // Add order field for sorting
-  status             String   @default("DRAFT")    // Add status field
+  order              Int      @default(0) // Add order field for sorting
+  status             String   @default("DRAFT") // Add status field
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -403,4 +391,16 @@ model FaqItem {
 
   @@index([categoryId])
   @@index([order])
+}
+
+model PartnerPage {
+  id         String      @id @default(cuid())
+  title_en   String
+  title_ar   String
+  imageUrl   String
+  websiteUrl String
+  type       PartnerType
+  order      Int
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @default(now())
 }

@@ -21,5 +21,5 @@ interface ApiError {
 
 export type ApiResponse<T> = ApiSuccess<T> | ApiError
 
-export type LanguageType = "en" | "ar"
+export type LanguageType = 'en' | 'ar';
 

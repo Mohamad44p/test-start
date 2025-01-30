@@ -1,20 +1,23 @@
-"use client";
+"use client"
 
-import { motion } from "framer-motion";
-import OurTeam from "../OurTeam/OurTeam";
-import AboutHero from "./about-hero";
-import { WhoWeAre } from "./who-we-are";
-import FoucesArea from "../shared/Hero/FoucesArea";
+import { motion } from "framer-motion"
+import OurTeam from "../OurTeam/OurTeam"
+import FoucesArea from "../shared/Hero/FoucesArea"
+import { AboutUsData } from "@/app/actions/pages/about-us-actions"
+import { FocusareaData } from "@/app/actions/pages/focusareas-actions"
+import { TeamMemberData } from "@/app/actions/pages/team-actions"
+import AboutHero from "./about-hero"
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.3,
+      staggerChildren: 0.5,
+      delayChildren: 0.3,
     },
   },
-};
+}
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 50 },
@@ -22,31 +25,35 @@ const sectionVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.8,
-      ease: "easeOut",
+      duration: 1,
+      ease: [0.6, -0.05, 0.01, 0.99],
     },
   },
-};
+}
 
-export default function AboutUsContent() {
+interface AboutUsContentProps {
+  aboutUsData: AboutUsData
+  focusareasData: FocusareaData[]
+  teamMembersData: TeamMemberData[]
+}
+
+export default function AboutUsContent({ aboutUsData, focusareasData, teamMembersData }: AboutUsContentProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white text-gray-800">
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <AboutHero />
-
-        <motion.section variants={sectionVariants}>
-          <WhoWeAre />
-        </motion.section>
-
-        <FoucesArea/>
-        <motion.section variants={sectionVariants}>
-          <OurTeam />
-        </motion.section>
-      </motion.div>
-    </div>
-  );
+    <motion.div
+      className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-blue-50 text-gray-800"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.section variants={sectionVariants}>
+        <AboutHero aboutUsData={aboutUsData} />
+      </motion.section>
+      <motion.section variants={sectionVariants}>
+        <FoucesArea focusareasData={focusareasData} />
+      </motion.section>
+      <motion.section variants={sectionVariants}>
+        <OurTeam teamMembersData={teamMembersData} />
+      </motion.section>
+    </motion.div>
+  )
 }

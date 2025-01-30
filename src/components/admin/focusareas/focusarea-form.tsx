@@ -19,16 +19,12 @@ import { ImageUpload } from "@/lib/ImageUpload"
 const cardSchema = z.object({
   titleEn: z.string().min(1, "Title in English is required"),
   titleAr: z.string().min(1, "Title in Arabic is required"),
-  descriptionEn: z.string().min(1, "Description in English is required"),
-  descriptionAr: z.string().min(1, "Description in Arabic is required"),
   imageUrl: z.string().min(1, "Image is required"),
 })
 
 const focusareaSchema = z.object({
   titleEn: z.string().min(1, "Title in English is required"),
   titleAr: z.string().min(1, "Title in Arabic is required"),
-  descriptionEn: z.string().min(1, "Description in English is required"),
-  descriptionAr: z.string().min(1, "Description in Arabic is required"),
   cards: z.array(cardSchema).min(1, "At least 1 card is required").max(6, "Maximum 6 cards are allowed"),
 })
 
@@ -47,9 +43,7 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
     defaultValues: initialData || {
       titleEn: "",
       titleAr: "",
-      descriptionEn: "",
-      descriptionAr: "",
-      cards: [{ titleEn: "", titleAr: "", descriptionEn: "", descriptionAr: "", imageUrl: "" }],
+      cards: [{ titleEn: "", titleAr: "", imageUrl: "" }],
     },
   })
 
@@ -119,19 +113,6 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="descriptionEn"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (English)</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </TabsContent>
               <TabsContent value="ar" className="space-y-4">
                 <FormField
@@ -142,19 +123,6 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
                       <FormLabel>Title (Arabic)</FormLabel>
                       <FormControl>
                         <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="descriptionAr"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (Arabic)</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -195,19 +163,6 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={form.control}
-                        name={`cards.${index}.descriptionEn`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Description (English)</FormLabel>
-                            <FormControl>
-                              <Textarea {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
                     </TabsContent>
                     <TabsContent value="ar" className="space-y-4">
                       <FormField
@@ -223,19 +178,6 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={form.control}
-                        name={`cards.${index}.descriptionAr`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Description (Arabic)</FormLabel>
-                            <FormControl>
-                              <Textarea {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
                     </TabsContent>
                   </Tabs>
                   <FormField
@@ -245,7 +187,10 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
                       <FormItem className="mt-4">
                         <FormLabel>Image</FormLabel>
                         <FormControl>
-                          <ImageUpload onUpload={(url) => field.onChange(url)} defaultImage={field.value} />
+                          <ImageUpload 
+                            onUpload={(url) => field.onChange(url)} 
+                            value={field.value}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -263,7 +208,7 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => append({ titleEn: "", titleAr: "", descriptionEn: "", descriptionAr: "", imageUrl: "" })}
+                onClick={() => append({ titleEn: "", titleAr: "", imageUrl: "" })}
               >
                 Add Card
               </Button>

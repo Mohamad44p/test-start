@@ -112,8 +112,6 @@ export async function deleteGallery(id: string) {
 
 export const getFeaturedImages = cache(async (limit = 4) => {
   try {
-    console.log("Fetching featured images with limit:", limit)
-    
     const featuredImages = await db.image.findMany({
       where: { 
         featured: true,
@@ -131,9 +129,6 @@ export const getFeaturedImages = cache(async (limit = 4) => {
         }
       }
     })
-
-    console.log("Found featured images:", JSON.stringify(featuredImages, null, 2))
-
     if (!featuredImages.length) {
       console.log("No featured images found in database")
     }

@@ -46,8 +46,6 @@ export function GalleryTable({ initialGalleries }: GalleryTableProps) {
     if (confirm('Are you sure you want to delete this gallery?')) {
       try {
         const result = await deleteGallery(id);
-        console.log('Delete result:', result);
-        
         if (result.success) {
           setGalleries(galleries.filter(gallery => gallery.id !== id));
           toast({

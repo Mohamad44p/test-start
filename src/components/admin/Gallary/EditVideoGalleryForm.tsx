@@ -96,16 +96,12 @@ export default function EditVideoGalleryForm({ id }: EditVideoGalleryFormProps) 
     setIsSubmitting(true);
     
     try {
-      console.log('Form data before submission:', JSON.stringify(data, null, 2));
-
       if (!data.videos || data.videos.length === 0) {
         throw new Error("Please add at least one video");
       }
 
       const result = await updateVideoGallery(data);
       
-      console.log('Server response:', result);
-
       if (result.success) {
         toast({
           title: "Success",

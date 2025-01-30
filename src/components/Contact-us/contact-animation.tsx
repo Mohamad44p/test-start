@@ -1,9 +1,8 @@
 "use client"
-
+import ContactSvg from "../../../public/Contact/Contact.json"
 import dynamic from "next/dynamic"
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false })
-import ContactSvg from "../../../public/svg/Contact.json"
 
 export function ContactAnimation() {
   return (

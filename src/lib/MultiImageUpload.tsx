@@ -54,15 +54,25 @@ export function MultiImageUpload({ onUpload, defaultImages = [], onDelete }: Mul
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ imageUrl: imageToRemove }),
+        body: JSON.stringify({ 
+          imageUrl: imageToRemove
+        }),
       })
 
-      if (!response.ok) throw new Error('Delete failed')
+      const data = await response.json();
 
-      onUpload(newPreviews)
+      if (!response.ok) {
+        console.error('Delete response:', data);
+        throw new Error(data.error || 'Delete failed');
+      }
+
+      onUpload(newPreviews);
+      if (onDelete) {
+        onDelete(index);
+      }
     } catch (error) {
-      console.error('Delete error:', error)
-      setPreviews(previews)
+      console.error('Delete error:', error);
+      setPreviews(previews); // Restore the previous state
     }
   }
 

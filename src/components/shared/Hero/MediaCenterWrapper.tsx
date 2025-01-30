@@ -10,9 +10,5 @@ export default async function MediaCenterWrapper() {
   }
 
   const featuredImages = featuredImagesResponse.data || []
-  
-  console.log("MediaCenterWrapper - Featured Images Count:", featuredImages.length)
-  console.log("MediaCenterWrapper - Featured Images:", JSON.stringify(featuredImages, null, 2))
-
   return <MediaCenter featuredImages={featuredImages} />
 }

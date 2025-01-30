@@ -25,8 +25,6 @@ export async function createPost(formData: FormData) {
     tags: formData.getAll("tags"),
   }
 
-  console.log("Processing data:", data)
-
   const validatedFields = createPostSchema.safeParse(data)
 
   if (!validatedFields.success) {

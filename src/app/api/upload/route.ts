@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     await writeFile(safePath, buffer)
     const publicPath = `/uploads/files/${uniqueSuffix}-${filename}`
 
-    return NextResponse.json({ urls: publicPath })
+    return NextResponse.json({ url: publicPath }) // Changed from urls to url
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })

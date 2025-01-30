@@ -21,8 +21,6 @@ const teamMemberSchema = z.object({
   nameAr: z.string().min(1, "Name in Arabic is required"),
   jobTitleEn: z.string().min(1, "Job title in English is required"),
   jobTitleAr: z.string().min(1, "Job title in Arabic is required"),
-  descriptionEn: z.string().min(1, "Description in English is required"),
-  descriptionAr: z.string().min(1, "Description in Arabic is required"),
   imageUrl: z.string().min(1, "Image is required"),
 })
 
@@ -43,8 +41,6 @@ export function TeamMemberForm({ initialData }: TeamMemberFormProps) {
       nameAr: "",
       jobTitleEn: "",
       jobTitleAr: "",
-      descriptionEn: "",
-      descriptionAr: "",
       imageUrl: "",
     },
   })
@@ -123,19 +119,6 @@ export function TeamMemberForm({ initialData }: TeamMemberFormProps) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="descriptionEn"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (English)</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </TabsContent>
               <TabsContent value="ar" className="space-y-4">
                 <FormField
@@ -164,19 +147,6 @@ export function TeamMemberForm({ initialData }: TeamMemberFormProps) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="descriptionAr"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (Arabic)</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </TabsContent>
             </Tabs>
             <FormField
@@ -186,7 +156,10 @@ export function TeamMemberForm({ initialData }: TeamMemberFormProps) {
                 <FormItem className="mt-4">
                   <FormLabel>Image</FormLabel>
                   <FormControl>
-                    <ImageUpload onUpload={(url) => field.onChange(url)} defaultImage={field.value} />
+                    <ImageUpload 
+                      onUpload={(url) => field.onChange(url)}
+                      value={field.value}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

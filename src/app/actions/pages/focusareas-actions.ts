@@ -6,13 +6,9 @@ import { revalidatePath } from "next/cache"
 export type FocusareaData = {
   titleEn: string
   titleAr: string
-  descriptionEn: string
-  descriptionAr: string
   cards: {
     titleEn: string
     titleAr: string
-    descriptionEn: string
-    descriptionAr: string
     imageUrl: string
   }[]
 }
@@ -40,6 +36,8 @@ export async function createFocusarea(data: FocusareaData) {
   const createdFocusarea = await db.focusarea.create({
     data: {
       ...focusareaData,
+      descriptionEn: "", // Default value for required field
+      descriptionAr: "", // Default value for required field
       cards: {
         create: cards,
       },
@@ -60,6 +58,8 @@ export async function updateFocusarea(id: string, data: FocusareaData) {
     where: { id },
     data: {
       ...focusareaData,
+      descriptionEn: "", // Default value for required field
+      descriptionAr: "", // Default value for required field
       cards: {
         deleteMany: {},
         create: cards,

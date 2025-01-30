@@ -1,16 +1,19 @@
-import { useState, FormEvent } from "react"
+"use client"
+
+import { useState, type FormEvent } from "react"
 import { motion } from "framer-motion"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
-import { PreviousComplaintData } from "@/types/complaint"
+import type { PreviousComplaintData } from "@/types/complaint"
 import { toast } from "@/hooks/use-toast"
+import { useLanguage } from "@/context/LanguageContext"
 
 interface PreviousComplaintsProps {
-  onNext: (data: PreviousComplaintData) => void;
-  onPrevious: () => void;
-  data?: PreviousComplaintData;
+  onNext: (data: PreviousComplaintData) => void
+  onPrevious: () => void
+  data?: PreviousComplaintData
 }
 
 export function PreviousComplaints({ onNext, onPrevious, data }: PreviousComplaintsProps) {
@@ -21,39 +24,64 @@ export function PreviousComplaints({ onNext, onPrevious, data }: PreviousComplai
     receivedResponse: data?.receivedResponse || false,
     responseDate: data?.responseDate || "",
   })
+  const { currentLang } = useLanguage()
 
   const validateForm = () => {
     if (formData.hasPreviousComplaint) {
       if (!formData.previousComplaintEntity?.trim()) {
         toast({
-          title: "Error",
-          description: "Previous complaint entity is required",
+          title: currentLang === "ar" ? "خطأ" : "Error",
+          description:
+            currentLang === "ar" ? "الجهة المقدم إليها الشكوى السابقة مطلوبة" : "Previous complaint entity is required",
           variant: "destructive",
-        });
-        return false;
+        })
+        return false
       }
       if (!formData.previousComplaintDate?.trim()) {
         toast({
-          title: "Error",
-          description: "Previous complaint date is required",
+          title: currentLang === "ar" ? "خطأ" : "Error",
+          description: currentLang === "ar" ? "تاريخ الشكوى السابقة مطلوب" : "Previous complaint date is required",
           variant: "destructive",
-        });
-        return false;
+        })
+        return false
       }
     }
-    return true;
-  };
+    return true
+  }
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    onNext(formData);
+    e.preventDefault()
+    if (!validateForm()) return
+    onNext(formData)
   }
+
+  const labels = {
+    en: {
+      hasPreviousComplaint: "Have you filed a similar complaint before?",
+      yes: "Yes",
+      no: "No",
+      previousEntity: "Previous Entity",
+      previousDate: "Date of Previous Complaint",
+      previous: "Previous",
+      next: "Next",
+    },
+    ar: {
+      hasPreviousComplaint: "هل قدمت شكوى مماثلة من قبل؟",
+      yes: "نعم",
+      no: "لا",
+      previousEntity: "الجهة السابقة",
+      previousDate: "تاريخ الشكوى السابقة",
+      previous: "السابق",
+      next: "التالي",
+    },
+  }
+
+  const t = labels[currentLang as keyof typeof labels]
 
   return (
     <motion.form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <Label>Have you filed a similar complaint before?</Label>
+        <Label>{t.hasPreviousComplaint}</Label>
         <RadioGroup
           defaultValue={formData.hasPreviousComplaint.toString()}
           onValueChange={(value) => setFormData({ ...formData, hasPreviousComplaint: value === "true" })}
@@ -61,11 +89,11 @@ export function PreviousComplaints({ onNext, onPrevious, data }: PreviousComplai
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="true" id="hasPreviousYes" />
-            <Label htmlFor="hasPreviousYes">Yes</Label>
+            <Label htmlFor="hasPreviousYes">{t.yes}</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="false" id="hasPreviousNo" />
-            <Label htmlFor="hasPreviousNo">No</Label>
+            <Label htmlFor="hasPreviousNo">{t.no}</Label>
           </div>
         </RadioGroup>
       </div>
@@ -73,29 +101,33 @@ export function PreviousComplaints({ onNext, onPrevious, data }: PreviousComplai
       {formData.hasPreviousComplaint && (
         <>
           <div className="space-y-2">
-            <Label htmlFor="previousEntity">Previous Entity</Label>
+            <Label htmlFor="previousEntity">{t.previousEntity}</Label>
             <Input
               id="previousEntity"
               value={formData.previousComplaintEntity}
               onChange={(e) => setFormData({ ...formData, previousComplaintEntity: e.target.value })}
+              className={currentLang === "ar" ? "text-right" : "text-left"}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="previousDate">Date of Previous Complaint</Label>
+            <Label htmlFor="previousDate">{t.previousDate}</Label>
             <Input
               id="previousDate"
               type="date"
               value={formData.previousComplaintDate}
               onChange={(e) => setFormData({ ...formData, previousComplaintDate: e.target.value })}
+              className={currentLang === "ar" ? "text-right" : "text-left"}
             />
           </div>
         </>
       )}
 
       <div className="flex justify-between">
-        <Button type="button" onClick={onPrevious} variant="outline">Previous</Button>
-        <Button type="submit">Next</Button>
+        <Button type="button" onClick={onPrevious} variant="outline">
+          {t.previous}
+        </Button>
+        <Button type="submit">{t.next}</Button>
       </div>
     </motion.form>
   )

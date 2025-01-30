@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -22,14 +22,7 @@ const cardSchema = z.object({
   titleAr: z.string().min(1, 'Title in Arabic is required'),
   descriptionEn: z.string().min(1, 'Description in English is required'),
   descriptionAr: z.string().min(1, 'Description in Arabic is required'),
-  icon: z.string().optional().default(''), // Make icon optional initially
-})
-
-const whoWeAreSchema = z.object({
-  titleEn: z.string().min(1, 'Title in English is required'),
-  titleAr: z.string().min(1, 'Title in Arabic is required'),
-  descriptionEn: z.string().min(1, 'Description in English is required'),
-  descriptionAr: z.string().min(1, 'Description in Arabic is required'),
+  icon: z.string().min(1, 'Icon is required'),
 })
 
 const aboutUsSchema = z.object({
@@ -38,8 +31,10 @@ const aboutUsSchema = z.object({
   descriptionEn: z.string().min(1, 'Description in English is required'),
   descriptionAr: z.string().min(1, 'Description in Arabic is required'),
   imageUrl: z.string().nullable(),
-  cards: z.array(cardSchema).min(3, 'At least 3 cards are required').max(3, 'Maximum 3 cards are allowed'),
-  whoWeAre: z.array(whoWeAreSchema).min(3, 'At least 3 "Who We Are" items are required').max(3, 'Maximum 3 "Who We Are" items are allowed'),
+  card1Visible: z.boolean().default(true),
+  card2Visible: z.boolean().default(true),
+  card3Visible: z.boolean().default(true),
+  cards: z.array(cardSchema).length(3, 'Exactly 3 cards are required'),
 })
 
 type AboutUsFormValues = z.infer<typeof aboutUsSchema>
@@ -51,29 +46,30 @@ interface AboutUsFormProps {
 export function AboutUsForm({ initialData }: AboutUsFormProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  
+  // Add this effect to handle client-side mounting
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const defaultCard = {
     titleEn: '',
     titleAr: '',
     descriptionEn: '',
     descriptionAr: '',
-    icon: 'Star', // Provide a default icon
+    icon: 'Star',
   };
 
   const form = useForm<AboutUsFormValues>({
     resolver: zodResolver(aboutUsSchema),
-    defaultValues: initialData || {
-      titleEn: '',
-      titleAr: '',
-      descriptionEn: '',
-      descriptionAr: '',
-      imageUrl: null,
-      cards: [defaultCard, defaultCard, defaultCard],
-      whoWeAre: [
-        { titleEn: '', titleAr: '', descriptionEn: '', descriptionAr: '' },
-        { titleEn: '', titleAr: '', descriptionEn: '', descriptionAr: '' },
-        { titleEn: '', titleAr: '', descriptionEn: '', descriptionAr: '' },
-      ],
+    defaultValues: {
+      ...initialData,
+      imageUrl: initialData?.imageUrl || null,
+      card1Visible: initialData?.card1Visible ?? true,
+      card2Visible: initialData?.card2Visible ?? true,
+      card3Visible: initialData?.card3Visible ?? true,
+      cards: initialData?.cards || [defaultCard, defaultCard, defaultCard],
     },
   })
 
@@ -82,24 +78,32 @@ export function AboutUsForm({ initialData }: AboutUsFormProps) {
     control: form.control,
   })
 
-  const { fields: whoWeAreFields } = useFieldArray({
-    name: 'whoWeAre',
-    control: form.control,
-  })
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      console.log('Form values changed:', value)
+    })
+    return () => subscription.unsubscribe()
+  }, [form])
 
   async function onSubmit(data: AboutUsFormValues) {
     setIsLoading(true)
     try {
+      const formData = {
+        ...data,
+        imageUrl: data.imageUrl || null,
+      }
+
       if (initialData) {
-        await updateAboutUs(initialData.id, data)
+        await updateAboutUs(initialData.id, formData)
         toast({ title: 'About Us updated successfully' })
       } else {
-        await createAboutUs(data)
+        await createAboutUs(formData)
         toast({ title: 'About Us created successfully' })
       }
       router.push('/admin/pages/about')
       router.refresh()
     } catch (error) {
+      console.error('Form submission error:', error) // Add error logging
       toast({ title: 'An error occurred', description: 'Please try again', variant: 'destructive' })
     } finally {
       setIsLoading(false)
@@ -112,13 +116,18 @@ export function AboutUsForm({ initialData }: AboutUsFormProps) {
     try {
       await deleteAboutUs(initialData.id)
       toast({ title: 'About Us deleted successfully' })
-      router.push('/about')
+      router.push('/admin/pages/about')
       router.refresh()
     } catch (error) {
       toast({ title: 'An error occurred', description: 'Please try again', variant: 'destructive' })
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Don't render form until client-side mounted
+  if (!mounted) {
+    return null
   }
 
   return (
@@ -198,9 +207,9 @@ export function AboutUsForm({ initialData }: AboutUsFormProps) {
                 <FormItem className="mt-4">
                   <FormLabel>Image</FormLabel>
                   <FormControl>
-                    <ImageUpload
+                    <ImageUpload 
                       onUpload={(url) => field.onChange(url)}
-                      defaultImage={field.value}
+                      value={field.value || ''} 
                     />
                   </FormControl>
                   <FormMessage />
@@ -299,85 +308,22 @@ export function AboutUsForm({ initialData }: AboutUsFormProps) {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Who We Are</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {whoWeAreFields.map((field, index) => (
-              <Card key={field.id} className="mb-4">
-                <CardHeader>
-                  <CardTitle>Who We Are {index + 1}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue="en" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="en">English</TabsTrigger>
-                      <TabsTrigger value="ar">Arabic</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="en" className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name={`whoWeAre.${index}.titleEn`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Title (English)</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name={`whoWeAre.${index}.descriptionEn`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Description (English)</FormLabel>
-                            <FormControl>
-                              <Textarea {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </TabsContent>
-                    <TabsContent value="ar" className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name={`whoWeAre.${index}.titleAr`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Title (Arabic)</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name={`whoWeAre.${index}.descriptionAr`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Description (Arabic)</FormLabel>
-                            <FormControl>
-                              <Textarea {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </TabsContent>
-                  </Tabs>
+                  <FormField
+                    control={form.control}
+                    name={`card${index + 1}Visible` as keyof AboutUsFormValues}
+                    render={({ field }) => (
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <input
+                            type="checkbox"
+                            checked={field.value as boolean}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        </FormControl>
+                        <FormLabel>Show Card {index + 1}</FormLabel>
+                      </FormItem>
+                    )}
+                  />
                 </CardContent>
               </Card>
             ))}

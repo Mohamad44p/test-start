@@ -11,25 +11,44 @@ import { Attachments } from "./form-steps/attachments"
 import { Confirmation } from "./form-steps/confirmation"
 import { AnonymousComplaintForm } from "./anonymous-complaint-form"
 import type { FormDataType } from "@/types/form-types"
-import { toast } from "@/hooks/use-toast"
-
-const steps = [
-  "Complainant Info",
-  "Complaint Description",
-  "Previous Complaints",
-  "Complaint Details",
-  "Attachments",
-  "Confirmation",
-]
+import { useToast } from "@/hooks/use-toast"
+import { useLanguage } from "@/context/LanguageContext"
 
 export function ComplaintForm() {
   const [currentStep, setCurrentStep] = useState(0)
   const [formData, setFormData] = useState<FormDataType>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { toast } = useToast()
+  const { currentLang } = useLanguage()
+
+  const steps = {
+    en: [
+      "Complainant Info",
+      "Complaint Description",
+      "Previous Complaints",
+      "Complaint Details",
+      "Attachments",
+      "Confirmation",
+    ],
+    ar: ["معلومات مقدم الشكوى", "وصف الشكوى", "الشكاوى السابقة", "تفاصيل الشكوى", "المرفقات", "التأكيد"],
+  }
+
+  const labels = {
+    en: {
+      regularComplaint: "Regular Complaint",
+      anonymousComplaint: "Anonymous Complaint",
+    },
+    ar: {
+      regularComplaint: "شكوى عادية",
+      anonymousComplaint: "شكوى مجهولة",
+    },
+  }
+
+  const t = labels[currentLang as keyof typeof labels]
 
   const handleNext = (stepData: Partial<FormDataType>) => {
     setFormData((prevData) => ({ ...prevData, ...stepData }))
-    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
+    setCurrentStep((prev) => Math.min(prev + 1, steps[currentLang as keyof typeof steps].length - 1))
   }
 
   const handlePrevious = () => {
@@ -55,8 +74,11 @@ export function ComplaintForm() {
       const result = await response.json()
       if (result.success) {
         toast({
-          title: "Complaint Submitted",
-          description: `Your complaint has been successfully submitted. Complaint number: ${result.complaintNumber}`,
+          title: currentLang === "ar" ? "تم تقديم الشكوى" : "Complaint Submitted",
+          description:
+            currentLang === "ar"
+              ? `تم تقديم شكواك بنجاح. رقم الشكوى: ${result.complaintNumber}`
+              : `Your complaint has been successfully submitted. Complaint number: ${result.complaintNumber}`,
         })
         // Reset form or redirect to a success page
         setFormData({})
@@ -67,8 +89,11 @@ export function ComplaintForm() {
     } catch (error) {
       console.error("Error submitting complaint:", error)
       toast({
-        title: "Error",
-        description: "Failed to submit complaint. Please try again.",
+        title: currentLang === "ar" ? "خطأ" : "Error",
+        description:
+          currentLang === "ar"
+            ? "فشل في تقديم الشكوى. يرجى المحاولة مرة أخرى."
+            : "Failed to submit complaint. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -77,36 +102,36 @@ export function ComplaintForm() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className={`max-w-4xl mx-auto ${currentLang === "ar" ? "rtl" : "ltr"}`}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-lg shadow-xl overflow-hidden"
       >
         <div className="p-8">
-          <Tabs defaultValue="regular" className="w-full">
+          <Tabs defaultValue="regular" className="w-full" dir={currentLang === "ar" ? "rtl" : "ltr"}>
             <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="regular">Regular Complaint</TabsTrigger>
-              <TabsTrigger value="anonymous">Anonymous Complaint</TabsTrigger>
+              <TabsTrigger value="regular">{t.regularComplaint}</TabsTrigger>
+              <TabsTrigger value="anonymous">{t.anonymousComplaint}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="regular">
               <div className="mb-8">
                 <div className="relative">
                   <div className="overflow-hidden h-2 mb-4 flex rounded bg-gray-200">
-                    {steps.map((step, idx) => (
+                    {steps[currentLang as keyof typeof steps].map((step, idx) => (
                       <motion.div
                         key={step}
                         initial={{ width: 0 }}
                         animate={{
-                          width: `${(idx <= currentStep ? 100 : 0) / steps.length}%`,
+                          width: `${(idx <= currentStep ? 100 : 0) / steps[currentLang as keyof typeof steps].length}%`,
                         }}
                         className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary"
                       />
                     ))}
                   </div>
-                  <div className="flex justify-between">
-                    {steps.map((step, idx) => (
+                  <div className={`flex ${currentLang === "ar" ? "flex-row-reverse" : "flex-row"} justify-between`}>
+                    {steps[currentLang as keyof typeof steps].map((step, idx) => (
                       <div
                         key={step}
                         className={`flex flex-col items-center ${
@@ -130,9 +155,9 @@ export function ComplaintForm() {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentStep}
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: currentLang === "ar" ? 20 : -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  exit={{ opacity: 0, x: currentLang === "ar" ? -20 : 20 }}
                   transition={{ duration: 0.3 }}
                 >
                   {currentStep === 0 && <ComplainantInfo onNext={handleNext} data={formData} />}

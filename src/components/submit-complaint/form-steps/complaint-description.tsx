@@ -1,17 +1,20 @@
-import { useState, FormEvent } from "react"
+"use client"
+
+import { useState, type FormEvent } from "react"
 import { motion } from "framer-motion"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
-import { ComplaintDescriptionData } from "@/types/form-types"
+import type { ComplaintDescriptionData } from "@/types/form-types"
 import { toast } from "@/hooks/use-toast"
+import { useLanguage } from "@/context/LanguageContext"
 
 export interface ComplaintDescriptionProps {
-  onNext: (data: ComplaintDescriptionData) => void;
-  onPrevious: () => void;
-  data?: ComplaintDescriptionData;
+  onNext: (data: ComplaintDescriptionData) => void
+  onPrevious: () => void
+  data?: ComplaintDescriptionData
 }
 
 export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDescriptionProps) {
@@ -20,37 +23,64 @@ export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDesc
     entity: data?.entity || "",
     filedInCourt: data?.filedInCourt || false,
   })
+  const { currentLang } = useLanguage()
 
   const validateForm = () => {
     if (!formData.description.trim()) {
       toast({
-        title: "Error",
-        description: "Description of the complaint is required",
+        title: currentLang === "ar" ? "خطأ" : "Error",
+        description: currentLang === "ar" ? "وصف الشكوى مطلوب" : "Description of the complaint is required",
         variant: "destructive",
-      });
-      return false;
+      })
+      return false
     }
     if (!formData.entity.trim()) {
       toast({
-        title: "Error",
-        description: "Entity against which the complaint is filed is required",
+        title: currentLang === "ar" ? "خطأ" : "Error",
+        description:
+          currentLang === "ar"
+            ? "الجهة المشتكى عليها مطلوبة"
+            : "Entity against which the complaint is filed is required",
         variant: "destructive",
-      });
-      return false;
+      })
+      return false
     }
-    return true;
-  };
+    return true
+  }
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    onNext(formData);
+    e.preventDefault()
+    if (!validateForm()) return
+    onNext(formData)
   }
+
+  const labels = {
+    en: {
+      description: "Description of the Complaint",
+      entity: "The entity against which the complaint is filed",
+      filedInCourt: "Was this complaint filed in a court of law?",
+      yes: "Yes",
+      no: "No",
+      previous: "Previous",
+      next: "Next",
+    },
+    ar: {
+      description: "وصف الشكوى",
+      entity: "الجهة المشتكى عليها",
+      filedInCourt: "هل تم تقديم هذه الشكوى في المحكمة؟",
+      yes: "نعم",
+      no: "لا",
+      previous: "السابق",
+      next: "التالي",
+    },
+  }
+
+  const t = labels[currentLang as keyof typeof labels]
 
   return (
     <motion.form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="description">Description of the Complaint</Label>
+        <Label htmlFor="description">{t.description}</Label>
         <Textarea
           id="description"
           rows={4}
@@ -61,7 +91,7 @@ export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDesc
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="entity">The entity against which the complaint is filed</Label>
+        <Label htmlFor="entity">{t.entity}</Label>
         <Input
           id="entity"
           value={formData.entity}
@@ -71,7 +101,7 @@ export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDesc
       </div>
 
       <div>
-        <Label>Was this complaint filed in a court of law?</Label>
+        <Label>{t.filedInCourt}</Label>
         <RadioGroup
           defaultValue={formData.filedInCourt.toString()}
           onValueChange={(value) => setFormData({ ...formData, filedInCourt: value === "true" })}
@@ -79,18 +109,20 @@ export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDesc
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="true" id="filedInCourtYes" />
-            <Label htmlFor="filedInCourtYes">Yes</Label>
+            <Label htmlFor="filedInCourtYes">{t.yes}</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="false" id="filedInCourtNo" />
-            <Label htmlFor="filedInCourtNo">No</Label>
+            <Label htmlFor="filedInCourtNo">{t.no}</Label>
           </div>
         </RadioGroup>
       </div>
 
       <div className="flex justify-between">
-        <Button type="button" onClick={onPrevious} variant="outline">Previous</Button>
-        <Button type="submit">Next</Button>
+        <Button type="button" onClick={onPrevious} variant="outline">
+          {t.previous}
+        </Button>
+        <Button type="submit">{t.next}</Button>
       </div>
     </motion.form>
   )
