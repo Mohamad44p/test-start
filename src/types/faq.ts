@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+export type LanguageType = 'en' | 'ar'
+
 export interface FaqCategory {
   id: string
   nameEn: string
@@ -19,9 +21,20 @@ export interface FaqItem {
   answerAr: string
   order: number
   categoryId: string
-  category: FaqCategory
+  category?: FaqCategory // Make category optional
   createdAt: Date
   updatedAt: Date
+}
+
+export interface FaqData {
+  categories: FaqCategory[]
+  faqsByCategory: Record<string, FaqItem[]>
+}
+
+export interface ApiResponse<T> {
+  success: boolean
+  data?: T
+  error?: string
 }
 
 export const FaqCategorySchema = z.object({

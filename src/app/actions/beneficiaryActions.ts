@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache"
 import { BeneficiaryFormInput, CategoryFormInput } from "@/lib/schema/beneficiarySchema"
 import db from "@/app/db/db"
 import slugify from "slugify"
+import { cache } from 'react'
+import type { ApiResponse, Beneficiary, Category } from '@/types/beneficiary'
 
 export async function createBeneficiary(formData: FormData) {
   const data = {
@@ -84,3 +86,48 @@ export async function createCategory(data: CategoryFormInput) {
     return { success: false, error: "Failed to create category" }
   }
 }
+
+export const getBeneficiaries = cache(async (): Promise<ApiResponse<Beneficiary[]>> => {
+  try {
+    const beneficiaries = await db.beneficiary.findMany({
+      include: {
+        category: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    return {
+      success: true,
+      data: beneficiaries,
+    }
+  } catch (error) {
+    console.error("Error fetching beneficiaries:", error)
+    return {
+      success: false,
+      error: "Failed to fetch beneficiaries",
+    }
+  }
+})
+
+export const getCategories = cache(async (): Promise<ApiResponse<Category[]>> => {
+  try {
+    const categories = await db.category.findMany({
+      orderBy: {
+        name_en: 'asc',
+      },
+    })
+
+    return {
+      success: true,
+      data: categories,
+    }
+  } catch (error) {
+    console.error("Error fetching categories:", error)
+    return {
+      success: false,
+      error: "Failed to fetch categories",
+    }
+  }
+})

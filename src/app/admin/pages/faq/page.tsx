@@ -7,6 +7,7 @@ import { DataActions } from '@/components/shared/data-actions'
 import type { FaqCategory } from '@/types/faq'
 
 export const revalidate = 30
+export const dynamic = "force-dynamic"
 
 export default async function FaqPage() {
   const categories = (await getFaqCategories()) as FaqCategory[]

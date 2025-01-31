@@ -8,6 +8,8 @@ import { DataTable } from '@/components/admin/Gallary/tabel/data-table'
 import { Beneficiary } from "@prisma/client"
 import { beneficiariesTableConfig } from './config'
 
+export const dynamic = "force-dynamic"
+
 interface FormattedBeneficiary extends Omit<Beneficiary, 'createdAt' | 'updatedAt'> {
   createdAt: string;
   updatedAt: string;

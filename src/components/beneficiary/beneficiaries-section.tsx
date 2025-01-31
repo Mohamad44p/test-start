@@ -1,19 +1,26 @@
-"use client";
-import Image from "next/image";
-import React, { useEffect, useId, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useOutsideClick } from "@/lib/use-outside-click";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/types/card";
-import { cards } from "./cards";
-import { CategoryTabs } from "./category-tabs";
+'use client'
 
-const DEFAULT_IMAGE = "/car-front-2.png"; 
+import { useEffect, useId, useRef, useState } from 'react'
+import Image from 'next/image'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useOutsideClick } from '@/lib/use-outside-click'
+import { Input } from '@/components/ui/input'
+import { CategoryTabs } from './category-tabs'
+import type { Beneficiary, Category } from '@/types/beneficiary'
+import { useLanguage } from '@/context/LanguageContext'
 
-export function BeneficiariesSection() {
-  const [active, setActive] = useState<Card | null>(null);
-  const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+interface BeneficiariesSectionProps {
+  beneficiaries: Beneficiary[]
+  categories: Category[]
+}
+
+export function BeneficiariesSection({ beneficiaries, categories }: BeneficiariesSectionProps) {
+  const [active, setActive] = useState<Beneficiary | null>(null)
+  const [search, setSearch] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('all')
+  const { currentLang } = useLanguage()
+
+  const DEFAULT_IMAGE = "/car-front-2.png"; 
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -22,14 +29,21 @@ export function BeneficiariesSection() {
     return url;
   };
 
-  const categories = ["all", "education", "healthcare", "training", "welfare"];
+  const getLocalizedContent = (content: Beneficiary) => ({
+    title: currentLang === 'ar' ? content.title_ar : content.title_en,
+    description: currentLang === 'ar' ? content.description_ar : content.description_en,
+    longDescription: currentLang === 'ar' ? content.longDescription_ar : content.longDescription_en,
+  })
 
-  const filteredCards = cards.filter((card) => {
-    const matchesSearch = card.title.toLowerCase().includes(search.toLowerCase()) ||
-                         card.description.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = categoryFilter === "all" || card.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredBeneficiaries = beneficiaries.filter((beneficiary) => {
+    const localizedContent = getLocalizedContent(beneficiary)
+    const matchesSearch = (
+      localizedContent.title + localizedContent.description
+    ).toLowerCase().includes(search.toLowerCase())
+    
+    const matchesCategory = categoryFilter === 'all' || beneficiary.category.slug === categoryFilter
+    return matchesSearch && matchesCategory
+  })
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -89,7 +103,7 @@ export function BeneficiariesSection() {
         </AnimatePresence>
 
         <AnimatePresence>
-          {active && typeof active === "object" ? (
+          {active && (
             <div className="fixed inset-0 grid place-items-center z-[100] p-4">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -100,12 +114,12 @@ export function BeneficiariesSection() {
                   ease: [0.19, 1.0, 0.22, 1.0]
                 }}
                 style={{ willChange: 'transform, opacity' }}
-                layoutId={`card-${active.title}-${id}`}
+                layoutId={`card-${active.id}-${id}`}
                 ref={ref}
                 className="w-full max-w-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden border"
               >
                 <motion.button
-                  key={`button-${active.title}-${id}`}
+                  key={`button-${active.id}-${id}`}
                   layout
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -116,14 +130,14 @@ export function BeneficiariesSection() {
                   <CloseIcon />
                 </motion.button>
 
-                <motion.div layoutId={`image-${active.title}-${id}`}>
+                <motion.div layoutId={`image-${active.id}-${id}`}>
                   <Image
                     priority
                     loading="eager"
                     width={600}
                     height={400}
                     src={getValidImageUrl(active.imageUrl)}
-                    alt={active.title || 'Card image'}
+                    alt={getLocalizedContent(active).title}
                     className="w-full h-64 object-contain bg-gray-50 p-8"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
@@ -134,16 +148,16 @@ export function BeneficiariesSection() {
 
                 <div className="p-6 pt-4">
                   <motion.h3
-                    layoutId={`title-${active.title}-${id}`}
+                    layoutId={`title-${active.id}-${id}`}
                     className="text-2xl font-bold text-black mb-2"
                   >
-                    {active.title}
+                    {getLocalizedContent(active).title}
                   </motion.h3>
                   <motion.p
-                    layoutId={`description-${active.description}-${id}`}
+                    layoutId={`description-${active.id}-${id}`}
                     className="text-gray-700 mb-4"
                   >
-                    {active.description}
+                    {getLocalizedContent(active).description}
                   </motion.p>
 
                   <motion.div
@@ -153,7 +167,7 @@ export function BeneficiariesSection() {
                     exit={{ opacity: 0 }}
                     className="text-gray-800 text-base leading-relaxed max-h-64 overflow-auto pr-2"
                   >
-                    {active.longDescription}
+                    {getLocalizedContent(active).longDescription}
                   </motion.div>
 
                   <motion.a
@@ -170,7 +184,7 @@ export function BeneficiariesSection() {
                 </div>
               </motion.div>
             </div>
-          ) : null}
+          )}
         </AnimatePresence>
 
         <motion.ul 
@@ -188,60 +202,63 @@ export function BeneficiariesSection() {
           }}
           className="grid grid-cols-2 md:grid-cols-4 gap-6"
         >
-          {filteredCards.map((card) => (
-            <motion.li
-              key={card.id}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { 
-                  opacity: 1, 
-                  y: 0,
-                  transition: { 
-                    type: "spring", 
-                    stiffness: 300, 
-                    damping: 20 
+          {filteredBeneficiaries.map((beneficiary) => {
+            const localizedContent = getLocalizedContent(beneficiary)
+            return (
+              <motion.li
+                key={beneficiary.id}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { 
+                    opacity: 1, 
+                    y: 0,
+                    transition: { 
+                      type: "spring", 
+                      stiffness: 300, 
+                      damping: 20 
+                    }
                   }
-                }
-              }}
-              layoutId={`card-${card.id}-${id}`}
-              onClick={() => setActive(card)}
-              className="bg-white border rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden group"
-            >
-              <div className="p-6 flex flex-col items-center">
-                <motion.div 
-                  layoutId={`image-${card.title}-${id}`}
-                  className="mb-4 w-32 h-32 flex items-center justify-center"
-                >
-                  <Image
-                    width={120}
-                    height={120}
-                    loading="eager"
-                    src={getValidImageUrl(card.imageUrl)}
-                    alt={card.title || 'Card image'}
-                    className="rounded-full object-contain w-full h-full p-2 bg-gray-50 group-hover:rotate-6 transition-transform duration-300 border will-change-transform"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = DEFAULT_IMAGE;
-                    }}
-                  />
-                </motion.div>
-                <div className="text-center">
-                  <motion.h3
-                    layoutId={`title-${card.title}-${id}`}
-                    className="font-bold text-lg text-black mb-1"
+                }}
+                layoutId={`card-${beneficiary.id}-${id}`}
+                onClick={() => setActive(beneficiary)}
+                className="bg-white border rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden group"
+              >
+                <div className="p-6 flex flex-col items-center">
+                  <motion.div 
+                    layoutId={`image-${beneficiary.id}-${id}`}
+                    className="mb-4 w-32 h-32 flex items-center justify-center"
                   >
-                    {card.title}
-                  </motion.h3>
-                  <motion.p
-                    layoutId={`description-${card.description}-${id}`}
-                    className="text-gray-700 text-sm"
-                  >
-                    {card.description}
-                  </motion.p>
+                    <Image
+                      width={120}
+                      height={120}
+                      loading="eager"
+                      src={getValidImageUrl(beneficiary.imageUrl)}
+                      alt={localizedContent.title}
+                      className="rounded-full object-contain w-full h-full p-2 bg-gray-50 group-hover:rotate-6 transition-transform duration-300 border will-change-transform"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = DEFAULT_IMAGE;
+                      }}
+                    />
+                  </motion.div>
+                  <div className="text-center">
+                    <motion.h3
+                      layoutId={`title-${beneficiary.id}-${id}`}
+                      className="font-bold text-lg text-black mb-1"
+                    >
+                      {localizedContent.title}
+                    </motion.h3>
+                    <motion.p
+                      layoutId={`description-${beneficiary.id}-${id}`}
+                      className="text-gray-700 text-sm"
+                    >
+                      {localizedContent.description}
+                    </motion.p>
+                  </div>
                 </div>
-              </div>
-            </motion.li>
-          ))}
+              </motion.li>
+            )
+          })}
         </motion.ul>
       </div>
     </div>

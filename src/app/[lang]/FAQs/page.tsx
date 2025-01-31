@@ -1,33 +1,52 @@
-import { getFaqCategories } from '@/app/actions/pages/faqActions'
+import { Suspense } from "react"
+import { getFaqCategories } from "@/app/actions/pages/faqActions"
 import { FAQSection } from "@/components/faq-section/faq-section"
+import Loading from "./loading"
+import { FaqProvider } from "@/context/FaqContext"
 
-// Enable ISR with 30-second revalidation
 export const revalidate = 30
 
-export default async function FAQsPage() {
+interface FAQsPageProps {
+  params: {
+    lang: string
+  }
+}
+
+export default async function FAQsPage({ params: { lang } }: FAQsPageProps) {
   const categories = await getFaqCategories()
 
-  // Transform Prisma data to match existing FAQ component structure
-  const transformedCategories = categories.map(category => ({
-    id: category.slug,
-    label: category.nameEn,
-    labelAr: category.nameAr,
-  }))
+  if (!categories || categories.length === 0) {
+    return (
+      <div className="min-h-[90vh] flex items-center justify-center">
+        <p className="text-gray-500">
+          {lang === "ar" ? "لا توجد أسئلة متكررة متاحة حالياً" : "No FAQs available at the moment"}
+        </p>
+      </div>
+    )
+  }
 
   const faqsByCategory = categories.reduce((acc, category) => {
-    acc[category.slug] = category.faqs.map(faq => ({
-      question: faq.questionEn,
-      questionAr: faq.questionAr,
-      answer: faq.answerEn,
-      answerAr: faq.answerAr,
+    acc[category.id] = category.faqs.map(faq => ({
+      ...faq,
+      category: category 
     }))
     return acc
-  }, {} as Record<string, Array<{ question: string; questionAr: string; answer: string; answerAr: string }>>)
+  }, {} as Record<string, typeof categories[0]['faqs']>)
 
   return (
     <div className="min-h-screen">
-      <FAQSection categories={transformedCategories} faqsByCategory={faqsByCategory} />
+      <Suspense fallback={<Loading />}>
+        <FaqProvider>
+          <FAQSection 
+            categories={categories} 
+            faqsByCategory={faqsByCategory}
+          />
+        </FaqProvider>
+      </Suspense>
     </div>
   )
 }
 
+export function generateStaticParams() {
+  return [{ lang: "en" }, { lang: "ar" }]
+}

@@ -3,6 +3,8 @@
 import db from '@/app/db/db'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
+import { cache } from 'react'
+import { FaqCategory } from '@/types/faq'
 
 const FaqCategorySchema = z.object({
   nameEn: z.string().min(1, "English name is required"),
@@ -66,12 +68,18 @@ export async function deleteFaqItem(id: string) {
 }
 
 // Query Actions
-export async function getFaqCategories() {
-  return db.faqCategory.findMany({
-    include: { faqs: true },
+export const getFaqCategories = cache(async (): Promise<FaqCategory[]> => {
+  const categories = await db.faqCategory.findMany({
+    include: { 
+      faqs: {
+        orderBy: { order: 'asc' }
+      }
+    },
     orderBy: { order: 'asc' }
   })
-}
+
+  return categories as FaqCategory[]
+})
 
 export async function getFaqCategoryById(id: string) {
   return db.faqCategory.findUnique({
