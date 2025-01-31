@@ -1,165 +1,201 @@
 /* eslint-disable @next/next/no-img-element */
-"use client";
+"use client"
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, X, Calendar, Play } from 'lucide-react';
-import { GalleryFilters } from "./GalleryFilters";
+import { useState, useEffect, useCallback, useRef } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { ChevronLeft, ChevronRight, X, Calendar, Play } from "lucide-react"
+import { GalleryFilters } from "./GalleryFilters"
+import { useLanguage } from "@/context/LanguageContext"
+import type { VideoGallery as VideoGalleryType, Video } from "@/types/video-gallery"
 
-interface Video {
-  src: string;
-  title: string;
-  thumbnail: string;
+interface VideoGalleryProps {
+  galleries: VideoGalleryType[]
+  lang: string
 }
 
-interface Event {
-  id: string;
-  name: string;
-  date: string;
-  videos: Video[];
-}
-
-const events: Event[] = [
-  {
-    id: 'event1',
-    name: 'Gaza Tech and Innovative Recovery',
-    date: '2023-05-15',
-    videos: [
-      { src: "https://www.example.com/video1.mp4", title: "Opening Ceremony", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/3-1634469578.jpg" },
-      { src: "https://www.example.com/video2.mp4", title: "Panel Discussion", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/1-1634469590.jpg" },
-      { src: "https://www.example.com/video3.mp4", title: "Networking Session", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/6-1634469601.jpg" },
-    ]
-  },
-  {
-    id: 'event2',
-    name: 'TechStart Presentation Event',
-    date: '2023-06-20',
-    videos: [
-      { src: "https://www.example.com/video4.mp4", title: "Keynote Speaker", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/14-1669299686.jpg" },
-      { src: "https://www.example.com/video5.mp4", title: "Q&A Session", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/13-1669299686.jpg" },
-      { src: "https://www.example.com/video6.mp4", title: "Product Demo", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/12-1669299685.jpg" },
-    ]
-  },
-  {
-    id: 'event3',
-    name: 'TechStart Meet & Greet event',
-    date: '2023-07-10',
-    videos: [
-      { src: "https://www.example.com/video7.mp4", title: "Welcome Reception", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/8-1679836859.jpg" },
-      { src: "https://www.example.com/video8.mp4", title: "Group Discussion", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/1-1679836857.jpg" },
-      { src: "https://www.example.com/video9.mp4", title: "Mentorship Session", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/5-1679836857.jpg" },
-    ]
-  },
-  {
-    id: 'event4',
-    name: 'TechStart Job Fair at An-Najah University',
-    date: '2023-08-05',
-    videos: [
-      { src: "https://www.example.com/video10.mp4", title: "Company Booths", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/15-1688625991.JPG" },
-      { src: "https://www.example.com/video11.mp4", title: "Resume Workshop", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/14-1688625991.JPG" },
-      { src: "https://www.example.com/video12.mp4", title: "Interview Practice", thumbnail: "https://www.techstart.ps//public/files/resized/490x245/galleries/1366x768/13-1688625990.JPG" },
-    ]
-  },
-];
-
-export const VideoGallery = ({
-  className,
-}: {
-  className?: string;
-}) => {
-  const [filteredEvents, setFilteredEvents] = useState(events);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
+const VideoThumbnail = ({ video, onClick }: { video: Video; onClick: () => void }) => {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [thumbnail, setThumbnail] = useState<string | null>(video.thumbnail || null)
 
   useEffect(() => {
-    const filtered = events.filter(event => 
-      event.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    const sorted = [...filtered].sort((a, b) => {
-      if (sortOrder === 'asc') {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-      } else {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      }
-    });
-    setFilteredEvents(sorted);
-  }, [searchTerm, sortOrder]);
-
-  const nextVideo = () => {
-    if (selectedEvent) {
-      setCurrentVideoIndex((prevIndex) => 
-        (prevIndex + 1) % selectedEvent.videos.length
-      );
+    if (video.type === "youtube" && !thumbnail) {
+      const videoId = video.url.split("/").pop()
+      setThumbnail(`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`)
     }
-  };
-
-  const prevVideo = () => {
-    if (selectedEvent) {
-      setCurrentVideoIndex((prevIndex) => 
-        (prevIndex - 1 + selectedEvent.videos.length) % selectedEvent.videos.length
-      );
-    }
-  };
-
-  const handleSearch = useCallback((term: string) => {
-    setSearchTerm(term);
-  }, []);
-
-  const handleSort = useCallback((order: 'asc' | 'desc') => {
-    setSortOrder(order);
-  }, []);
+  }, [video, thumbnail])
 
   return (
-    <div className={cn("min-h-screen bg-gray-100", className)}>
-       <header className="sticky top-0 z-50 bg-white shadow-sm">
-        <GalleryFilters onSearch={handleSearch} onSort={handleSort} title="TechStart Image Gallery" />
+    <div className="relative aspect-video cursor-pointer group" onClick={onClick}>
+      {video.type === "youtube" ? (
+        <img
+          src={thumbnail || "/placeholder.jpg"}
+          alt={video.title_en}
+          className="w-full h-full object-cover rounded-lg"
+          loading="lazy"
+        />
+      ) : (
+        <video
+          ref={videoRef}
+          src={video.url}
+          className="w-full h-full object-cover rounded-lg"
+          preload="metadata"
+          muted
+          onLoadedData={() => {
+            if (videoRef.current) {
+              videoRef.current.currentTime = 1 // Set to 1 second to get a good thumbnail
+            }
+          }}
+        />
+      )}
+      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+        <Play className="w-12 h-12 text-white" />
+      </div>
+    </div>
+  )
+}
+
+const VideoPlayer = ({ video }: { video: Video }) => {
+  if (video.type === "youtube") {
+    const videoId = video.url.split("/").pop()
+    return (
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`}
+        className="w-full h-full rounded-lg"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
+        loading="lazy"
+        title="YouTube video player"
+        referrerPolicy="no-referrer-when-downgrade"
+        frameBorder="0"
+        allowFullScreen
+      />
+    )
+  }
+
+  return (
+    <video
+      src={video.url}
+      className="w-full h-full rounded-lg"
+      controls
+      controlsList="nodownload noremoteplayback"
+      playsInline
+      crossOrigin="anonymous"
+      preload="metadata"
+    >
+      <track kind="captions" />
+      Your browser does not support the video tag.
+    </video>
+  )
+}
+
+export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps) => {
+  const { currentLang } = useLanguage()
+  const [filteredGalleries, setFilteredGalleries] = useState(initialGalleries)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
+  const [selectedGallery, setSelectedGallery] = useState<VideoGalleryType | null>(null)
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
+
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString(currentLang === "ar" ? "ar-SA" : "en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  }
+
+  const getLocalizedTitle = useCallback(
+    (gallery: VideoGalleryType) => {
+      return currentLang === "ar" ? gallery.title_ar : gallery.title_en
+    },
+    [currentLang],
+  )
+
+  const getLocalizedVideoTitle = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (video: any) => {
+      return currentLang === "ar" ? video.title_ar : video.title_en
+    },
+    [currentLang],
+  )
+
+  useEffect(() => {
+    const filtered = initialGalleries.filter((gallery) => {
+      const searchLower = searchTerm.toLowerCase()
+      return currentLang === "ar"
+        ? gallery.title_ar.toLowerCase().includes(searchLower)
+        : gallery.title_en.toLowerCase().includes(searchLower)
+    })
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortOrder === "asc") {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      } else {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      }
+    })
+    setFilteredGalleries(sorted)
+  }, [searchTerm, sortOrder, initialGalleries, currentLang])
+
+  const nextVideo = () => {
+    if (selectedGallery) {
+      setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % selectedGallery.videos.length)
+    }
+  }
+
+  const prevVideo = () => {
+    if (selectedGallery) {
+      setCurrentVideoIndex(
+        (prevIndex) => (prevIndex - 1 + selectedGallery.videos.length) % selectedGallery.videos.length,
+      )
+    }
+  }
+
+  const handleSearch = useCallback((term: string) => {
+    setSearchTerm(term)
+  }, [])
+
+  const handleSort = useCallback((order: "asc" | "desc") => {
+    setSortOrder(order)
+  }, [])
+
+  return (
+    <div className={cn("min-h-screen bg-gray-100")}>
+      <header className="sticky top-0 z-50 bg-white shadow-sm">
+        <GalleryFilters
+          onSearch={handleSearch}
+          onSort={handleSort}
+          title={currentLang === "ar" ? "معرض فيديو تك ستارت" : "TechStart Video Gallery"}
+        />
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {filteredEvents.map((event) => (
+        {filteredGalleries.map((gallery) => (
           <motion.section
-            key={event.id}
+            key={gallery.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-12 overflow-hidden"
+            className="mb-12"
           >
             <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-purple-800">{event.name}</h2>
+              <h2 className="text-2xl font-bold text-purple-800">{getLocalizedTitle(gallery)}</h2>
               <p className="text-gray-600 flex items-center mt-2">
                 <Calendar size={18} className="mr-2" />
-                {event.date}
+                {formatDate(new Date(gallery.createdAt))}
               </p>
             </div>
-            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {event.videos.map((video, videoIndex) => (
-                <motion.div
-                  key={`${event.id}-${videoIndex}`}
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.2 }}
-                  className="relative group cursor-pointer"
+            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {gallery.videos.map((video, index) => (
+                <VideoThumbnail
+                  key={video.id}
+                  video={video}
                   onClick={() => {
-                    setSelectedEvent(event);
-                    setCurrentVideoIndex(videoIndex);
+                    setSelectedGallery(gallery)
+                    setCurrentVideoIndex(index)
                   }}
-                >
-                  <div className="relative w-full h-48">
-                    <img
-                      src={video.thumbnail}
-                      alt={`${event.name} - ${video.title}`}
-                      className="w-full h-full object-cover rounded-lg shadow-md"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 rounded-lg flex items-center justify-center">
-                      <Play className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" size={48} />
-                    </div>
-                  </div>
-                  <p className="mt-2 text-sm font-medium text-gray-800">{video.title}</p>
-                </motion.div>
+                />
               ))}
             </div>
           </motion.section>
@@ -167,68 +203,52 @@ export const VideoGallery = ({
       </main>
 
       <AnimatePresence>
-        {selectedEvent && (
+        {selectedGallery && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[200]"
+            className="fixed inset-0 bg-black/90 flex items-center justify-center z-[200]"
           >
             <div className="relative w-full h-full flex flex-col items-center justify-center p-4">
               <Button
                 variant="ghost"
                 size="icon"
                 className="absolute top-4 z-[210] right-4 text-white"
-                onClick={() => setSelectedEvent(null)}
+                onClick={() => setSelectedGallery(null)}
               >
                 <X size={24} />
               </Button>
               <div className="relative w-full max-w-4xl aspect-video">
-                <video
-                  ref={videoRef}
-                  src={selectedEvent.videos[currentVideoIndex].src}
-                  className="w-full h-full rounded-lg"
-                  controls
-                  autoPlay
-                />
+                <VideoPlayer video={selectedGallery.videos[currentVideoIndex]} />
               </div>
               <div className="mt-4 text-white text-center">
-                <h2 className="text-2xl font-bold mb-2">{selectedEvent.videos[currentVideoIndex].title}</h2>
-                <p className="text-lg mb-2">{selectedEvent.name}</p>
+                <h2 className="text-2xl font-bold mb-2">
+                  {getLocalizedVideoTitle(selectedGallery.videos[currentVideoIndex])}
+                </h2>
+                <p className="text-lg mb-2">{getLocalizedTitle(selectedGallery)}</p>
                 <p className="text-sm flex items-center justify-center">
                   <Calendar size={14} className="mr-1" />
-                  {selectedEvent.date}
+                  {formatDate(new Date(selectedGallery.createdAt))}
                 </p>
               </div>
               <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-white"
-                  onClick={prevVideo}
-                >
+                <Button variant="ghost" size="icon" className="text-white" onClick={prevVideo}>
                   <ChevronLeft size={36} />
                 </Button>
               </div>
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-white"
-                  onClick={nextVideo}
-                >
+                <Button variant="ghost" size="icon" className="text-white" onClick={nextVideo}>
                   <ChevronRight size={36} />
                 </Button>
               </div>
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                 <div className="flex space-x-2">
-                  {selectedEvent.videos.map((_, index) => (
+                  {selectedGallery.videos.map((_, index) => (
                     <button
                       key={index}
                       aria-label={`Go to video ${index + 1}`}
-                      className={`w-2 h-2 rounded-full ${
-                        index === currentVideoIndex ? 'bg-white' : 'bg-gray-500'
-                      }`}
+                      className={`w-2 h-2 rounded-full ${index === currentVideoIndex ? "bg-white" : "bg-gray-500"}`}
                       onClick={() => setCurrentVideoIndex(index)}
                     />
                   ))}
@@ -239,6 +259,6 @@ export const VideoGallery = ({
         )}
       </AnimatePresence>
     </div>
-  );
-};
+  )
+}
 

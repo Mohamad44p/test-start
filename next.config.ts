@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   experimental: {
     staleTimes: {
       dynamic: 60,
@@ -30,7 +29,6 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: true,
-
   images: {
     minimumCacheTTL: 31536000,
     remotePatterns: [
@@ -41,8 +39,8 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
       {
-        protocol: 'https',
-        hostname: 'www.techstart.ps',
+        protocol: "https",
+        hostname: "www.techstart.ps",
         port: "",
         pathname: "/**",
       },
@@ -58,8 +56,80 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
+  },
+  async headers() {
+    return [
+      {
+        source: "/videos/:path*",
+        headers: [
+          {
+            key: "Accept-Ranges",
+            value: "bytes",
+          },
+        ],
+      },
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(), geolocation=(), interest-cohort=(), payment=()",
+          },
+          {
+            key: "Content-Security-Policy",
+            value:
+              "default-src 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; script-src 'self' 'unsafe-inline' https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'self';",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: `
+              default-src 'self';
+              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://www.youtube-nocookie.com https://*.ytimg.com;
+              style-src 'self' 'unsafe-inline';
+              img-src 'self' data: https: http:;
+              media-src 'self' blob: https: http:;
+              frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
+              connect-src 'self' https:;
+              worker-src 'self' blob:;
+              frame-ancestors 'self';
+            `
+              .replace(/\s{2,}/g, " ")
+              .trim(),
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+    ];
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

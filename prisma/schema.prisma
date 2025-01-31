@@ -79,6 +79,7 @@ model Video {
   description_en String?      @db.Text
   description_ar String?      @db.Text
   type           String       @default("local")
+  thumbnail      String?      // Add this field
   createdAt      DateTime     @default(now())
   galleryId      String
   gallery        VideoGallery @relation(fields: [galleryId], references: [id])

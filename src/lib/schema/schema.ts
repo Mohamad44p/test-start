@@ -64,6 +64,7 @@ export const videoSchema = z.object({
   description_en: z.string().nullable().optional(),
   description_ar: z.string().nullable().optional(),
   type: z.enum(['youtube', 'local']),
+  thumbnail: z.string().optional(),
 });
 
 export const createVideoGallerySchema = z.object({

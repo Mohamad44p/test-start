@@ -1,24 +1,17 @@
-export interface Video {
-  id: string;
-  url: string;
-  title_en: string;
-  title_ar: string;
-  description_en?: string | null;
-  description_ar?: string | null;
-  createdAt: Date;
-  galleryId: string;
+import { Video as PrismaVideo, VideoGallery as PrismaVideoGallery } from "@prisma/client";
+
+export type VideoType = 'youtube' | 'local';
+
+export interface Video extends Omit<PrismaVideo, 'type'> {
+  type: VideoType;
+  thumbnail?: string;
 }
 
-export interface VideoGallery {
-  id: string;
-  title_en: string;
-  title_ar: string;
-  createdAt: Date;
-  updatedAt: Date;
+export type VideoGallery = PrismaVideoGallery & {
   videos: Video[];
-}
+};
 
-export interface FormattedVideoGallery extends Omit<VideoGallery, 'createdAt'> {
+export interface FormattedVideoGallery extends Omit<PrismaVideoGallery, 'createdAt'> {
   createdAt: string;
 }
 
@@ -28,7 +21,9 @@ export interface VideoUpload {
   title_ar: string;
   description_en: string | null;
   description_ar: string | null;
-  type: 'youtube' | 'local';  // Add this line
+  type: 'youtube' | 'local';
+  thumbnail?: string;
+  featured: boolean;
 }
 
 export interface VideoFormData {

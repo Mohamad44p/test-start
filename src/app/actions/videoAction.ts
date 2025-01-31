@@ -18,7 +18,6 @@ export async function getVideoGalleries(): Promise<VideoGallery[]> {
   });
 }
 
-
 export async function deleteVideoGallery(id: string) {
   try {
     const result = await db.$transaction(async (tx) => {
@@ -102,36 +101,47 @@ export async function updateVideoGallery(
   }
 }
 
+function getYoutubeVideoId(url: string): string | null {
+  try {
+    const urlObj = new URL(url);
+    if (urlObj.hostname.includes('youtube.com')) {
+      return urlObj.searchParams.get('v');
+    } else if (urlObj.hostname === 'youtu.be') {
+      return urlObj.pathname.slice(1);
+    }
+  } catch {
+    // If URL parsing fails, try regex
+    const match = url.match(
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([^&]+)/
+    );
+    return match ? match[1] : null;
+  }
+  return null;
+}
+
 export async function createVideoGallery(
   data: CreateVideoGalleryInput,
 ): Promise<{ success: boolean; gallery?: VideoGallery; error?: string }> {
-  if (!data || typeof data !== "object") {
-    console.error("Invalid input data:", data)
-    return { success: false, error: "Invalid input data" }
-  }
-
   try {
-    if (!data.videos || data.videos.length === 0) {
-      throw new Error("At least one video is required")
-    }
-
-    // Process videos before creation
     const processedVideos = data.videos.map(video => {
-      if (!video.type) {
-        throw new Error("Video type is required")
+      if (video.type === 'youtube') {
+        const videoId = getYoutubeVideoId(video.url);
+        if (!videoId) {
+          throw new Error('Invalid YouTube URL');
+        }
+        return {
+          ...video,
+          url: `https://www.youtube.com/embed/${videoId}`,
+          thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+          type: 'youtube' as const
+        };
       }
-
       return {
-        url: video.type === 'youtube' 
-          ? `https://www.youtube.com/embed/${getYoutubeVideoId(video.url)}`
-          : video.url,
-        title_en: video.title_en,
-        title_ar: video.title_ar,
-        description_en: video.description_en || null,
-        description_ar: video.description_ar || null,
-        type: video.type, // Make sure to include the type
-      }
-    })
+        ...video,
+        type: 'local' as const,
+        thumbnail: null
+      };
+    });
 
     const newGallery = await db.videoGallery.create({
       data: {
@@ -145,23 +155,16 @@ export async function createVideoGallery(
       include: {
         videos: true,
       },
-    })
+    });
 
-    revalidatePath("/admin/VideoGallery")
-    return { success: true, gallery: newGallery }
+    revalidatePath("/admin/VideoGallery");
+    return { success: true, gallery: newGallery };
   } catch (error) {
-    console.error("Failed to create video gallery:", error)
-    if (error instanceof Error) {
-      return { success: false, error: error.message }
-    }
-    return { success: false, error: "An unexpected error occurred" }
+    console.error("Failed to create video gallery:", error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Failed to create video gallery" 
+    };
   }
-}
-
-// Helper function to extract YouTube video ID
-function getYoutubeVideoId(url: string) {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
-  const match = url.match(regExp)
-  return match && match[2].length === 11 ? match[2] : null
 }
 
