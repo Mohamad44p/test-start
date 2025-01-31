@@ -25,6 +25,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { TagSelector } from "@/components/admin/Gallary/TagSelector"
+import { RichTextEditor } from '@/components/Editor/RichTextEditor'
 
 interface Tag {
   id: string;
@@ -108,18 +109,21 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
 
     try {
       const result = await editPost(blog.id, formData)
-      if ('error' in result) {
-        toast({
-          title: "Error",
-          description: "Failed to edit blog post. Please try again.",
-          variant: "destructive",
-        })
-      } else {
+      if (result.success) {
         toast({
           title: "Success",
-          description: "Blog post edited successfully.",
+          description: "Blog post updated successfully.",
         })
         router.push('/admin/blog')
+        router.refresh()
+      } else if (result.error) {
+        toast({
+          title: "Error",
+          description: typeof result.error === 'object' 
+            ? JSON.stringify(result.error) 
+            : result.error,
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Unexpected error:", error)
@@ -227,10 +231,11 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
                       <FormItem>
                         <FormLabel>Content (English)</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Enter English content"
-                            {...field}
-                            className="w-full min-h-[200px] resize-y"
+                          <RichTextEditor
+                            content={field.value}
+                            onChange={field.onChange}
+                            dir="ltr"
+                            placeholder="Write your content in English..."
                           />
                         </FormControl>
                         <FormMessage />
@@ -279,11 +284,11 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
                       <FormItem>
                         <FormLabel>Content (Arabic)</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Enter Arabic content"
-                            {...field}
-                            className="w-full min-h-[200px] resize-y text-right"
+                          <RichTextEditor
+                            content={field.value}
+                            onChange={field.onChange}
                             dir="rtl"
+                            placeholder="Write your content in Arabic..."
                           />
                         </FormControl>
                         <FormMessage />

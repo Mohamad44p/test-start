@@ -1,0 +1,54 @@
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline'
+import Link from '@tiptap/extension-link'
+import Image from '@tiptap/extension-image'
+import TextAlign from '@tiptap/extension-text-align'
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import { common, createLowlight } from 'lowlight'
+import Youtube from '@tiptap/extension-youtube'
+import Table from '@tiptap/extension-table'
+import TableRow from '@tiptap/extension-table-row'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
+
+const lowlight = createLowlight(common)
+
+export const extensions = [
+  StarterKit.configure({
+    heading: {
+      levels: [1, 2, 3, 4],
+    },
+  }),
+  Underline,
+  Link.configure({
+    openOnClick: false,
+    HTMLAttributes: {
+      class: 'text-primary underline',
+    },
+  }),
+  Image.configure({
+    allowBase64: true,
+    HTMLAttributes: {
+      class: 'rounded-lg max-w-full',
+    },
+  }),
+  TextAlign.configure({
+    types: ['heading', 'paragraph'],
+  }),
+  CodeBlockLowlight.configure({
+    lowlight,
+  }),
+  Youtube.configure({
+    width: 840,
+    height: 472.5,
+    HTMLAttributes: {
+      class: 'rounded-lg overflow-hidden',
+    },
+  }),
+  Table.configure({
+    resizable: true,
+  }),
+  TableRow,
+  TableCell,
+  TableHeader,
+]

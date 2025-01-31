@@ -17,7 +17,7 @@ export interface ImageUploadProps {
 export function ImageUpload({ onUpload, defaultImage, value }: ImageUploadProps) {
   const currentImage = value || defaultImage;
   const [uploading, setUploading] = useState(false)
-  const [preview, setPreview] = useState<string | null>(null) // Initialize as null
+  const [preview, setPreview] = useState<string | null>(null)
 
   // Update preview when component mounts or defaultImage changes
   useEffect(() => {
@@ -43,7 +43,7 @@ export function ImageUpload({ onUpload, defaultImage, value }: ImageUploadProps)
       if (!response.ok) throw new Error('Upload failed')
 
       const data = await response.json()
-      const imageUrl = data.url // Changed from data.urls to data.url
+      const imageUrl = data.url
       setPreview(imageUrl)
       onUpload(imageUrl)
     } catch (error) {
@@ -120,7 +120,7 @@ export function ImageUpload({ onUpload, defaultImage, value }: ImageUploadProps)
               suppressHydrationWarning
             />
             <Button
-              type="button" // Add type="button" to prevent form submission
+              type="button"
               variant="destructive"
               size="icon"
               className="absolute top-2 right-2"
@@ -136,7 +136,6 @@ export function ImageUpload({ onUpload, defaultImage, value }: ImageUploadProps)
         ) : (
           <div className="flex flex-col items-center justify-center py-4">
             <Upload className="h-10 w-10 text-gray-400 mb-2" />
-              Drag &apos;n&apos; drop an image here, or click to select one
             <p className="text-sm text-gray-600">
               Drag &apos;n&apos; drop an image here, or click to select one
             </p>

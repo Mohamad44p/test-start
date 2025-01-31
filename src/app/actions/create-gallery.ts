@@ -139,3 +139,21 @@ export const getFeaturedImages = cache(async (limit = 4) => {
     return { success: false, error: "Failed to fetch featured images" }
   }
 })
+
+
+export const getGalleries = cache(async () => {
+  try {
+    const galleries = await db.gallery.findMany({
+      include: {
+        images: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+    return { success: true, data: galleries }
+  } catch (error) {
+    console.error("Fetch galleries error:", error)
+    return { success: false, error: "Failed to fetch galleries" }
+  }
+})

@@ -1,28 +1,40 @@
 import { ContentGrid } from "@/components/News-blog/content-grid"
-import { type ContentCardProps } from "@/components/News-blog/content-card"
+import { getPostsByType } from "@/app/actions/fetch-posts"
+import {toPostType } from "@/types/blog"
 
-const PUBLICATIONS: ContentCardProps[] = [
-  {
-    type: "publication",
-    title: "User Stickiness: How to Create Products that Stick",
-    date: "November 8, 2024",
-    readTime: "8 min",
-    tags: ["Product design", "Metrics", "SaaS"],
-    imageUrl: "https://www.techstart.ps//public/files/server/publications/WhatsApp%20Image%202024-11-06%20at%2012.16.43%20PM%20(1).jpeg",
-    slug: "user-stickiness",
-  },
-  {
-    type: "publication",
-    title: "The Ultimate Guide to User Onboarding",
-    date: "October 24, 2024",
-    readTime: "12 min",
-    tags: ["Product design", "User onboarding", "SaaS"],
-    imageUrl: "https://www.techstart.ps//public/files/image/orion%20112.PNG",
-    slug: "user-onboarding",
-  },
-]
+export default async function Publications(props: { params: Promise<{ lang: string }> }) {
+  const params = await props.params;
 
-export default function Publications() {
-  return <ContentGrid title="Publications" items={PUBLICATIONS} />
+  const {
+    lang
+  } = params;
+
+  // Convert string to PostType using the utility function
+  const { data: publications = [], error } = await getPostsByType(toPostType('publication'))
+
+  if (error) {
+    return (
+      <div className="container mx-auto py-12 px-4">
+        <div className="text-center text-gray-600">
+          {lang === 'ar' 
+            ? 'عذراً، حدث خطأ أثناء تحميل المنشورات'
+            : 'Sorry, there was an error loading the publications'}
+        </div>
+      </div>
+    )
+  }
+
+  const title = lang === 'ar' ? 'المنشورات والتقارير' : 'Publications & Reports'
+  const subtitle = lang === 'ar'
+    ? 'استكشف أحدث المنشورات والتقارير المتخصصة لدينا'
+    : 'Explore our latest publications and specialized reports'
+
+  return (
+    <ContentGrid 
+      title={title}
+      subtitle={subtitle}
+      items={publications}
+    />
+  )
 }
 

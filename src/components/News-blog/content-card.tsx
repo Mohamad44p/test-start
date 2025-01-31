@@ -1,23 +1,19 @@
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Calendar, Clock } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { PostType } from "@/types/blog"
+import { motion } from "framer-motion"
+import Image from "next/image"
+import Link from "next/link"
+import { Calendar } from "lucide-react"
 
 export interface ContentCardProps {
-  type: "blog" | "publication" | "announcement";
-  title: string;
-  description?: string;
-  date: string;
-  readTime?: string;
-  tags?: string[];
-  imageUrl: string;
-  slug: string;
+  id: number
+  type: PostType | string // Allow both PostType enum and string
+  title: string
+  description?: string | null
+  date: Date
+  readTime?: string | null
+  imageUrl: string | null
+  slug: string
+  tags?: { name: string; slug: string }[]
 }
 
 export function ContentCard({
@@ -26,60 +22,64 @@ export function ContentCard({
   description,
   date,
   readTime,
-  tags,
   imageUrl,
   slug,
+  tags = []
 }: ContentCardProps) {
   return (
-    <Card className="overflow-hidden group hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
-      <Link href={`/${type}/${slug}`} className="flex flex-col h-full">
-        <CardHeader className="p-0">
-          <div className="aspect-[16/9] relative overflow-hidden">
-            <Image
-              src={imageUrl}
-              alt={title}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
+    <Link href={`/media-center/news/${type}/${slug}`}>
+      <motion.article 
+        className="group relative bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+        whileHover={{ y: -5 }}
+      >
+        <div className="relative aspect-video">
+          <Image
+            src={imageUrl || "/placeholder.jpg"}
+            alt={title}
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        </div>
+        
+        <div className="p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-block px-3 py-1 text-xs font-semibold text-white bg-[#862996] rounded-full">
+              {type}
+            </span>
           </div>
-        </CardHeader>
-        <CardContent className="p-6 flex-grow">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-            <div className="flex items-center gap-1.5">
-              <Calendar className="w-4 h-4" />
-              <time dateTime={date}>{date}</time>
-            </div>
+          
+          <h3 className="text-xl font-bold mb-2 line-clamp-2">{title}</h3>
+          
+          {description && (
+            <p className="text-gray-600 mb-4 line-clamp-2">{description}</p>
+          )}
+          
+          <div className="flex items-center text-sm text-gray-500">
+            <Calendar size={16} className="mr-2" />
+            {new Date(date).toLocaleDateString()}
             {readTime && (
-              <div className="flex items-center gap-1.5">
-                <Clock className="w-4 h-4" />
-                <span>{readTime} read</span>
-              </div>
+              <>
+                <span className="mx-2">•</span>
+                {readTime}
+              </>
             )}
           </div>
-          <h2 className="text-2xl font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors duration-300">
-            {title}
-          </h2>
-          {description && (
-            <p className="text-muted-foreground line-clamp-3 mb-4">
-              {description}
-            </p>
+          
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {tags.map((tag) => (
+                <span
+                  key={tag.slug}
+                  className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full"
+                >
+                  {tag.name}
+                </span>
+              ))}
+            </div>
           )}
-        </CardContent>
-        <CardFooter className="px-6 pb-6 mt-auto">
-          <div className="flex flex-wrap gap-2">
-            {tags?.map((tag) => (
-              <Badge
-                key={tag}
-                variant="secondary"
-                className="bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1"
-              >
-                {tag}
-              </Badge>
-            ))}
-          </div>
-        </CardFooter>
-      </Link>
-    </Card>
-  );
+        </div>
+      </motion.article>
+    </Link>
+  )
 }

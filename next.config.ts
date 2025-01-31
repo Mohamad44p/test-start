@@ -41,8 +41,8 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
       {
-        protocol: "https",
-        hostname: "www.techstart.ps",
+        protocol: 'https',
+        hostname: 'www.techstart.ps',
         port: "",
         pathname: "/**",
       },

@@ -1,28 +1,30 @@
-import React from 'react'
 import { ContentGrid } from "@/components/News-blog/content-grid"
-import { type ContentCardProps } from "@/components/News-blog/content-card"
+import { getPostsByType } from "@/app/actions/fetch-posts"
+import { toPostType } from "@/types/blog"
 
-const ANNOUNCEMENTS: ContentCardProps[] = [
-  {
-    type: "announcement",
-    title: "PIONEER Announcement",
-    date: "December 1, 2024",
-    readTime: "3 min",
-    tags: ["Announcement", "Update"],
-    imageUrl: "https://www.techstart.ps/public/files/resized/350x200/image/E4web.jpg",
-    slug: "pioneer-announcement"
-  },
-  {
-    type: "announcement",
-    title: "Announcement - HCIS",
-    date: "December 1, 2024",
-    readTime: "3 min",
-    tags: ["Announcement", "Update"],
-    imageUrl: "https://www.techstart.ps/public/files/resized/350x200/image/HCIS.png",
-    slug: "hcis-announcement"
+export default async function AnnouncementsPage(props: { params: Promise<{ lang: string }> }) {
+  const params = await props.params;
+
+  const {
+    lang
+  } = params;
+
+  const { data: announcements = [], error } = await getPostsByType(toPostType('announcement'))
+
+  if (error) {
+    return <div>Error loading announcements</div>
   }
-]
 
-export default function Announcements() {
-  return <ContentGrid title="Announcements" items={ANNOUNCEMENTS} />
+  const title = lang === 'ar' ? 'الإعلانات' : 'Announcements'
+  const subtitle = lang === 'ar' 
+    ? 'اطلع على آخر الإعلانات والتحديثات المهمة'
+    : 'Stay updated with our latest announcements and important updates'
+
+  return (
+    <ContentGrid 
+      title={title}
+      subtitle={subtitle}
+      items={announcements}
+    />
+  )
 }

@@ -36,8 +36,6 @@ export async function createFocusarea(data: FocusareaData) {
   const createdFocusarea = await db.focusarea.create({
     data: {
       ...focusareaData,
-      descriptionEn: "", // Default value for required field
-      descriptionAr: "", // Default value for required field
       cards: {
         create: cards,
       },
@@ -58,8 +56,6 @@ export async function updateFocusarea(id: string, data: FocusareaData) {
     where: { id },
     data: {
       ...focusareaData,
-      descriptionEn: "", // Default value for required field
-      descriptionAr: "", // Default value for required field
       cards: {
         deleteMany: {},
         create: cards,
