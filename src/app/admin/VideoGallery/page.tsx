@@ -1,8 +1,10 @@
-import { Suspense } from 'react'
-import Link from 'next/link'
+import { Suspense } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { PlusCircle } from 'lucide-react'
-import { VideoGalleryTable } from '@/components/admin/Gallary/tabel/video-gallery-table'
+import { PlusCircle } from "lucide-react"
+import { VideoGalleryTable } from "@/components/admin/Gallary/tabel/video-gallery-table"
+
+export const dynamic = "force-dynamic"
 
 export default function VideoGallery() {
   return (
@@ -16,7 +18,13 @@ export default function VideoGallery() {
           </Button>
         </Link>
       </div>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="w-full h-32 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        }
+      >
         <VideoGalleryTable />
       </Suspense>
     </div>
