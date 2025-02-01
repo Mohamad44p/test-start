@@ -8,7 +8,6 @@ import {
   RotateCcw,
   FastForward,
 } from 'lucide-react';
-import { cn } from "@/lib/utils";
 
 interface VideoControlsProps {
   videoRef?: React.RefObject<HTMLVideoElement>;
@@ -33,7 +32,6 @@ export const VideoControls = ({
   onSeek,
   onFullscreen,
   onMute,
-  isMuted: externalMuted,
 }: VideoControlsProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import * as React from "react"
@@ -70,6 +71,7 @@ export function AdminVideoControls({ videoId, className, type }: VideoControlsPr
 
       // Initialize player when API is ready
       const initPlayer = () => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const player = new window.YT.Player(videoId, {
           events: {
             onStateChange: (event: any) => {

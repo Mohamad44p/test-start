@@ -5,7 +5,8 @@ import { PartnerPageForm } from "./PartnerPageForm"
 import type { PartnerPageFormInput } from "@/lib/schema/partnerPageSchema"
 
 interface PartnerPageWrapperProps {
-  initialData?: any // Use proper type from your schema
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialData?: any //
   action: (data: PartnerPageFormInput) => Promise<{ success: boolean; error?: string }>
   buttonText?: string
 }

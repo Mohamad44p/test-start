@@ -1,7 +1,7 @@
 import { getPartnerPages } from "@/app/actions/pages/partner-actions"
 import { PartnerPagesDataTable } from "@/components/admin/pages/PartnerPagesDataTable"
 
-export default async function PartnersPage(props) {
+export default async function PartnersPage() {
   const { data: partnerPages, error } = await getPartnerPages()
 
   if (error) {

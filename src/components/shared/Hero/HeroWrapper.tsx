@@ -23,6 +23,7 @@ export default async function HeroWrapper() {
       }
       return acc
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     {} as Record<number, any>,
   )
 
