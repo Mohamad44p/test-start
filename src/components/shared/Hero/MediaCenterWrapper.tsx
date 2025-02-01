@@ -1,14 +1,13 @@
-import { getFeaturedImages } from "@/app/actions/create-gallery"
+import { getMediaCenterContent } from "@/app/actions/media-center-actions"
 import { MediaCenter } from "./MediaCenter"
 
 export default async function MediaCenterWrapper() {
-  const featuredImagesResponse = await getFeaturedImages(4)
+  const response = await getMediaCenterContent()
 
-  if (!featuredImagesResponse.success) {
-    console.error("Failed to fetch featured images:", featuredImagesResponse.error)
-    return <MediaCenter featuredImages={[]} />
+  if (!response.success) {
+    console.error("Failed to fetch media center content:", response.error)
+    return <MediaCenter content={null} />
   }
 
-  const featuredImages = featuredImagesResponse.data || []
-  return <MediaCenter featuredImages={featuredImages} />
+  return <MediaCenter content={response.data} />
 }

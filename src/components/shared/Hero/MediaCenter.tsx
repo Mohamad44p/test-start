@@ -8,13 +8,13 @@ import { BentoGrid, BentoGridItem } from "../../ui/bento-grid"
 import { Copy, File, Video, Camera } from "lucide-react"
 import AnimatedNetworkBackground from "../Nav/AnimatedBackground"
 import { useLanguage } from "@/context/LanguageContext"
-import type { FeaturedImage } from "@/types/gallery"
+import type { MediaCenterContent } from "@/types/media-center"
 
 interface MediaCenterProps {
-  featuredImages: FeaturedImage[]
+  content: MediaCenterContent | null
 }
 
-export function MediaCenter({ featuredImages = [] }: MediaCenterProps) {
+export function MediaCenter({ content }: MediaCenterProps) {
   const { currentLang } = useLanguage()
   const bgColor = "#1b316e" // Updated primary color
 
@@ -31,17 +31,16 @@ export function MediaCenter({ featuredImages = [] }: MediaCenterProps) {
   const items = [
     {
       title: currentLang === "ar" ? "آخر الأخبار والتحديثات" : "Latest News & Updates",
-      description:
-        currentLang === "ar"
-          ? "استكشف إنجازاتنا وإعلاناتنا الأخيرة في قطاع التكنولوجيا."
-          : "Explore our recent achievements and announcements in the tech sector.",
+      description: currentLang === "ar" 
+        ? content?.latestNews?.title_ar || "استكشف إنجازاتنا وإعلاناتنا الأخيرة."
+        : content?.latestNews?.title_en || "Explore our recent achievements.",
       header: (
         <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl overflow-hidden">
           <Image
-            src={featuredImages[0]?.url || defaultImage}
+            src={content?.latestNews?.imageUrl || defaultImage}
             alt={currentLang === "ar" 
-              ? (featuredImages[0]?.title_ar || "صورة افتراضية") 
-              : (featuredImages[0]?.title_en || "Default image")}
+              ? content?.latestNews?.title_ar || "صورة افتراضية"
+              : content?.latestNews?.title_en || "Default image"}
             width={600}
             height={300}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -51,46 +50,44 @@ export function MediaCenter({ featuredImages = [] }: MediaCenterProps) {
         </div>
       ),
       className: "md:col-span-2",
-      icon: <Copy className="h-4 w-4 text-[#1b316e] group-hover:text-[#862996] transition-colors duration-300" />,
-      link: "/news",
+      icon: <Copy />,
+      link: content?.latestNews ? `/blog/${content.latestNews.slug}` : "/blog",
     },
     {
       title: currentLang === "ar" ? "البيانات الصحفية" : "Press Releases",
-      description:
-        currentLang === "ar"
-          ? "الإعلانات الرسمية والتغطية الصحفية لمبادراتنا."
-          : "Official announcements and press coverage of our initiatives.",
+      description: currentLang === "ar" 
+        ? content?.pressReleases?.title_ar || "الإعلانات الرسمية والتغطية الصحفية."
+        : content?.pressReleases?.title_en || "Official announcements and press coverage.",
       header: (
         <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl overflow-hidden">
           <Image
-            src={featuredImages[1]?.url || defaultImage}
+            src={content?.pressReleases?.imageUrl || defaultImage}
             alt={currentLang === "ar" 
-              ? (featuredImages[1]?.title_ar || "صورة افتراضية") 
-              : (featuredImages[1]?.title_en || "Default image")}
+              ? content?.pressReleases?.title_ar || "صورة افتراضية"
+              : content?.pressReleases?.title_en || "Default image"}
             width={300}
             height={300}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
       ),
       className: "md:col-span-1",
-      icon: <File className="h-4 w-4 text-[#1b316e] group-hover:text-[#862996] transition-colors duration-300" />,
-      link: "/press",
+      icon: <File />,
+      link: content?.pressReleases ? `/announcements/${content.pressReleases.slug}` : "/announcements",
     },
     {
       title: currentLang === "ar" ? "معرض الصور" : "Photo Gallery",
-      description:
-        currentLang === "ar"
-          ? "رحلة بصرية عبر أحداثنا ومعالمنا البارزة."
-          : "Visual journey through our events and milestones.",
+      description: currentLang === "ar"
+        ? content?.featuredImage?.gallery.title_ar || "رحلة بصرية عبر أحداثنا."
+        : content?.featuredImage?.gallery.title_en || "Visual journey through our events.",
       header: (
         <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl overflow-hidden">
           <Image
-            src={featuredImages[2]?.url || defaultImage}
+            src={content?.featuredImage?.url || defaultImage}
             alt={currentLang === "ar" 
-              ? (featuredImages[2]?.title_ar || "صورة افتراضية") 
-              : (featuredImages[2]?.title_en || "Default image")}
+              ? content?.featuredImage?.title_ar || "صورة افتراضية"
+              : content?.featuredImage?.title_en || "Default image"}
             width={300}
             height={300}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -99,31 +96,30 @@ export function MediaCenter({ featuredImages = [] }: MediaCenterProps) {
         </div>
       ),
       className: "md:col-span-1",
-      icon: <Camera className="h-4 w-4 text-[#1b316e] group-hover:text-[#862996] transition-colors duration-300" />,
+      icon: <Camera />,
       link: "/gallery",
     },
     {
       title: currentLang === "ar" ? "قصص الفيديو" : "Video Stories",
-      description:
-        currentLang === "ar"
-          ? "شاهد تأثيرنا من خلال محتوى فيديو مقنع."
-          : "Watch our impact through compelling video content.",
+      description: currentLang === "ar"
+        ? content?.featuredVideo?.title_ar || "شاهد تأثيرنا من خلال الفيديو."
+        : content?.featuredVideo?.title_en || "Watch our impact through video.",
       header: (
         <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl overflow-hidden">
           <Image
-            src={featuredImages[3]?.url || defaultImage}
+            src={content?.featuredVideo?.thumbnail || defaultImage}
             alt={currentLang === "ar" 
-              ? (featuredImages[3]?.title_ar || "صورة افتراضية") 
-              : (featuredImages[3]?.title_en || "Default image")}
+              ? content?.featuredVideo?.title_ar || "صورة افتراضية"
+              : content?.featuredVideo?.title_en || "Default image"}
             width={600}
             height={300}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
       ),
       className: "md:col-span-2",
-      icon: <Video className="h-4 w-4 text-[#1b316e] group-hover:text-[#862996] transition-colors duration-300" />,
+      icon: <Video />,
       link: "/videos",
     },
   ]
