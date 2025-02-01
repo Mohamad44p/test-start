@@ -67,6 +67,9 @@ export default function EditVideoGalleryForm({ id }: EditVideoGalleryFormProps) 
               title_ar: video.title_ar,
               description_en: video.description_en || null,
               description_ar: video.description_ar || null,
+              type: video.type as 'youtube' | 'local',
+              featured: video.featured || false,  // Include featured status
+              thumbnail: video.thumbnail
             })),
           });
         } else {
@@ -98,6 +101,12 @@ export default function EditVideoGalleryForm({ id }: EditVideoGalleryFormProps) 
     try {
       if (!data.videos || data.videos.length === 0) {
         throw new Error("Please add at least one video");
+      }
+
+      // Check for featured video
+      const featuredVideos = data.videos.filter(v => v.featured);
+      if (featuredVideos.length !== 1) {
+        throw new Error("Please select exactly one featured video");
       }
 
       const result = await updateVideoGallery(data);
@@ -211,14 +220,21 @@ export default function EditVideoGalleryForm({ id }: EditVideoGalleryFormProps) 
                     <FormControl>
                       <MultiVideoUpload
                         onUpload={(videos) => {
-                          field.onChange(videos);
+                          // Ensure URLs are properly formatted
+                          const processedVideos = videos.map(v => ({
+                            ...v,
+                            url: v.type === 'youtube' && !v.url.includes('embed') 
+                              ? `https://www.youtube.com/embed/${getYoutubeVideoId(v.url)}`
+                              : v.url
+                          }));
+                          field.onChange(processedVideos);
                           form.trigger("videos");
                         }}
                         defaultVideos={field.value}
                       />
                     </FormControl>
                     <FormDescription>
-                      Upload one or more videos for your gallery.
+                      Upload local videos or add YouTube links.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

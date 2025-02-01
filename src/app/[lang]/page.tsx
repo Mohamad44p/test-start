@@ -1,10 +1,9 @@
-
-import React from "react"
-import HeroWrapper from "@/components/shared/Hero/HeroWrapper"
-import StatsWrapper from "@/components/Stats/StatsWrapper"
-import ProgramsWrapper from "@/components/shared/program/ProgramsWrapper"
-import SafeguardsBannerWrapper from "@/components/shared/banners/SafeguardsBannerWrapper"
-import MediaCenterWrapper from "@/components/shared/Hero/MediaCenterWrapper"
+import React from "react";
+import HeroWrapper from "@/components/shared/Hero/HeroWrapper";
+import StatsWrapper from "@/components/Stats/StatsWrapper";
+import ProgramsWrapper from "@/components/shared/program/ProgramsWrapper";
+import SafeguardsBannerWrapper from "@/components/shared/banners/SafeguardsBannerWrapper";
+import MediaCenterWrapper from "@/components/shared/Hero/MediaCenterWrapper";
 
 export default function Page() {
   return (
@@ -21,5 +20,5 @@ export default function Page() {
       </section>
       <SafeguardsBannerWrapper />
     </main>
-  )
+  );
 }

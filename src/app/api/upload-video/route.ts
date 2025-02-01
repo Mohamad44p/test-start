@@ -11,34 +11,49 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'No file provided' }, { status: 400 });
     }
 
-    // Validate file type
+    // Validate file type and size
     const validTypes = ['video/mp4', 'video/webm', 'video/ogg'];
     if (!validTypes.includes(file.type)) {
       return NextResponse.json({ success: false, error: 'Invalid file type' }, { status: 400 });
     }
 
+    // 100MB max size
+    const maxSize = 100 * 1024 * 1024; 
+    if (file.size > maxSize) {
+      return NextResponse.json({ success: false, error: 'File too large' }, { status: 400 });
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create uploads directory if it doesn't exist
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'videos');
-    await ensureDir(uploadDir);
+    // Create absolute path to uploads directory
+    const uploadDir = path.join('public', 'uploads', 'videos');
+    const absoluteUploadDir = path.join(process.cwd(), uploadDir);
 
-    // Create a safe filename
-    const uniqueFilename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
-    const filepath = path.join(uploadDir, uniqueFilename);
+    try {
+      await access(absoluteUploadDir);
+    } catch {
+      await mkdir(absoluteUploadDir, { recursive: true });
+    }
 
-    await writeFile(filepath, buffer);
+    // Create a safe filename with timestamp
+    const timestamp = Date.now();
+    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
+    const uniqueFilename = `${timestamp}-${safeName}`;
+    const filePath = path.join(absoluteUploadDir, uniqueFilename);
 
-    // Return the public URL
+    // Write the file
+    await writeFile(filePath, buffer);
+
+    // Return the URL path relative to /public
     const publicUrl = `/uploads/videos/${uniqueFilename}`;
-    
+
     return NextResponse.json({ 
       success: true, 
       url: publicUrl,
-      type: 'local',
-      thumbnail: publicUrl + '?thumb=1' // You might want to generate actual thumbnails
+      type: 'local'
     });
+
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json({ 
@@ -48,11 +63,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function ensureDir(dirPath: string) {
-  try {
-    await access(dirPath);
-  } catch {
-    await mkdir(dirPath, { recursive: true });
-  }
-}
+export const config = {
+  api: {
+    bodyParser: false,
+    responseLimit: '100mb',
+  },
+};
 

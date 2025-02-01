@@ -1,15 +1,32 @@
-import { Video as PrismaVideo, VideoGallery as PrismaVideoGallery } from "@prisma/client";
+import { VideoGallery as PrismaVideoGallery } from "@prisma/client";
 
 export type VideoType = 'youtube' | 'local';
 
-export interface Video extends Omit<PrismaVideo, 'type'> {
+export interface VideoBase {
+  title_en: string;
+  title_ar: string;
+  description_en: string | null;
+  description_ar: string | null;
   type: VideoType;
-  thumbnail?: string;
+  thumbnail: string | null;
+  featured: boolean;
 }
 
-export type VideoGallery = PrismaVideoGallery & {
+export interface Video extends VideoBase {
+  id: string;
+  url: string;
+  galleryId: string;
+  createdAt: Date;
+}
+
+export interface VideoGallery {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  createdAt: Date;
+  updatedAt: Date;
   videos: Video[];
-};
+}
 
 export interface FormattedVideoGallery extends Omit<PrismaVideoGallery, 'createdAt'> {
   createdAt: string;

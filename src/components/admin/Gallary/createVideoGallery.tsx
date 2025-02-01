@@ -41,6 +41,12 @@ export default function CreateVideoGallery() {
         throw new Error("Please add at least one video")
       }
 
+      // Check for featured video
+      const featuredVideos = data.videos.filter(v => v.featured)
+      if (featuredVideos.length !== 1) {
+        throw new Error("Please select exactly one featured video")
+      }
+
       const result = await createVideoGallery(data)
       if (result.success) {
         toast({

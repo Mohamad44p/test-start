@@ -71,6 +71,11 @@ model VideoGallery {
   videos    Video[]
 }
 
+enum VideoType {
+  youtube
+  local
+}
+
 model Video {
   id             String       @id @default(cuid())
   url            String
@@ -78,8 +83,9 @@ model Video {
   title_ar       String
   description_en String?      @db.Text
   description_ar String?      @db.Text
-  type           String       @default("local")
-  thumbnail      String?      // Add this field
+  type           VideoType    @default(local)
+  thumbnail      String?      // This will be null when not set
+  featured       Boolean      @default(false)
   createdAt      DateTime     @default(now())
   galleryId      String
   gallery        VideoGallery @relation(fields: [galleryId], references: [id])
@@ -264,6 +270,7 @@ model WorkWithUs {
   descriptionAr String
   tags          String
   deadline      DateTime
+  applyLink     String?  // Add this field
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
 }

@@ -55,6 +55,22 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
+  // Handle video file requests
+  if (request.nextUrl.pathname.startsWith('/uploads/videos/')) {
+    const response = NextResponse.next();
+    
+    // Add proper headers for video streaming
+    response.headers.set('Accept-Ranges', 'bytes');
+    response.headers.set('Content-Type', 'video/mp4');
+    
+    // Add CORS headers
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Range');
+    
+    return response;
+  }
+
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
@@ -127,5 +143,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/videos/:path*", "/((?!api|_next|admin|assets|favicon.ico).*)"],
+  matcher: ["/videos/:path*", "/((?!api|_next|admin|assets|favicon.ico).*)", "/uploads/videos/:path*", '/api/upload-video', '/api/delete-video'],
 };

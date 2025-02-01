@@ -4,11 +4,11 @@ import { revalidatePath } from "next/cache";
 import db from "@/app/db/db";
 import { unlink } from "fs/promises";
 import path from "path";
-import { VideoGallery } from "@/types/video-gallery";
+import { VideoGallery, VideoType } from "@/types/video-gallery";
 import { CreateVideoGalleryInput, UpdateVideoGalleryInput } from "@/lib/schema/schema";
 
 export async function getVideoGalleries(): Promise<VideoGallery[]> {
-  return await db.videoGallery.findMany({
+  const galleries = await db.videoGallery.findMany({
     include: {
       videos: true,
     },
@@ -16,6 +16,14 @@ export async function getVideoGalleries(): Promise<VideoGallery[]> {
       createdAt: "desc",
     },
   });
+
+  return galleries.map(gallery => ({
+    ...gallery,
+    videos: gallery.videos.map(video => ({
+      ...video,
+      thumbnail: video.thumbnail || null
+    }))
+  }));
 }
 
 export async function deleteVideoGallery(id: string) {
@@ -61,16 +69,32 @@ export async function deleteVideoGallery(id: string) {
 }
 
 export async function getVideoGallery(id: string): Promise<VideoGallery | null> {
-  return await db.videoGallery.findUnique({
+  const gallery = await db.videoGallery.findUnique({
     where: { id },
     include: { videos: true },
   });
+
+  if (!gallery) return null;
+
+  return {
+    ...gallery,
+    videos: gallery.videos.map(video => ({
+      ...video,
+      thumbnail: video.thumbnail || null
+    }))
+  };
 }
 
 export async function updateVideoGallery(
   data: UpdateVideoGalleryInput
 ): Promise<{ success: boolean; gallery?: VideoGallery; error?: string }> {
   try {
+    // Ensure exactly one video is featured
+    const featuredVideos = data.videos.filter(v => v.featured);
+    if (featuredVideos.length !== 1) {
+      throw new Error('Exactly one video must be featured');
+    }
+
     const updatedGallery = await db.videoGallery.update({
       where: { id: data.id },
       data: {
@@ -83,15 +107,18 @@ export async function updateVideoGallery(
             url: video.url,
             title_en: video.title_en,
             title_ar: video.title_ar,
-            description_en: video.description_en || "",
-            description_ar: video.description_ar || "",
+            description_en: video.description_en || null,
+            description_ar: video.description_ar || null,
+            type: video.type,
+            thumbnail: video.thumbnail || null, // Convert undefined to null
+            featured: video.featured || false,
           })),
         },
       },
       include: {
         videos: true,
       },
-    });
+    }) as VideoGallery; // Add type assertion
 
     revalidatePath("/admin/VideoGallery");
     return { success: true, gallery: updatedGallery };
@@ -101,47 +128,37 @@ export async function updateVideoGallery(
   }
 }
 
-function getYoutubeVideoId(url: string): string | null {
-  try {
-    const urlObj = new URL(url);
-    if (urlObj.hostname.includes('youtube.com')) {
-      return urlObj.searchParams.get('v');
-    } else if (urlObj.hostname === 'youtu.be') {
-      return urlObj.pathname.slice(1);
-    }
-  } catch {
-    // If URL parsing fails, try regex
-    const match = url.match(
-      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([^&]+)/
-    );
-    return match ? match[1] : null;
-  }
-  return null;
-}
-
 export async function createVideoGallery(
   data: CreateVideoGalleryInput,
 ): Promise<{ success: boolean; gallery?: VideoGallery; error?: string }> {
   try {
-    const processedVideos = data.videos.map(video => {
-      if (video.type === 'youtube') {
-        const videoId = getYoutubeVideoId(video.url);
-        if (!videoId) {
-          throw new Error('Invalid YouTube URL');
-        }
-        return {
-          ...video,
-          url: `https://www.youtube.com/embed/${videoId}`,
-          thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
-          type: 'youtube' as const
-        };
-      }
-      return {
-        ...video,
-        type: 'local' as const,
-        thumbnail: null
-      };
-    });
+    // Ensure at least one video is featured
+    if (!data.videos.length) {
+      throw new Error("At least one video is required");
+    }
+
+    // If no video is featured, make the first one featured
+    if (!data.videos.some(v => v.featured)) {
+      data.videos[0].featured = true;
+    }
+
+    // If multiple videos are featured, keep only the first one featured
+    let foundFeatured = false;
+    data.videos = data.videos.map(video => ({
+      ...video,
+      featured: video.featured ? !foundFeatured && (foundFeatured = true) : false
+    }));
+
+    const processedVideos = data.videos.map(video => ({
+      url: video.url,
+      title_en: video.title_en,
+      title_ar: video.title_ar,
+      description_en: video.description_en || null,
+      description_ar: video.description_ar || null,
+      type: video.type as VideoType,
+      thumbnail: video.thumbnail || null, // Convert undefined to null
+      featured: video.featured,
+    }));
 
     const newGallery = await db.videoGallery.create({
       data: {
@@ -155,7 +172,7 @@ export async function createVideoGallery(
       include: {
         videos: true,
       },
-    });
+    }) as VideoGallery; // Add type assertion
 
     revalidatePath("/admin/VideoGallery");
     return { success: true, gallery: newGallery };

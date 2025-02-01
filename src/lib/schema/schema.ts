@@ -61,17 +61,23 @@ export const videoSchema = z.object({
   url: z.string().min(1, "Video URL is required"),
   title_en: z.string().min(1, "English title is required"),
   title_ar: z.string().min(1, "Arabic title is required"),
-  description_en: z.string().nullable().optional(),
-  description_ar: z.string().nullable().optional(),
-  type: z.enum(['youtube', 'local']),
-  thumbnail: z.string().optional(),
+  description_en: z.string().nullable(),
+  description_ar: z.string().nullable(),
+  type: z.enum(['youtube', 'local'] as const),
+  thumbnail: z.string().nullable(),
+  featured: z.boolean().default(false),
 });
 
 export const createVideoGallerySchema = z.object({
   title_en: z.string().min(1, "English title is required"),
   title_ar: z.string().min(1, "Arabic title is required"),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
-  videos: z.array(videoSchema).min(1, "At least one video is required"),
+  videos: z.array(videoSchema)
+    .min(1, "At least one video is required")
+    .refine(
+      (videos) => videos.filter(v => v.featured).length === 1,
+      "Exactly one video must be featured"
+    ),
 });
 
 export const updateVideoGallerySchema = createVideoGallerySchema.extend({

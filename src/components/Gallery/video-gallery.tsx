@@ -9,6 +9,9 @@ import { ChevronLeft, ChevronRight, X, Calendar, Play } from "lucide-react"
 import { GalleryFilters } from "./GalleryFilters"
 import { useLanguage } from "@/context/LanguageContext"
 import type { VideoGallery as VideoGalleryType, Video } from "@/types/video-gallery"
+import { VideoControls } from "./VideoControls"
+import { YouTubePlayer } from './YouTubePlayer';
+import { getYoutubeVideoId } from "@/lib/utils";
 
 interface VideoGalleryProps {
   galleries: VideoGalleryType[]
@@ -57,38 +60,44 @@ const VideoThumbnail = ({ video, onClick }: { video: Video; onClick: () => void 
 }
 
 const VideoPlayer = ({ video }: { video: Video }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleFullscreen = () => {
+    if (!containerRef.current) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      containerRef.current.requestFullscreen();
+    }
+  };
+
   if (video.type === "youtube") {
-    const videoId = video.url.split("/").pop()
-    return (
-      <iframe
-        src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`}
-        className="w-full h-full rounded-lg"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
-        loading="lazy"
-        title="YouTube video player"
-        referrerPolicy="no-referrer-when-downgrade"
-        frameBorder="0"
-        allowFullScreen
-      />
-    )
+    const videoId = getYoutubeVideoId(video.url);
+    return <YouTubePlayer videoId={videoId} />;
   }
 
   return (
-    <video
-      src={video.url}
-      className="w-full h-full rounded-lg"
-      controls
-      controlsList="nodownload noremoteplayback"
-      playsInline
-      crossOrigin="anonymous"
-      preload="metadata"
-    >
-      <track kind="captions" />
-      Your browser does not support the video tag.
-    </video>
-  )
-}
+    <div ref={containerRef} className="relative w-full h-full">
+      <video
+        ref={videoRef}
+        src={video.url}
+        className="w-full h-full rounded-lg"
+        playsInline
+        crossOrigin="anonymous"
+        preload="metadata"
+        muted // Start muted
+      >
+        <track kind="captions" />
+        Your browser does not support the video tag.
+      </video>
+      <VideoControls 
+        videoRef={videoRef} 
+        onFullscreen={handleFullscreen}
+      />
+    </div>
+  );
+};
 
 export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps) => {
   const { currentLang } = useLanguage()
@@ -261,4 +270,3 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
     </div>
   )
 }
-

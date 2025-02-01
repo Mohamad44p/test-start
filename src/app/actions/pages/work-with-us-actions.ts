@@ -14,7 +14,7 @@ export interface WorkWithUsData {
   descriptionAr: string
   tags: string
   deadline: Date
-  applyLink?: string | null  // Changed to optional
+  applyLink?: string | null  // Add this field
 }
 
 export interface WorkWithUsListing extends WorkWithUsData {
