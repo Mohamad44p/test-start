@@ -7,12 +7,18 @@ import { FaqProvider } from "@/context/FaqContext"
 export const revalidate = 30
 
 interface FAQsPageProps {
-  params: {
+  params: Promise<{
     lang: string
-  }
+  }>
 }
 
-export default async function FAQsPage({ params: { lang } }: FAQsPageProps) {
+export default async function FAQsPage(props: FAQsPageProps) {
+  const params = await props.params;
+
+  const {
+    lang
+  } = params;
+
   const categories = await getFaqCategories()
 
   if (!categories || categories.length === 0) {
