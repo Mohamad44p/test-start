@@ -412,3 +412,51 @@ model PartnerPage {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @default(now())
 }
+
+model ProgramTab {
+  id          String   @id @default(cuid())
+  title_en    String
+  title_ar    String
+  slug        String   @unique
+  content_en  String   @db.Text
+  content_ar  String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProgramsHero {
+  id              String   @id @default(cuid())
+  tagline         String  // Keep this field for backwards compatibility
+  title           String  // Keep this field for backwards compatibility
+  highlightWord   String  // Keep this field for backwards compatibility
+  description     String  // Keep this field for backwards compatibility
+  tagline_en      String
+  tagline_ar      String
+  title_en        String
+  title_ar        String
+  highlightWord_en String
+  highlightWord_ar String
+  description_en  String
+  description_ar  String
+  imageUrl        String?
+  card1Title_en   String?
+  card1Title_ar   String?
+  card1Icon       String?
+  card1Description_en String?
+  card1Description_ar String?
+  card1Show       Boolean  @default(true)
+  card2Title_en   String?
+  card2Title_ar   String?
+  card2Icon       String?
+  card2Description_en String?
+  card2Description_ar String?
+  card2Show       Boolean  @default(true)
+  card3Title_en   String?
+  card3Title_ar   String?
+  card3Icon       String?
+  card3Description_en String?
+  card3Description_ar String?
+  card3Show       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
+}

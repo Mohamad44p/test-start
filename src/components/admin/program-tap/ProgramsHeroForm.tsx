@@ -1,0 +1,424 @@
+"use client"
+
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card"
+import { createProgramsHero, updateProgramsHero } from "@/app/actions/programs-hero-actions"
+import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
+import { CreateProgramsHeroInput, ProgramsHero } from "@/types/programs-hero"
+import { IconSelector } from "@/components/shared/icon-selector"
+import { ImageUpload } from "@/lib/ImageUpload"
+import * as z from "zod"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+const programsHeroSchema = z.object({
+  tagline_en: z.string().min(1, "English tagline is required"),
+  tagline_ar: z.string().min(1, "Arabic tagline is required"),
+  title_en: z.string().min(1, "English title is required"),
+  title_ar: z.string().min(1, "Arabic title is required"),
+  highlightWord_en: z.string().min(1, "English highlight word is required"),
+  highlightWord_ar: z.string().min(1, "Arabic highlight word is required"),
+  description_en: z.string().min(1, "English description is required"),
+  description_ar: z.string().min(1, "Arabic description is required"),
+  imageUrl: z.string().nullable(),
+  card1Title_en: z.string().nullable(),
+  card1Title_ar: z.string().nullable(),
+  card1Icon: z.string().nullable(),
+  card1Description_en: z.string().nullable(),
+  card1Description_ar: z.string().nullable(),
+  card1Show: z.boolean(),
+  card2Title_en: z.string().nullable(),
+  card2Title_ar: z.string().nullable(),
+  card2Icon: z.string().nullable(),
+  card2Description_en: z.string().nullable(),
+  card2Description_ar: z.string().nullable(),
+  card2Show: z.boolean(),
+  card3Title_en: z.string().nullable(),
+  card3Title_ar: z.string().nullable(),
+  card3Icon: z.string().nullable(),
+  card3Description_en: z.string().nullable(),
+  card3Description_ar: z.string().nullable(),
+  card3Show: z.boolean(),
+})
+
+interface ProgramsHeroFormProps {
+  programsHero?: ProgramsHero
+}
+
+export default function ProgramsHeroForm({ programsHero }: ProgramsHeroFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { toast } = useToast()
+  const router = useRouter()
+
+  const form = useForm<CreateProgramsHeroInput>({
+    resolver: zodResolver(programsHeroSchema),
+    defaultValues: programsHero || {
+      tagline_en: "",
+      tagline_ar: "",
+      title_en: "",
+      title_ar: "",
+      highlightWord_en: "",
+      highlightWord_ar: "",
+      description_en: "",
+      description_ar: "",
+      imageUrl: null,
+      card1Title_en: null,
+      card1Title_ar: null,
+      card1Icon: null,
+      card1Description_en: null,
+      card1Description_ar: null,
+      card1Show: true,
+      card2Title_en: null,
+      card2Title_ar: null,
+      card2Icon: null,
+      card2Description_en: null,
+      card2Description_ar: null,
+      card2Show: true,
+      card3Title_en: null,
+      card3Title_ar: null,
+      card3Icon: null,
+      card3Description_en: null,
+      card3Description_ar: null,
+      card3Show: true,
+    },
+  })
+
+  async function onSubmit(data: CreateProgramsHeroInput) {
+    setIsSubmitting(true)
+    try {
+      const result = programsHero
+        ? await updateProgramsHero({ ...data, id: programsHero.id })
+        : await createProgramsHero(data)
+
+      if (result.success) {
+        toast({
+          title: `Programs hero ${programsHero ? "updated" : "created"}`,
+          description: `The programs hero has been ${programsHero ? "updated" : "created"} successfully.`,
+        })
+        router.push("/admin/programs-hero")
+      } else if (result.error) {
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle>{programsHero ? "Edit" : "Create"} Programs Hero</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="imageUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hero Image</FormLabel>
+                  <FormControl>
+                    <ImageUpload
+                      value={field.value || ''}
+                      onUpload={(url) => field.onChange(url)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Main Content</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="en" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="en">English</TabsTrigger>
+                    <TabsTrigger value="ar">Arabic</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="en" className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="tagline_en"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Tagline</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter English tagline" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="title_en"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Title</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter English title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="highlightWord_en"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Highlight Word</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter English highlight word" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="description_en"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Enter English description" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TabsContent>
+                  <TabsContent value="ar" className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="tagline_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Tagline</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter Arabic tagline" {...field} dir="rtl" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="title_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Title</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter Arabic title" {...field} dir="rtl" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="highlightWord_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Highlight Word</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter Arabic highlight word" {...field} dir="rtl" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="description_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Enter Arabic description" {...field} dir="rtl" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+
+            {[1, 2, 3].map((cardNumber) => (
+              <Card key={cardNumber}>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    Card {cardNumber}
+                    <FormField
+                      control={form.control}
+                      name={`card${cardNumber}Show` as keyof CreateProgramsHeroInput}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value as boolean}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormLabel className="m-0">Show Card</FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Tabs defaultValue="en" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="en">English</TabsTrigger>
+                      <TabsTrigger value="ar">Arabic</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="en" className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name={`card${cardNumber}Title_en` as keyof CreateProgramsHeroInput}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Title</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder={`Enter card ${cardNumber} English title`} 
+                                {...field} 
+                                value={String(field.value || '')}
+                                onChange={(e) => field.onChange(e.target.value || null)}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`card${cardNumber}Description_en` as keyof CreateProgramsHeroInput}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                placeholder={`Enter card ${cardNumber} English description`} 
+                                {...field} 
+                                value={String(field.value || '')}
+                                onChange={(e) => field.onChange(e.target.value || null)}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </TabsContent>
+                    <TabsContent value="ar" className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name={`card${cardNumber}Title_ar` as keyof CreateProgramsHeroInput}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Title</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder={`Enter card ${cardNumber} Arabic title`} 
+                                {...field} 
+                                value={String(field.value || '')}
+                                onChange={(e) => field.onChange(e.target.value || null)}
+                                dir="rtl"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`card${cardNumber}Description_ar` as keyof CreateProgramsHeroInput}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                placeholder={`Enter card ${cardNumber} Arabic description`} 
+                                {...field} 
+                                value={String(field.value || '')}
+                                onChange={(e) => field.onChange(e.target.value || null)}
+                                dir="rtl"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </TabsContent>
+                  </Tabs>
+
+                  <FormField
+                    control={form.control}
+                    name={`card${cardNumber}Icon` as keyof CreateProgramsHeroInput}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Icon</FormLabel>
+                        <FormControl>
+                          <IconSelector
+                            value={String(field.value || '')}
+                            onChange={(value) => field.onChange(value)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+            ))}
+
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full"
+            >
+              {isSubmitting ? "Submitting..." : (programsHero ? "Update" : "Create") + " Programs Hero"}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  )
+}

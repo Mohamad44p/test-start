@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const safePath = join(uploadDir, `${uniqueSuffix}-${filename}`)
     
     await writeFile(safePath, buffer)
-    const publicPath = `${process.env.NEXT_PUBLIC_SITE_URL}/uploads/files/${uniqueSuffix}-${filename}`
+    const publicPath = `/uploads/files/${uniqueSuffix}-${filename}`
 
     return NextResponse.json({ url: publicPath }) // Changed from urls to url
   } catch (error) {

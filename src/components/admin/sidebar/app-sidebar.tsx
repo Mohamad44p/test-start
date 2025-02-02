@@ -71,6 +71,14 @@ const data: { navMain: NavItem[] } = {
       icon: Layers,
       items: [
         {
+          title: "Programs Tabs",
+          url: "/admin/program-tabs",
+        },
+        {
+          title: "Programs Hero",
+          url: "/admin/programs-hero",
+        },
+        {
           title: "Palestinian IT Leads",
           url: "/admin/beneficiaries",
         },
