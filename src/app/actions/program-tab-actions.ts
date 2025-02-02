@@ -2,12 +2,15 @@
 
 import { revalidatePath } from "next/cache"
 import db from "@/app/db/db"
-import { CreateProgramTabInput, UpdateProgramTabInput } from "@/types/program-tab"
+import type { CreateProgramTabInput, UpdateProgramTabInput } from "@/types/program-tab"
 
 export async function createProgramTab(data: CreateProgramTabInput) {
   try {
     const programTab = await db.programTab.create({
       data,
+      include: {
+        programPage: true,
+      },
     })
 
     revalidatePath("/admin/program-tabs")
@@ -23,6 +26,9 @@ export async function updateProgramTab(data: UpdateProgramTabInput) {
     const programTab = await db.programTab.update({
       where: { id: data.id },
       data,
+      include: {
+        programPage: true,
+      },
     })
 
     revalidatePath("/admin/program-tabs")
@@ -46,3 +52,4 @@ export async function deleteProgramTab(id: string) {
     return { error: "Failed to delete program tab" }
   }
 }
+

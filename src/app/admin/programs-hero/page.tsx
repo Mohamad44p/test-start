@@ -1,43 +1,54 @@
 import { Suspense } from "react"
-import { ProgramsHero } from "@/types/programs-hero"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import ProgramsHeroForm from "@/components/admin/program-tap/ProgramsHeroForm"
+import type { ProgramsHero, ProgramsPages } from "@/types/programs-hero"
+import db from "@/app/db/db"
+import ProgramsHeroList from "@/components/admin/program-tap/ProgramsHeroList"
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"
 
-
-async function fetchProgramsHero(): Promise<ProgramsHero | null> {
+async function fetchProgramsHeroes(): Promise<ProgramsHero[] | null> {
   try {
-    const db = (await import("@/app/db/db")).default
-    const programsHero = await db.programsHero.findFirst()
-    return programsHero
+    const programsHeroes = await db.programsHero.findMany({
+      include: { programPage: true },
+    })
+    return programsHeroes
   } catch (error) {
-    console.error("Failed to fetch programs hero:", error)
+    console.error("Failed to fetch programs heroes:", error)
+    return null
+  }
+}
+
+async function fetchPrograms(): Promise<ProgramsPages[] | null> {
+  try {
+    const programs = await db.programsPages.findMany()
+    return programs
+  } catch (error) {
+    console.error("Failed to fetch programs:", error)
     return null
   }
 }
 
 export default async function ProgramsHeroPage() {
-  const programsHero = await fetchProgramsHero()
+  const programsHeroes = await fetchProgramsHeroes()
+  const programs = await fetchPrograms()
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Programs Hero</h1>
+      <h1 className="text-3xl font-bold mb-6">Programs Heroes</h1>
+      <div className="mb-4">
+        <Link href="/admin/programs-hero/create">
+          <Button>Create New Programs Hero</Button>
+        </Link>
+      </div>
       <Suspense fallback={<div>Loading...</div>}>
-        {programsHero === null ? (
-          <div>
-            <p className="text-red-500 mb-4">
-              No Programs Hero found. Would you like to create one?
-            </p>
-            <Link href="/admin/programs-hero/create">
-              <Button>Create Programs Hero</Button>
-            </Link>
-          </div>
+        {programsHeroes === null || programs === null ? (
+          <div className="text-red-500">Error: Unable to fetch data. Please check your database connection.</div>
         ) : (
-          <ProgramsHeroForm programsHero={programsHero} />
+          <ProgramsHeroList initialProgramsHeroes={programsHeroes} />
         )}
       </Suspense>
     </div>
   )
 }
+

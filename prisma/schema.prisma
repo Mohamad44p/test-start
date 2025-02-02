@@ -84,7 +84,7 @@ model Video {
   description_en String?      @db.Text
   description_ar String?      @db.Text
   type           VideoType    @default(local)
-  thumbnail      String?      // This will be null when not set
+  thumbnail      String? // This will be null when not set
   featured       Boolean      @default(false)
   createdAt      DateTime     @default(now())
   galleryId      String
@@ -270,7 +270,7 @@ model WorkWithUs {
   descriptionAr String
   tags          String
   deadline      DateTime
-  applyLink     String?  // Add this field
+  applyLink     String? // Add this field
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
 }
@@ -414,49 +414,64 @@ model PartnerPage {
 }
 
 model ProgramTab {
-  id          String   @id @default(cuid())
-  title_en    String
-  title_ar    String
-  slug        String   @unique
-  content_en  String   @db.Text
-  content_ar  String   @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String         @id @default(cuid())
+  title_en      String
+  title_ar      String
+  slug          String         @unique
+  content_en    String         @db.Text
+  content_ar    String         @db.Text
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  programPage   ProgramsPages? @relation(fields: [programPageId], references: [id])
+  programPageId String?
+
+  @@index([programPageId])
+}
+
+model ProgramsPages {
+  id           String         @id @default(cuid())
+  name_en      String
+  name_ar      String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now())
+  ProgramTab   ProgramTab[]
+  ProgramsHero ProgramsHero[]
 }
 
 model ProgramsHero {
-  id              String   @id @default(cuid())
-  tagline         String  // Keep this field for backwards compatibility
-  title           String  // Keep this field for backwards compatibility
-  highlightWord   String  // Keep this field for backwards compatibility
-  description     String  // Keep this field for backwards compatibility
-  tagline_en      String
-  tagline_ar      String
-  title_en        String
-  title_ar        String
-  highlightWord_en String
-  highlightWord_ar String
-  description_en  String
-  description_ar  String
-  imageUrl        String?
-  card1Title_en   String?
-  card1Title_ar   String?
-  card1Icon       String?
+  id                  String         @id @default(cuid())
+  name                String         @unique
+  tagline_en          String
+  tagline_ar          String
+  title_en            String
+  title_ar            String
+  highlightWord_en    String
+  highlightWord_ar    String
+  description_en      String
+  description_ar      String
+  imageUrl            String?
+  card1Title_en       String?
+  card1Title_ar       String?
+  card1Icon           String?
   card1Description_en String?
   card1Description_ar String?
-  card1Show       Boolean  @default(true)
-  card2Title_en   String?
-  card2Title_ar   String?
-  card2Icon       String?
+  card1Show           Boolean        @default(true)
+  card2Title_en       String?
+  card2Title_ar       String?
+  card2Icon           String?
   card2Description_en String?
   card2Description_ar String?
-  card2Show       Boolean  @default(true)
-  card3Title_en   String?
-  card3Title_ar   String?
-  card3Icon       String?
+  card2Show           Boolean        @default(true)
+  card3Title_en       String?
+  card3Title_ar       String?
+  card3Icon           String?
   card3Description_en String?
   card3Description_ar String?
-  card3Show       Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now())
+  card3Show           Boolean        @default(true)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  programPageId       String?
+  programPage         ProgramsPages? @relation(fields: [programPageId], references: [id])
+
+  @@index([programPageId])
 }
