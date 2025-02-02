@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
       try {
         await writeFile(filepath, buffer)
-        urls.push(`/images/${filename}`)
+        urls.push(`${process.env.NEXT_PUBLIC_SITE_URL}/images/${filename}`)
       } catch (error) {
         console.error('Error saving file:', error)
         return NextResponse.json(
