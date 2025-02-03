@@ -4,6 +4,7 @@ import { BeneficiariesSection } from '@/components/beneficiary/beneficiaries-sec
 import Loading from './loading'
 
 export const revalidate = 30
+export const dynamic = "force-dynamic"
 
 export default async function PalestinianITleads() {
   const [beneficiariesResponse, categoriesResponse] = await Promise.all([

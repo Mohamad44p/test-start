@@ -2,6 +2,8 @@ import { ContentGrid } from "@/components/News-blog/content-grid"
 import { getPostsByType } from "@/app/actions/fetch-posts"
 import {toPostType } from "@/types/blog"
 
+export const dynamic = "force-dynamic"
+
 export default async function Publications(props: { params: Promise<{ lang: string }> }) {
   const params = await props.params;
 
@@ -9,7 +11,6 @@ export default async function Publications(props: { params: Promise<{ lang: stri
     lang
   } = params;
 
-  // Convert string to PostType using the utility function
   const { data: publications = [], error } = await getPostsByType(toPostType('publication'))
 
   if (error) {

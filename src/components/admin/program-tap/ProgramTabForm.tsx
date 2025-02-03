@@ -12,10 +12,10 @@ import { useToast } from "@/hooks/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter } from "next/navigation"
 import type { CreateProgramTabInput, ProgramTab, ProgramsPages } from "@/types/program-tab"
-import { RichTextEditor } from "@/components/Editor/RichTextEditor"
 import * as z from "zod"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ProgramDialog } from "./ProgramDialog"
+import { RichTextEditor } from "@/components/Editor/RichTextEditor"
 
 const programTabSchema = z.object({
   title_en: z.string().min(1, "English title is required"),

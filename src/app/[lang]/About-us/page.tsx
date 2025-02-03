@@ -3,6 +3,9 @@ import { getFocusareas } from "@/app/actions/pages/focusareas-actions"
 import { getTeamMembers } from "@/app/actions/pages/team-actions"
 import AboutUsContent from "@/components/who-we-are/about-us-content"
 
+export const dynamic = "force-dynamic"
+
+
 export default async function AboutPage() {
   const aboutUsData = await getAboutUs()
   const focusareasData = await getFocusareas()

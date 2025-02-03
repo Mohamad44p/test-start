@@ -5,6 +5,7 @@ import Loading from "./loading"
 import { FaqProvider } from "@/context/FaqContext"
 
 export const revalidate = 30
+export const dynamic = "force-dynamic"
 
 interface FAQsPageProps {
   params: Promise<{

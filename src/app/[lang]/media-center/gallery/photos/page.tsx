@@ -1,6 +1,8 @@
 import { getGalleries } from "@/app/actions/create-gallery"
 import { PhotoGalleryClient } from "@/components/Gallery/imagesGallery"
 
+export const dynamic = "force-dynamic"
+
 interface GalleryPageProps {
   params: Promise<{
     lang: string

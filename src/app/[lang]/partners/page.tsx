@@ -2,6 +2,9 @@ import { getPartnerPages } from "@/app/actions/pages/partner-actions"
 import PartnersPageClient from "@/components/shared/Clients/PartnersPage"
 import type { PartnerPage } from "@/types/partner"
 
+export const dynamic = "force-dynamic"
+
+
 export default async function PartnersWrapper() {
   const { data: partnerPages, error } = await getPartnerPages()
 
