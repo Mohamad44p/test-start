@@ -12,7 +12,6 @@ import { useToast } from "@/hooks/use-toast"
 import type { VideoUpload } from "@/types/video-gallery"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
-import { VideoControls } from "@/components/ui/CustomVideoPlayer"
 import { AdminVideoControls } from "@/components/ui/admin-video-controls"
 
 interface MultiVideoUploadProps {
@@ -242,7 +241,6 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
               videoId={playerId}
               type="youtube"
               className="absolute bottom-4 left-4 right-4"
-              onError={() => setError(true)}
             />
           )}
         </div>
@@ -277,7 +275,6 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
           videoId={playerId}
           type="local"
           className="absolute bottom-4 left-4 right-4"
-          onError={() => setError(true)}
         />
       </div>
     );

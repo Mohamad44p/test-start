@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
-import { useState, useCallback, useEffect } from 'react'
-import { useDropzone } from 'react-dropzone'
-import Image from 'next/image'
-import { Loader2, Upload, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { toast } from '@/hooks/use-toast'
+import { useState, useCallback, useEffect } from "react";
+import { useDropzone } from "react-dropzone";
+import Image from "next/image";
+import { Loader2, Upload, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 export interface ImageUploadProps {
   onUpload: (url: string | null) => void;
@@ -14,85 +14,91 @@ export interface ImageUploadProps {
   value?: string;
 }
 
-export function ImageUpload({ onUpload, defaultImage, value }: ImageUploadProps) {
+export function ImageUpload({
+  onUpload,
+  defaultImage,
+  value,
+}: ImageUploadProps) {
   const currentImage = value || defaultImage;
-  const [uploading, setUploading] = useState(false)
-  const [preview, setPreview] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
 
-  // Update preview when component mounts or defaultImage changes
   useEffect(() => {
     if (currentImage) {
-      setPreview(currentImage)
+      setPreview(currentImage);
     }
-  }, [currentImage])
+  }, [currentImage]);
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    setUploading(true)
-    const file = acceptedFiles[0]
-    if (!file) return
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      setUploading(true);
+      const file = acceptedFiles[0];
+      if (!file) return;
 
-    const formData = new FormData()
-    formData.append('file', file)
+      const formData = new FormData();
+      formData.append("file", file);
 
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
+      try {
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
 
-      if (!response.ok) throw new Error('Upload failed')
+        if (!response.ok) throw new Error("Upload failed");
 
-      const data = await response.json()
-      const imageUrl = data.url
-      setPreview(imageUrl)
-      onUpload(imageUrl)
-    } catch (error) {
-      console.error('Upload error:', error)
-      onUpload(null)
-    } finally {
-      setUploading(false)
-    }
-  }, [onUpload])
+        const data = await response.json();
+        const imageUrl = data.url;
+        setPreview(imageUrl);
+        onUpload(imageUrl);
+      } catch (error) {
+        console.error("Upload error:", error);
+        onUpload(null);
+      } finally {
+        setUploading(false);
+      }
+    },
+    [onUpload]
+  );
 
   const handleRemove = async () => {
     if (preview) {
-      setUploading(true)
+      setUploading(true);
       try {
-        const response = await fetch('/api/delete-image', {
-          method: 'POST',
+        const response = await fetch("/api/delete-image", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ imageUrl: preview }),
-        })
+        });
 
         if (!response.ok) {
           const error = await response.json();
-          throw new Error(error.error || 'Delete failed');
+          throw new Error(error.error || "Delete failed");
         }
 
-        setPreview(null)
-        onUpload(null)
+        setPreview(null);
+        onUpload(null);
       } catch (error) {
-        console.error('Delete error:', error)
+        console.error("Delete error:", error);
         toast?.({
           title: "Error",
           description: "Failed to delete image",
           variant: "destructive",
-        })
+        });
       } finally {
-        setUploading(false)
+        setUploading(false);
       }
     }
-  }
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif']
+      "image/*": [".png", ".jpg", ".jpeg", ".gif"],
     },
-    multiple: false
-  })
+    multiple: false,
+  });
 
   return (
     <div className="w-full">
@@ -100,7 +106,9 @@ export function ImageUpload({ onUpload, defaultImage, value }: ImageUploadProps)
         {...getRootProps()}
         className={cn(
           "border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors",
-          isDragActive ? "border-primary bg-primary/10" : "border-gray-300 hover:bg-gray-50",
+          isDragActive
+            ? "border-primary bg-primary/10"
+            : "border-gray-300 hover:bg-gray-50",
           preview && "border-none p-0"
         )}
       >
@@ -113,7 +121,7 @@ export function ImageUpload({ onUpload, defaultImage, value }: ImageUploadProps)
         ) : preview ? (
           <div className="relative aspect-video w-full">
             <Image
-              src={preview}
+              src={preview || "/placeholder.svg"}
               alt="Preview"
               fill
               className="object-cover rounded-lg"
@@ -125,9 +133,9 @@ export function ImageUpload({ onUpload, defaultImage, value }: ImageUploadProps)
               size="icon"
               className="absolute top-2 right-2"
               onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                handleRemove()
+                e.preventDefault();
+                e.stopPropagation();
+                handleRemove();
               }}
             >
               <X className="h-4 w-4" />
@@ -143,5 +151,5 @@ export function ImageUpload({ onUpload, defaultImage, value }: ImageUploadProps)
         )}
       </div>
     </div>
-  )
+  );
 }

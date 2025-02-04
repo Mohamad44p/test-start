@@ -1,34 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { writeFile } from 'fs/promises'
-import { join } from 'path'
-import { mkdir } from 'fs/promises'
+import { type NextRequest, NextResponse } from "next/server"
+import { put } from "@vercel/blob"
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
-    const file = formData.get('file') as File
+    const file = formData.get("file") as File
     if (!file) {
-      return NextResponse.json({ error: 'No file received' }, { status: 400 })
+      return NextResponse.json({ error: "No file received" }, { status: 400 })
     }
 
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-
-    // Create uploads directory if it doesn't exist
-    const uploadDir = join(process.cwd(), 'public', 'uploads', 'files')
-    await mkdir(uploadDir, { recursive: true })
-
     // Create a safe filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    const filename = file.name.replace(/[^a-zA-Z0-9.-]/g, '-')
-    const safePath = join(uploadDir, `${uniqueSuffix}-${filename}`)
-    
-    await writeFile(safePath, buffer)
-    const publicPath = `/uploads/files/${uniqueSuffix}-${filename}`
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+    const filename = file.name.replace(/[^a-zA-Z0-9.-]/g, "-")
+    const safeName = `${uniqueSuffix}-${filename}`
 
-    return NextResponse.json({ url: publicPath }) // Changed from urls to url
+    // Upload to Vercel Blob
+    const blob = await put(safeName, file, { access: "public" })
+
+    return NextResponse.json({ url: blob.url })
   } catch (error) {
-    console.error('Upload error:', error)
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
+    console.error("Upload error:", error)
+    return NextResponse.json({ error: "Upload failed" }, { status: 500 })
   }
 }
+

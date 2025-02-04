@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     // Ensure the upload directories exist
     const uploadDir = path.join(process.cwd(), "public/uploads")
     const imageDir = path.join(uploadDir, "images")
-    const fileDir = path.join(uploadDir, "files")
+  const fileDir = path.join(uploadDir, "files")
 
     await Promise.all([
       import("fs").then((fs) => fs.promises.mkdir(uploadDir, { recursive: true })),
