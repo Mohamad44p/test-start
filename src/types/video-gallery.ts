@@ -1,6 +1,6 @@
 import { VideoGallery as PrismaVideoGallery } from "@prisma/client";
 
-export type VideoType = 'youtube' | 'local';
+export type VideoType = 'youtube' | 'local' | 'blob';
 
 export interface VideoBase {
   title_en: string;
@@ -33,14 +33,14 @@ export interface FormattedVideoGallery extends Omit<PrismaVideoGallery, 'created
 }
 
 export interface VideoUpload {
-  url: string;
-  title_en: string;
-  title_ar: string;
-  description_en: string | null;
-  description_ar: string | null;
-  type: 'youtube' | 'local';
-  thumbnail?: string;
-  featured: boolean;
+  url: string
+  title_en: string
+  title_ar: string
+  description_en: string | null
+  description_ar: string | null
+  type: "youtube" | "local" | "blob"
+  thumbnail: string | null
+  featured: boolean
 }
 
 export interface VideoFormData {

@@ -1,34 +1,41 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { join } from 'path'
-import { readFile } from 'fs/promises'
+import { type NextRequest, NextResponse } from "next/server"
+import { list } from "@vercel/blob"
 
 export async function GET(request: NextRequest) {
   try {
-    const url = request.nextUrl.searchParams.get('url')
+    const url = request.nextUrl.searchParams.get("url")
     if (!url) {
-      return new NextResponse('Missing URL parameter', { status: 400 })
+      return new NextResponse("Missing URL parameter", { status: 400 })
     }
 
-    // Remove leading slash and any attempts to navigate up directories
-    const safePath = url.replace(/^\/+/, '').replace(/\.\./g, '')
-    const filePath = join(process.cwd(), 'public', safePath)
+    // Extract the file name from the URL
+    const fileName = url.split("/").pop()
 
-    try {
-      const fileBuffer = await readFile(filePath)
-      const fileName = safePath.split('/').pop()
-
-      return new NextResponse(fileBuffer, {
-        headers: {
-          'Content-Disposition': `attachment; filename="${fileName}"`,
-          'Content-Type': 'application/octet-stream',
-        },
-      })
-    } catch (error) {
-      console.error('File read error:', error)
-      return new NextResponse('File not found', { status: 404 })
+    if (!fileName) {
+      return new NextResponse("Invalid URL", { status: 400 })
     }
+
+    // List blobs to find the matching file
+    const { blobs } = await list()
+    const matchingBlob = blobs.find((blob) => blob.pathname === fileName)
+
+    if (!matchingBlob) {
+      return new NextResponse("File not found", { status: 404 })
+    }
+
+    // Fetch the file content
+    const response = await fetch(matchingBlob.url)
+    const fileBuffer = await response.arrayBuffer()
+
+    return new NextResponse(fileBuffer, {
+      headers: {
+        "Content-Disposition": `attachment; filename="${fileName}"`,
+        "Content-Type": "application/octet-stream",
+      },
+    })
   } catch (error) {
-    console.error('Download error:', error)
-    return new NextResponse('Internal server error', { status: 500 })
+    console.error("Download error:", error)
+    return new NextResponse("Internal server error", { status: 500 })
   }
 }
+

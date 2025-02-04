@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { writeFile } from 'fs/promises'
-import path from 'path'
+import { type NextRequest, NextResponse } from "next/server"
+import { put } from "@vercel/blob"
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData()
@@ -9,21 +8,16 @@ export async function POST(request: NextRequest) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   for (const [key, value] of formData.entries()) {
     if (value instanceof File) {
-      const bytes = await value.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-
-      const filename = `${Date.now()}-${value.name}`
-      const filepath = path.join(process.cwd(), 'public/images', filename)
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+      const filename = value.name.replace(/[^a-zA-Z0-9.-]/g, "-")
+      const safeName = `${uniqueSuffix}-${filename}`
 
       try {
-        await writeFile(filepath, buffer)
-        urls.push(`/images/${filename}`)
+        const blob = await put(safeName, value, { access: "public" })
+        urls.push(blob.url)
       } catch (error) {
-        console.error('Error saving file:', error)
-        return NextResponse.json(
-          { success: false, error: 'Failed to save file' },
-          { status: 500 }
-        )
+        console.error("Error uploading file:", error)
+        return NextResponse.json({ success: false, error: "Failed to upload file" }, { status: 500 })
       }
     }
   }

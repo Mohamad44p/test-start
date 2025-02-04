@@ -74,6 +74,7 @@ model VideoGallery {
 enum VideoType {
   youtube
   local
+  blob
 }
 
 model Video {

@@ -63,7 +63,7 @@ export const videoSchema = z.object({
   title_ar: z.string().min(1, "Arabic title is required"),
   description_en: z.string().nullable(),
   description_ar: z.string().nullable(),
-  type: z.enum(['youtube', 'local'] as const),
+  type: z.enum(['youtube', 'local', 'blob'] as const),
   thumbnail: z.string().nullable(),
   featured: z.boolean().default(false),
 });

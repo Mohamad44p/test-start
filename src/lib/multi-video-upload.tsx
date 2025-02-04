@@ -3,7 +3,7 @@
 
 import { useState, useCallback, useEffect } from "react"
 import { useDropzone } from "react-dropzone"
-import { Loader2, Upload, X, Film, Youtube} from "lucide-react"
+import { Loader2, Upload, X, Youtube } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -24,7 +24,7 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
   const [videos, setVideos] = useState<VideoUpload[]>(defaultVideos)
   const [youtubeLink, setYoutubeLink] = useState("")
   const [featuredVideoIndex, setFeaturedVideoIndex] = useState<number>(() => {
-    return defaultVideos.findIndex(v => v.featured) || 0
+    return defaultVideos.findIndex((v) => v.featured) || 0
   })
   const { toast } = useToast()
   const [playingStates, setPlayingStates] = useState<boolean[]>(new Array(videos.length).fill(false))
@@ -67,9 +67,9 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
               title_ar: "",
               description_en: null,
               description_ar: null,
-              type: "local",
-              featured: videos.length === 0 && newVideos.length === 0, // Featured if first video
-              thumbnail: undefined,
+              type: "blob",
+              featured: videos.length === 0 && newVideos.length === 0,
+              thumbnail: null,
             }
             newVideos.push(videoData)
           }
@@ -93,17 +93,17 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
 
   const handleYoutubeUpload = () => {
     if (youtubeLink) {
-      const videoId = getYoutubeVideoId(youtubeLink);
+      const videoId = getYoutubeVideoId(youtubeLink)
       if (!videoId) {
         toast({
           title: "Error",
           description: "Invalid YouTube URL",
           variant: "destructive",
-        });
-        return;
+        })
+        return
       }
 
-      const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+      const embedUrl = `https://www.youtube.com/embed/${videoId}`
       const youtubeVideo: VideoUpload = {
         url: embedUrl,
         title_en: "YouTube Video",
@@ -112,24 +112,23 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
         description_ar: null,
         type: "youtube",
         featured: videos.length === 0, // Make it featured if it's the first video
-        thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
-      };
-      
-      const updatedVideos = [...videos, youtubeVideo];
-      setVideos(updatedVideos);
-      onUpload(updatedVideos);
-      setYoutubeLink("");
+        thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+      }
+
+      const updatedVideos = [...videos, youtubeVideo]
+      setVideos(updatedVideos)
+      onUpload(updatedVideos)
+      setYoutubeLink("")
     }
   }
 
   const handleRemove = async (index: number) => {
     const videoToRemove = videos[index]
-    if (videoToRemove.type === "local") {
+    if (videoToRemove.type === "blob") {
       try {
         const response = await fetch("/api/delete-video", {
           method: "POST",
           headers: {
-            "Content-Security-Policy": "default-src 'self'; connect-src 'self' https:;",
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ url: videoToRemove.url }),
@@ -180,38 +179,38 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
   const handleFeaturedChange = (index: number) => {
     const updatedVideos = videos.map((v, i) => ({
       ...v,
-      featured: i === index
-    }));
-    setFeaturedVideoIndex(index);
-    setVideos(updatedVideos);
-    
+      featured: i === index,
+    }))
+    setFeaturedVideoIndex(index)
+    setVideos(updatedVideos)
+
     // Debounce the onUpload call
     const timeoutId = setTimeout(() => {
-      onUpload(updatedVideos);
-    }, 300);
+      onUpload(updatedVideos)
+    }, 300)
 
-    return () => clearTimeout(timeoutId);
-  };
+    return () => clearTimeout(timeoutId)
+  }
 
   const handleClick = (e: React.MouseEvent) => {
     // Prevent form submission when clicking video controls
-    e.preventDefault();
-    e.stopPropagation();
-  };
+    e.preventDefault()
+    e.stopPropagation()
+  }
 
   const VideoPlayer = ({ video, playerId }: { video: VideoUpload; playerId: string }) => {
-    const [error, setError] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    
-    if (video.type === 'youtube') {
-      const videoId = video.url.includes('embed') 
-        ? video.url.split('/').pop()?.split('?')[0] 
-        : video.url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v(?:\/|=)|(?:.*\/)?)([\w-]{11}))/)?.[1];
-  
+    const [error, setError] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
+
+    if (video.type === "youtube") {
+      const videoId = video.url.includes("embed")
+        ? video.url.split("/").pop()?.split("?")[0]
+        : video.url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v(?:\/|=)|(?:.*\/)?)([\w-]{11}))/)?.[1]
+
       if (!videoId) {
-        return <div className="text-red-500">Invalid YouTube URL</div>;
+        return <div className="text-red-500">Invalid YouTube URL</div>
       }
-  
+
       return (
         <div className="relative w-full h-full bg-black">
           {isLoading && (
@@ -232,53 +231,47 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
             allowFullScreen
             onLoad={() => setIsLoading(false)}
             onError={() => {
-              setError(true);
-              setIsLoading(false);
+              setError(true)
+              setIsLoading(false)
             }}
           />
           {!error && !isLoading && (
-            <AdminVideoControls
-              videoId={playerId}
-              type="youtube"
-              className="absolute bottom-4 left-4 right-4"
-            />
+            <AdminVideoControls videoId={playerId} type="youtube" className="absolute bottom-4 left-4 right-4" />
           )}
         </div>
-      );
+      )
+    } else if (video.type === "blob" || video.type === "local") {
+      return (
+        <div className="relative w-full h-full bg-black">
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Loader2 className="w-8 h-8 animate-spin" />
+            </div>
+          )}
+          {error && (
+            <div className="absolute inset-0 flex items-center justify-center text-red-500">
+              Failed to load video. Please try again.
+            </div>
+          )}
+          <video
+            id={playerId}
+            src={video.url}
+            className="w-full h-full"
+            playsInline
+            preload="metadata"
+            onLoadedData={() => setIsLoading(false)}
+            onError={() => {
+              setError(true)
+              setIsLoading(false)
+            }}
+          />
+          <AdminVideoControls videoId={playerId} type="local" className="absolute bottom-4 left-4 right-4" />
+        </div>
+      )
     }
-  
-    return (
-      <div className="relative w-full h-full bg-black">
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin" />
-          </div>
-        )}
-        {error && (
-          <div className="absolute inset-0 flex items-center justify-center text-red-500">
-            Failed to load video. Please try again.
-          </div>
-        )}
-        <video
-          id={playerId}
-          src={video.url}
-          className="w-full h-full"
-          playsInline
-          preload="metadata"
-          onLoadedData={() => setIsLoading(false)}
-          onError={() => {
-            setError(true);
-            setIsLoading(false);
-          }}
-        />
-        <AdminVideoControls
-          videoId={playerId}
-          type="local"
-          className="absolute bottom-4 left-4 right-4"
-        />
-      </div>
-    );
-  };
+
+    return null
+  }
 
   return (
     <div className="w-full space-y-6" onClick={handleClick}>
@@ -332,10 +325,7 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
               <CardContent className="p-0">
                 <div className="grid grid-cols-1 md:grid-cols-2">
                   <div className="relative aspect-video min-h-[300px]">
-                    <VideoPlayer 
-                      video={video} 
-                      playerId={`video-${index}`} 
-                    />
+                    <VideoPlayer video={video} playerId={`video-${index}`} />
                   </div>
                   <div className="p-6 space-y-4">
                     <div className="flex items-center justify-between mb-4">
@@ -350,12 +340,12 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
                         />
                         <label htmlFor={`featured-${index}`}>Featured Video</label>
                       </div>
-                      <Button 
-                        variant="destructive" 
-                        size="sm" 
+                      <Button
+                        variant="destructive"
+                        size="sm"
                         onClick={(e) => {
-                          e.preventDefault();
-                          handleRemove(index);
+                          e.preventDefault()
+                          handleRemove(index)
                         }}
                         type="button"
                       >

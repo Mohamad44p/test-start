@@ -1,69 +1,76 @@
-'use client'
+"use client";
 
-import { useState, useCallback } from 'react'
-import { useDropzone } from 'react-dropzone'
-import Image from 'next/image'
-import { Loader2, Upload, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { useState, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+import Image from "next/image";
+import { Loader2, Upload, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export interface MultiImageUploadProps {
-  onUpload: (urls: string[]) => void
-  defaultImages?: string[]
-  onDelete?: (index: number) => void
+  onUpload: (urls: string[]) => void;
+  defaultImages?: string[];
+  onDelete?: (index: number) => void;
 }
 
-export function MultiImageUpload({ onUpload, defaultImages = [], onDelete }: MultiImageUploadProps) {
-  const [uploading, setUploading] = useState(false)
-  const [previews, setPreviews] = useState<string[]>(defaultImages)
+export function MultiImageUpload({
+  onUpload,
+  defaultImages = [],
+  onDelete,
+}: MultiImageUploadProps) {
+  const [uploading, setUploading] = useState(false);
+  const [previews, setPreviews] = useState<string[]>(defaultImages);
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    setUploading(true)
-    const formData = new FormData()
-    acceptedFiles.forEach((file, index) => {
-      formData.append(`file${index}`, file)
-    })
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      setUploading(true);
+      const formData = new FormData();
+      acceptedFiles.forEach((file, index) => {
+        formData.append(`file${index}`, file);
+      });
 
-    try {
-      const response = await fetch('/api/upload-multiple', {
-        method: 'POST',
-        body: formData,
-      })
+      try {
+        const response = await fetch("/api/upload-multiple", {
+          method: "POST",
+          body: formData,
+        });
 
-      if (!response.ok) throw new Error('Upload failed')
+        if (!response.ok) throw new Error("Upload failed");
 
-      const data = await response.json()
-      const newPreviews = [...previews, ...data.urls]
-      setPreviews(newPreviews)
-      onUpload(newPreviews)
-    } catch (error) {
-      console.error('Upload error:', error)
-    } finally {
-      setUploading(false)
-    }
-  }, [previews, onUpload])
+        const data = await response.json();
+        const newPreviews = [...previews, ...data.urls];
+        setPreviews(newPreviews);
+        onUpload(newPreviews);
+      } catch (error) {
+        console.error("Upload error:", error);
+      } finally {
+        setUploading(false);
+      }
+    },
+    [previews, onUpload]
+  );
 
   const handleRemove = async (index: number) => {
-    const imageToRemove = previews[index]
-    const newPreviews = previews.filter((_, i) => i !== index)
-    setPreviews(newPreviews)
+    const imageToRemove = previews[index];
+    const newPreviews = previews.filter((_, i) => i !== index);
+    setPreviews(newPreviews);
 
     try {
-      const response = await fetch('/api/delete-image', {
-        method: 'POST',
+      const response = await fetch("/api/delete-image", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          imageUrl: imageToRemove
+        body: JSON.stringify({
+          imageUrl: imageToRemove,
         }),
-      })
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
-        console.error('Delete response:', data);
-        throw new Error(data.error || 'Delete failed');
+        console.error("Delete response:", data);
+        throw new Error(data.error || "Delete failed");
       }
 
       onUpload(newPreviews);
@@ -71,24 +78,29 @@ export function MultiImageUpload({ onUpload, defaultImages = [], onDelete }: Mul
         onDelete(index);
       }
     } catch (error) {
-      console.error('Delete error:', error);
+      console.error("Delete error:", error);
       setPreviews(previews); // Restore the previous state
     }
-  }
-
-  const handleDelete = (index: number) => {
-    if (onDelete) {
-      onDelete(index)
-    }
-  }
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.avif', '.svg', '.bmp', '.tiff', '.ico']
+      "image/*": [
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".gif",
+        ".webp",
+        ".avif",
+        ".svg",
+        ".bmp",
+        ".tiff",
+        ".ico",
+      ],
     },
-    multiple: true
-  })
+    multiple: true,
+  });
 
   return (
     <div className="w-full">
@@ -96,7 +108,9 @@ export function MultiImageUpload({ onUpload, defaultImages = [], onDelete }: Mul
         {...getRootProps()}
         className={cn(
           "border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors",
-          isDragActive ? "border-primary bg-primary/10" : "border-gray-300 hover:bg-gray-50"
+          isDragActive
+            ? "border-primary bg-primary/10"
+            : "border-gray-300 hover:bg-gray-50"
         )}
       >
         <input {...getInputProps()} />
@@ -119,23 +133,22 @@ export function MultiImageUpload({ onUpload, defaultImages = [], onDelete }: Mul
           {previews.map((preview, index) => (
             <div key={index} className="relative">
               <Image
-                src={preview}
+                src={preview || "/placeholder.svg"}
                 alt={`Preview ${index + 1}`}
                 width={200}
                 height={200}
                 className="object-cover rounded-lg"
-                quality={100}
-                priority={index < 4}
-                unoptimized={preview.endsWith('.svg')}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
               <Button
+                type="button"
                 variant="destructive"
                 size="icon"
                 className="absolute top-2 right-2"
                 onClick={(e) => {
-                  e.stopPropagation()
-                  handleRemove(index)
-                  handleDelete(index)
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleRemove(index);
                 }}
               >
                 <X className="h-4 w-4" />
@@ -145,6 +158,5 @@ export function MultiImageUpload({ onUpload, defaultImages = [], onDelete }: Mul
         </div>
       )}
     </div>
-  )
+  );
 }
-
