@@ -33,6 +33,10 @@ const nextConfig = {
     minimumCacheTTL: 31536000,
     remotePatterns: [
       {
+        protocol: 'https',
+        hostname: '*.public.blob.vercel-storage.com',
+      },
+      {
         protocol: "https",
         hostname: "pbs.twimg.com",
         port: "",

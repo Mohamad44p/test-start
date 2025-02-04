@@ -100,6 +100,16 @@ export function ImageUpload({
     multiple: false,
   });
 
+  const isValidUrl = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      return false;
+    }
+  };
+
   return (
     <div className="w-full">
       <div
@@ -118,14 +128,14 @@ export function ImageUpload({
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="ml-2">Uploading...</p>
           </div>
-        ) : preview ? (
+        ) : preview && isValidUrl(preview) ? (
           <div className="relative aspect-video w-full">
             <Image
               src={preview || "/placeholder.svg"}
               alt="Preview"
               fill
               className="object-cover rounded-lg"
-              suppressHydrationWarning
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
             <Button
               type="button"
