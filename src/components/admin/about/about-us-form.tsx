@@ -18,11 +18,11 @@ import { ImageUpload } from '@/lib/ImageUpload'
 import { IconSelector } from '@/components/shared/icon-selector'
 
 const cardSchema = z.object({
-  titleEn: z.string().min(1, 'Title in English is required'),
-  titleAr: z.string().min(1, 'Title in Arabic is required'),
-  descriptionEn: z.string().min(1, 'Description in English is required'),
-  descriptionAr: z.string().min(1, 'Description in Arabic is required'),
-  icon: z.string().min(1, 'Icon is required'),
+  titleEn: z.string().optional(),
+  titleAr: z.string().optional(),
+  descriptionEn: z.string().optional(),
+  descriptionAr: z.string().optional(),
+  icon: z.string().optional().default('Star'),
 })
 
 const aboutUsSchema = z.object({
@@ -34,7 +34,7 @@ const aboutUsSchema = z.object({
   card1Visible: z.boolean().default(true),
   card2Visible: z.boolean().default(true),
   card3Visible: z.boolean().default(true),
-  cards: z.array(cardSchema).length(3, 'Exactly 3 cards are required'),
+  cards: z.array(cardSchema).optional().default([]),
 })
 
 type AboutUsFormValues = z.infer<typeof aboutUsSchema>
@@ -48,7 +48,6 @@ export function AboutUsForm({ initialData }: AboutUsFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [mounted, setMounted] = useState(false)
   
-  // Add this effect to handle client-side mounting
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -59,7 +58,7 @@ export function AboutUsForm({ initialData }: AboutUsFormProps) {
     descriptionEn: '',
     descriptionAr: '',
     icon: 'Star',
-  };
+  } as const;
 
   const form = useForm<AboutUsFormValues>({
     resolver: zodResolver(aboutUsSchema),

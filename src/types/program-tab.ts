@@ -25,3 +25,10 @@ export type UpdateProgramTabInput = Partial<CreateProgramTabInput> & { id: strin
 export type CreateProgramInput = Omit<ProgramsPages, "id" | "createdAt" | "updatedAt">
 export type UpdateProgramInput = Partial<CreateProgramInput> & { id: string }
 
+export interface SimpleProgramType {
+  id: string;
+  name_en: string;
+  name_ar: string;
+}
+
+

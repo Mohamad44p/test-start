@@ -4,11 +4,17 @@ import Link from "next/link"
 export const dynamic = "force-dynamic"
 
 
-export default async function ProgramsPage({
-  params: { lang }
-}: {
-  params: { lang: string }
-}) {
+export default async function ProgramsPage(
+  props: {
+    params: Promise<{ lang: string }>
+  }
+) {
+  const params = await props.params;
+
+  const {
+    lang
+  } = params;
+
   const { programs } = await getPrograms()
 
   return (

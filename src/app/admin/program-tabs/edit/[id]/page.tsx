@@ -1,7 +1,8 @@
 import db from "@/app/db/db"
 import ProgramTabForm from "@/components/admin/program-tap/ProgramTabForm"
 
-export default async function EditProgramTabPage({ params }: { params: { id: string } }) {
+export default async function EditProgramTabPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const [programTab, programs] = await Promise.all([
     db.programTab.findUnique({
       where: { id: params.id },

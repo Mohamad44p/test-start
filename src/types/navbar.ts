@@ -12,7 +12,20 @@ export interface NavTranslations {
   };
 }
 
+export interface ProgramData {
+  id: string;
+  name_en: string;
+  name_ar: string;
+  ProgramTab: {
+    id: string;
+    title_en: string;
+    title_ar: string;
+    slug: string;
+  }[];
+}
+
 export interface ProgramMenuItems {
+  programs: ProgramData[];
   buildingCapabilities: string;
   upskill: string;
   elevate: string;

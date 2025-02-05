@@ -56,6 +56,10 @@ const data: { navMain: NavItem[] } = {
           url: "/admin/pages/about",
         },
         {
+          title: "Partners",
+          url: "/admin/pages/partners",
+        },
+        {
           title: "Team Members",
           url: "/admin/pages/team",
         },

@@ -15,6 +15,14 @@ async function getProgram(slug: string) {
         ProgramsHero: true,
         ProgramTab: {
           orderBy: { createdAt: 'asc' }
+        },
+        faqCategories: {
+          include: {
+            faqs: {
+              orderBy: { order: 'asc' }
+            }
+          },
+          orderBy: { order: 'asc' }
         }
       }
     });
@@ -25,11 +33,12 @@ async function getProgram(slug: string) {
   }
 }
 
-export default async function DynamicProgramPage({
-  params
-}: {
-  params: { lang: string; slug: string }
-}) {
+export default async function DynamicProgramPage(
+  props: {
+    params: Promise<{ lang: string; slug: string }>
+  }
+) {
+  const params = await props.params;
   const program = await getProgram(params.slug);
 
   if (!program) {
@@ -37,12 +46,27 @@ export default async function DynamicProgramPage({
   }
 
   const hero = program.ProgramsHero[0];
-  
+
+  // Prepare FAQ data
+  const faqsByCategory = program.faqCategories.reduce((acc, category) => {
+    acc[category.id] = category.faqs.map(faq => ({
+      ...faq,
+      category: category 
+    }))
+    return acc
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  }, {} as Record<string, any[]>)
+
   return (
     <main className="min-h-screen flex flex-col">
       {hero && <DynamicHero hero={hero} lang={params.lang} />}
-      {program.ProgramTab && program.ProgramTab.length > 0 && (
-        <DynamicTabs tabs={program.ProgramTab} lang={params.lang} />
+      {program.ProgramTab && (
+        <DynamicTabs 
+          tabs={program.ProgramTab} 
+          lang={params.lang} 
+          faqCategories={program.faqCategories}
+          faqsByCategory={faqsByCategory}
+        />
       )}
     </main>
   );

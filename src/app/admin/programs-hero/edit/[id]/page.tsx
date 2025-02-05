@@ -1,7 +1,8 @@
 import db from "@/app/db/db"
 import ProgramsHeroForm from "@/components/admin/program-tap/ProgramsHeroForm"
 
-export default async function EditProgramsHeroPage({ params }: { params: { id: string } }) {
+export default async function EditProgramsHeroPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const [programsHero, programs] = await Promise.all([
     db.programsHero.findUnique({
       where: { id: params.id },

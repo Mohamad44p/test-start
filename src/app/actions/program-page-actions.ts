@@ -1,19 +1,35 @@
 "use server"
 
 import db from "@/app/db/db"
+import { SimpleProgramType } from "@/types/program-tab"
 
-export async function getPrograms() {
+interface ProgramsResponse {
+  success: boolean;
+  programs: Array<{
+    id: string;
+    name_en: string;
+    name_ar: string;
+  }>;
+  error?: string;
+}
+
+export async function getPrograms(): Promise<ProgramsResponse> {
   try {
     const programs = await db.programsPages.findMany({
-      include: {
-        ProgramsHero: true,
-        ProgramTab: true
-      }
-    })
-    return { success: true, programs }
+      select: {
+        id: true,
+        name_en: true,
+        name_ar: true,
+      },
+    });
+    
+    return { 
+      success: true, 
+      programs: programs as SimpleProgramType[] 
+    };
   } catch (error) {
-    console.error("Failed to fetch programs:", error)
-    return { error: "Failed to fetch programs" }
+    console.error("Failed to fetch programs:", error);
+    return { success: false, programs: [] };
   }
 }
 

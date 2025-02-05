@@ -3,14 +3,19 @@
 import React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { motion } from 'framer-motion'
-import type { ProgramTab } from '@prisma/client'
+import { FaqProvider } from '@/context/FaqContext'
+import { FAQSection } from '@/components/faq-section/faq-section'
+import type { ProgramTab, FaqCategory } from '@prisma/client'
 
 interface DynamicTabsProps {
   tabs: ProgramTab[];
   lang: string;
+  faqCategories: FaqCategory[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  faqsByCategory: Record<string, any[]>;
 }
 
-export default function DynamicTabs({ tabs, lang }: DynamicTabsProps) {
+export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory }: DynamicTabsProps) {
   const [activeTab, setActiveTab] = React.useState(tabs[0]?.slug || '')
 
   React.useEffect(() => {
@@ -28,6 +33,17 @@ export default function DynamicTabs({ tabs, lang }: DynamicTabsProps) {
 
   if (!tabs.length) return null;
 
+  const allTabs = [
+    ...tabs,
+    {
+      slug: 'faqs',
+      title_en: 'FAQs',
+      title_ar: 'الأسئلة الشائعة',
+      content_en: '',
+      content_ar: '',
+    }
+  ]
+
   return (
     <div className='flex-grow bg-gray-50'>
       <motion.div
@@ -42,7 +58,7 @@ export default function DynamicTabs({ tabs, lang }: DynamicTabsProps) {
         >
           <div className="md:w-64 w-full sticky top-20">
             <TabsList className='flex md:flex-col flex-row md:items-stretch items-center md:justify-start justify-start md:space-y-2 md:space-x-0 space-x-2 p-4 min-w-max md:min-w-0 bg-white/80 backdrop-blur-sm'>
-              {tabs.map((tab) => (
+              {allTabs.map((tab) => (
                 <TabsTrigger
                   key={tab.slug}
                   value={tab.slug}
@@ -68,6 +84,15 @@ export default function DynamicTabs({ tabs, lang }: DynamicTabsProps) {
                 />
               </TabsContent>
             ))}
+            
+            <TabsContent value="faqs">
+              <FaqProvider>
+                <FAQSection 
+                  categories={faqCategories} 
+                  faqsByCategory={faqsByCategory}
+                />
+              </FaqProvider>
+            </TabsContent>
           </div>
         </Tabs>
       </motion.div>

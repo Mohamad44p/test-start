@@ -22,6 +22,12 @@ export interface FaqItem {
   order: number
   categoryId: string
   category?: FaqCategory // Make category optional
+  programId?: string | null;
+  program?: {
+    id: string;
+    name_en: string;
+    name_ar: string;
+  } | null;
   createdAt: Date
   updatedAt: Date
 }
@@ -50,6 +56,7 @@ export const FaqItemSchema = z.object({
   answerEn: z.string().min(1, "English answer is required"),
   answerAr: z.string().min(1, "Arabic answer is required"),
   categoryId: z.string().min(1, "Category is required"),
+  programId: z.string().optional().nullable(),
   order: z.number().int().default(0),
 })
 

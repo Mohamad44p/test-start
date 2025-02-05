@@ -9,23 +9,32 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { toast } from '@/hooks/use-toast'
 import { createFaqCategory, updateFaqCategory, type FaqCategoryFormData } from '@/app/actions/pages/faqActions'
+import { ProgramDialog } from '../program-tap/ProgramDialog'
+import { SimpleProgramType } from "@/types/program-tab";
 
 const formSchema = z.object({
   nameEn: z.string().min(1, 'English name is required'),
   nameAr: z.string().min(1, 'Arabic name is required'),
   slug: z.string().min(1, 'Slug is required'),
   order: z.number().int().default(0),
+  programId: z.string().optional().nullable(),
 })
 
 interface FaqCategoryFormProps {
-  initialData?: FaqCategoryFormData & { id?: string }
+  initialData?: FaqCategoryFormData & { id?: string };
+  programs?: SimpleProgramType[];
 }
 
-export function FaqCategoryForm({ initialData }: FaqCategoryFormProps) {
+export function FaqCategoryForm({ 
+  initialData, 
+  programs: initialPrograms = [] 
+}: FaqCategoryFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [programs, setPrograms] = useState<SimpleProgramType[]>(initialPrograms)
 
   const form = useForm<FaqCategoryFormData>({
     resolver: zodResolver(formSchema),
@@ -34,6 +43,7 @@ export function FaqCategoryForm({ initialData }: FaqCategoryFormProps) {
       nameAr: '',
       slug: '',
       order: 0,
+      programId: null,
     },
   })
 
@@ -65,6 +75,10 @@ export function FaqCategoryForm({ initialData }: FaqCategoryFormProps) {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const handleProgramUpdate = (updatedPrograms: SimpleProgramType[]) => {
+    setPrograms(updatedPrograms)
   }
 
   return (
@@ -131,6 +145,41 @@ export function FaqCategoryForm({ initialData }: FaqCategoryFormProps) {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="programId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Program (Optional)</FormLabel>
+                  <Select
+                    onValueChange={(value) => field.onChange(value === "none" ? null : value)}
+                    value={field.value || "none"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a program">
+                          {field.value ? programs.find(p => p.id === field.value)?.name_en : "None"}
+                        </SelectValue>
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="none">
+                        None
+                      </SelectItem>
+                      {programs.map((program) => (
+                        <SelectItem key={program.id} value={program.id}>
+                          {program.name_en}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <ProgramDialog programs={programs} onProgramsUpdate={handleProgramUpdate} />
 
             <div className="flex justify-end gap-4">
               <Button

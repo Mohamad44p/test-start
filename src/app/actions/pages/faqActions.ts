@@ -11,6 +11,7 @@ const FaqCategorySchema = z.object({
   nameAr: z.string().min(1, "Arabic name is required"),
   slug: z.string().min(1, "Slug is required"),
   order: z.number().int().default(0),
+  programId: z.string().optional().nullable(),
 })
 
 const FaqItemSchema = z.object({
@@ -28,14 +29,25 @@ export type FaqItemFormData = z.infer<typeof FaqItemSchema>
 // Category Actions
 export async function createFaqCategory(data: FaqCategoryFormData) {
   const validatedData = FaqCategorySchema.parse(data)
-  await db.faqCategory.create({ data: validatedData })
+  await db.faqCategory.create({
+    data: {
+      ...validatedData,
+      programId: validatedData.programId || null,
+    },
+  })
   revalidatePath('/admin/pages/faq')
   revalidatePath('/')
 }
 
 export async function updateFaqCategory(id: string, data: FaqCategoryFormData) {
   const validatedData = FaqCategorySchema.parse(data)
-  await db.faqCategory.update({ where: { id }, data: validatedData })
+  await db.faqCategory.update({
+    where: { id },
+    data: {
+      ...validatedData,
+      programId: validatedData.programId || null,
+    },
+  })
   revalidatePath('/admin/pages/faq')
   revalidatePath('/')
 }
@@ -73,7 +85,14 @@ export const getFaqCategories = cache(async (): Promise<FaqCategory[]> => {
     include: { 
       faqs: {
         orderBy: { order: 'asc' }
-      }
+      },
+      program: {
+        select: {
+          id: true,
+          name_en: true,
+          name_ar: true,
+        },
+      },
     },
     orderBy: { order: 'asc' }
   })
@@ -84,8 +103,17 @@ export const getFaqCategories = cache(async (): Promise<FaqCategory[]> => {
 export async function getFaqCategoryById(id: string) {
   return db.faqCategory.findUnique({
     where: { id },
-    include: { faqs: true }
-  })
+    include: {
+      faqs: true,
+      program: {
+        select: {
+          id: true,
+          name_en: true,
+          name_ar: true,
+        },
+      },
+    },
+  });
 }
 
 export async function getFaqItemById(id: string) {

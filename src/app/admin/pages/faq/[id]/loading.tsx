@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LoadingFaqCategoryPage() {
   return (
@@ -22,7 +22,10 @@ export default function LoadingFaqCategoryPage() {
         <CardContent>
           <div className="space-y-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="border-t pt-4 first:border-t-0 first:pt-0">
+              <div
+                key={i}
+                className="border-t pt-4 first:border-t-0 first:pt-0"
+              >
                 <div className="flex justify-between items-start">
                   <div className="space-y-2">
                     <Skeleton className="h-5 w-64" />
@@ -39,5 +42,5 @@ export default function LoadingFaqCategoryPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

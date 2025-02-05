@@ -213,13 +213,13 @@ model AboutUs {
 }
 
 model Card {
-  id            String  @id @default(cuid())
-  titleEn       String
-  titleAr       String
-  descriptionEn String
-  descriptionAr String
-  icon          String
-  aboutUs       AboutUs @relation(fields: [aboutUsId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  titleEn       String?
+  titleAr       String?
+  descriptionEn String?
+  descriptionAr String?
+  icon          String?
+  aboutUs       AboutUs  @relation(fields: [aboutUsId], references: [id], onDelete: Cascade)
   aboutUsId     String
 }
 
@@ -227,8 +227,8 @@ model Focusarea {
   id            String          @id @default(cuid())
   titleEn       String
   titleAr       String
-  descriptionEn String          @default("") // Add default empty string
-  descriptionAr String          @default("") // Add default empty string
+  descriptionEn String          @default("") 
+  descriptionAr String          @default("") 
   cards         FocusareaCard[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @default(now())
@@ -348,11 +348,11 @@ model Safeguard {
   description_ar     String   @db.Text
   longDescription_en String?  @db.Text
   longDescription_ar String?  @db.Text
-  bgColor            String   @default("#f3f4f6") // Default light gray color
+  bgColor            String   @default("#f3f4f6")
   attachmentUrl      String?
   imageUrl           String?
-  order              Int      @default(0) // Add order field for sorting
-  status             String   @default("DRAFT") // Add status field
+  order              Int      @default(0)
+  status             String   @default("DRAFT") 
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -373,33 +373,39 @@ enum ComplaintStatus {
 }
 
 model FaqCategory {
-  id        String    @id @default(cuid())
+  id        String        @id @default(cuid())
   nameEn    String
   nameAr    String
-  slug      String    @unique
-  order     Int       @default(0)
+  slug      String        @unique
+  order     Int           @default(0)
+  programId String?      
+  program   ProgramsPages? @relation(fields: [programId], references: [id])
   faqs      FaqItem[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @default(now())
 
   @@index([slug])
   @@index([order])
+  @@index([programId])
 }
 
 model FaqItem {
-  id         String      @id @default(cuid())
-  questionEn String
-  questionAr String
-  answerEn   String      @db.Text
-  answerAr   String      @db.Text
-  order      Int         @default(0)
-  categoryId String
-  category   FaqCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @default(now())
+  id          String        @id @default(cuid())
+  questionEn  String
+  questionAr  String
+  answerEn    String       @db.Text
+  answerAr    String       @db.Text
+  order       Int          @default(0)
+  categoryId  String
+  category    FaqCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  programId   String?      // Add this field
+  program     ProgramsPages? @relation(fields: [programId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now())
 
   @@index([categoryId])
   @@index([order])
+  @@index([programId])
 }
 
 model PartnerPage {
@@ -437,6 +443,8 @@ model ProgramsPages {
   updatedAt    DateTime       @default(now())
   ProgramTab   ProgramTab[]
   ProgramsHero ProgramsHero[]
+  faqs         FaqItem[]    // Add this field
+  faqCategories FaqCategory[]
 }
 
 model ProgramsHero {
@@ -470,7 +478,7 @@ model ProgramsHero {
   card3Description_ar String?
   card3Show           Boolean        @default(true)
   createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
+  updatedAt           DateTime       @default(now())
   programPageId       String?
   programPage         ProgramsPages? @relation(fields: [programPageId], references: [id])
 
