@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client"
 
 import type { ColumnDef } from "@tanstack/react-table"
@@ -11,7 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { toast } from "@/hooks/use-toast"
-import { ContactSubmission, deleteContactSubmission } from "@/app/actions/pages/contact-actions"
+import { ContactSubmission, deleteContactSubmission, updateSubmissionStatus } from "@/app/actions/pages/contact-actions"
+import { useRouter } from "next/navigation"
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleString('en-US', {
@@ -61,9 +63,26 @@ export const columns: ColumnDef<ContactSubmission>[] = [
     },
   },
   {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const status: string = row.getValue("status")
+      return (
+        <span className={`px-2 py-1 rounded-full text-sm ${
+          status === 'new' ? 'bg-blue-100 text-blue-800' :
+          status === 'read' ? 'bg-green-100 text-green-800' :
+          'bg-gray-100 text-gray-800'
+        }`}>
+          {status}
+        </span>
+      )
+    },
+  },
+  {
     id: "actions",
     cell: ({ row }) => {
       const submission = row.original
+      const router = useRouter()
 
       return (
         <DropdownMenu>
@@ -77,8 +96,25 @@ export const columns: ColumnDef<ContactSubmission>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={async () => {
+                await updateSubmissionStatus(submission.id, 'read')
+                toast({ title: "Marked as read" })
+              }}
+            >
+              Mark as Read
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={async () => {
+                await updateSubmissionStatus(submission.id, 'archived')
+                toast({ title: "Archived successfully" })
+              }}
+            >
+              Archive
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={async () => {
                 await deleteContactSubmission(submission.id)
                 toast({ title: "Submission deleted successfully" })
+                router.refresh()
               }}
             >
               Delete

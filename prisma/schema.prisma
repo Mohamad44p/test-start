@@ -282,6 +282,7 @@ model ContactSubmission {
   email     String
   subject   String
   message   String
+  status    String   @default("new")  // Add this line
   createdAt DateTime @default(now())
 }
 

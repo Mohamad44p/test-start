@@ -16,6 +16,10 @@ const tableConfig = {
   }
 };
 
+
+export const dynamic = "force-dynamic"
+
+
 export default async function ContactSubmissionsPage() {
   const submissions = await getContactSubmissions()
 
