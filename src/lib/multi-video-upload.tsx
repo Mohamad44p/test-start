@@ -13,6 +13,7 @@ import type { VideoUpload } from "@/types/video-gallery"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { AdminVideoControls } from "@/components/ui/admin-video-controls"
+import { del } from "@vercel/blob"
 
 interface MultiVideoUploadProps {
   onUpload: (videos: VideoUpload[]) => void
@@ -126,32 +127,15 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
     const videoToRemove = videos[index]
     if (videoToRemove.type === "blob") {
       try {
-        const response = await fetch("/api/delete-video", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ url: videoToRemove.url }),
+        await del(videoToRemove.url)
+        const newVideos = videos.filter((_, i) => i !== index)
+        setVideos(newVideos)
+        onUpload(newVideos)
+
+        toast({
+          title: "Success",
+          description: "Video deleted successfully",
         })
-
-        const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to delete video from server")
-        }
-
-        if (data.success) {
-          const newVideos = videos.filter((_, i) => i !== index)
-          setVideos(newVideos)
-          onUpload(newVideos)
-
-          toast({
-            title: "Success",
-            description: "Video deleted successfully",
-          })
-        } else {
-          throw new Error(data.error || "Failed to delete video")
-        }
       } catch (error) {
         console.error("Delete error:", error)
         toast({
