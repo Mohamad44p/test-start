@@ -14,10 +14,6 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
-
-export const preferredRegion = "auto"
-export const revalidate = 0
-
 export default async function RootLayout(
   props: {
     children: React.ReactNode
