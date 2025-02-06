@@ -15,10 +15,8 @@ const montserrat = Montserrat({
 });
 
 
-export const dynamic = "force-dynamic"
 export const preferredRegion = "auto"
 export const revalidate = 0
-export const experimental_ppr = true
 
 export default async function RootLayout(
   props: {
