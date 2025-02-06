@@ -1,46 +1,46 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { NextResponse } from "next/server"
+import { del } from "@vercel/blob"
 
 export async function POST(request: Request) {
   try {
-    const { url } = await request.json();
+    const { url } = await request.json()
 
     if (!url) {
-      return NextResponse.json({ success: false, error: 'No URL provided' }, { status: 400 });
+      return NextResponse.json({ success: false, error: "No URL provided" }, { status: 400 })
     }
 
-    // Handle local video deletion
-    if (url.startsWith('/uploads/videos/')) {
-      const publicPath = path.join(process.cwd(), 'public');
-      const filePath = path.join(publicPath, url);
-
-      // Security check to ensure we're only deleting from uploads directory
-      if (!filePath.startsWith(path.join(publicPath, 'uploads', 'videos'))) {
-        return NextResponse.json({ success: false, error: 'Invalid file path' }, { status: 400 });
-      }
-
+    // Handle blob video deletion
+    if (url.includes(".vercel.blob.")) {
       try {
-        await fs.access(filePath);
-        await fs.unlink(filePath);
-        return NextResponse.json({ success: true });
+        await del(url)
+        return NextResponse.json({ success: true })
       } catch (error) {
-        if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-          // File doesn't exist, consider it a success for idempotency
-          return NextResponse.json({ success: true });
-        }
-        throw error;
+        console.error("Blob deletion error:", error)
+        throw error
       }
     }
 
     // For YouTube videos, just return success
-    return NextResponse.json({ success: true });
+    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+      return NextResponse.json({ success: true })
+    }
 
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Invalid video URL",
+      },
+      { status: 400 },
+    )
   } catch (error) {
-    console.error('Delete error:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to delete file' 
-    }, { status: 500 });
+    console.error("Delete error:", error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Failed to delete file",
+      },
+      { status: 500 },
+    )
   }
 }
+
