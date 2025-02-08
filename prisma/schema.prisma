@@ -444,7 +444,7 @@ model ProgramsPages {
   updatedAt    DateTime       @default(now())
   ProgramTab   ProgramTab[]
   ProgramsHero ProgramsHero[]
-  faqs         FaqItem[]    // Add this field
+  faqs         FaqItem[]   
   faqCategories FaqCategory[]
 }
 
