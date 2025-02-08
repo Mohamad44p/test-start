@@ -1,6 +1,7 @@
 import './globals.css'
 import { LanguageProvider } from '@/context/LanguageContext'
 import type { Metadata } from 'next'
+import { Montserrat } from 'next/font/google'
 
 export const metadata: Metadata = {
   title: 'Tech Start',
@@ -8,6 +9,10 @@ export const metadata: Metadata = {
 }
 
 
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+})
 
 export default async function RootLayout(
   props: {
@@ -23,9 +28,9 @@ export default async function RootLayout(
 
   return (
     <html lang="en" className="lenis lenis-smooth" suppressHydrationWarning>
-      <body>
-      <LanguageProvider defaultLang={params.lang}>
-         {children}
+      <body className={`${montserrat.variable} font-sans`}>
+        <LanguageProvider defaultLang={params.lang}>
+          {children}
         </LanguageProvider>
       </body>
     </html>

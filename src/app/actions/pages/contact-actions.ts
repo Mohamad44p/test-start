@@ -55,3 +55,15 @@ export async function deleteContactSubmission(id: string): Promise<void> {
 
   revalidatePath("/admin/pages/contact-submissions");
 }
+
+export async function getContactSubmission(id: string) {
+  try {
+    const submission = await db.contactSubmission.findUnique({
+      where: { id },
+    })
+    return submission
+  } catch (error) {
+    console.error("Error fetching contact submission:", error)
+    return null
+  }
+}

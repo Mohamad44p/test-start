@@ -440,12 +440,28 @@ model ProgramsPages {
   id           String         @id @default(cuid())
   name_en      String
   name_ar      String
+  categoryId   String?
+  category     ProgramCategory? @relation(fields: [categoryId], references: [id])
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @default(now())
   ProgramTab   ProgramTab[]
   ProgramsHero ProgramsHero[]
   faqs         FaqItem[]   
   faqCategories FaqCategory[]
+
+  @@index([categoryId])
+}
+
+model ProgramCategory {
+  id         String         @id @default(cuid())
+  name_en    String
+  name_ar    String
+  order      Int           @default(0)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  programs   ProgramsPages[]
+
+  @@index([order])
 }
 
 model ProgramsHero {

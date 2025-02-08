@@ -1,25 +1,46 @@
 "use server"
 
 import db from "@/app/db/db"
+import type { ProgramCategory } from "@/types/program-tab"
 
-export async function getNavbarPrograms() {
+interface NavbarProgramsResponse {
+  success: boolean;
+  categories: ProgramCategory[];
+}
+
+export async function getNavbarPrograms(): Promise<NavbarProgramsResponse> {
   try {
-    const programs = await db.programsPages.findMany({
+    const categories = await db.programCategory.findMany({
+      where: {
+        programs: {
+          some: {} // Only get categories that have programs
+        }
+      },
       include: {
-        ProgramTab: {
-          select: {
-            id: true,
-            title_en: true,
-            title_ar: true,
-            slug: true,
+        programs: {
+          include: {
+            ProgramTab: {
+              select: {
+                id: true,
+                title_en: true,
+                title_ar: true,
+                slug: true
+              }
+            }
           }
         }
+      },
+      orderBy: {
+        order: 'asc'
       }
-    })
-    
-    return { success: true, programs }
+    });
+
+    return { 
+      success: true, 
+      categories
+    };
   } catch (error) {
-    console.error("Failed to fetch navbar programs:", error)
-    return { error: "Failed to fetch programs", programs: [] }
+    console.error("Error fetching navbar programs:", error);
+    return { success: false, categories: [] };
   }
 }

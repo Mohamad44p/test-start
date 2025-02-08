@@ -1,17 +1,7 @@
 "use server"
 
 import db from "@/app/db/db"
-import { SimpleProgramType } from "@/types/program-tab"
-
-interface ProgramsResponse {
-  success: boolean;
-  programs: Array<{
-    id: string;
-    name_en: string;
-    name_ar: string;
-  }>;
-  error?: string;
-}
+import type { ProgramsResponse } from "@/types/program-tab"
 
 export async function getPrograms(): Promise<ProgramsResponse> {
   try {
@@ -20,12 +10,20 @@ export async function getPrograms(): Promise<ProgramsResponse> {
         id: true,
         name_en: true,
         name_ar: true,
+        categoryId: true,
+        category: {
+          select: {
+            id: true,
+            name_en: true,
+            name_ar: true
+          }
+        }
       },
     });
     
     return { 
       success: true, 
-      programs: programs as SimpleProgramType[] 
+      programs 
     };
   } catch (error) {
     console.error("Failed to fetch programs:", error);

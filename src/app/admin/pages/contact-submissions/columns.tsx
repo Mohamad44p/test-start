@@ -52,7 +52,7 @@ export const columns: ColumnDef<ContactSubmission>[] = [
     header: "Message",
     cell: ({ row }) => {
       const message: string = row.getValue("message")
-      return <div className="max-w-[300px] truncate">{message}</div>
+      return <div className="max-w-[300px] truncate">{message.slice(0, 100)}...</div>
     },
   },
   {
@@ -94,6 +94,13 @@ export const columns: ColumnDef<ContactSubmission>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => {
+                router.push(`/admin/pages/contact-submissions/${submission.id}`)
+              }}
+            >
+              View Details
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={async () => {
                 await updateSubmissionStatus(submission.id, 'read')

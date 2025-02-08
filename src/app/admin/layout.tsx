@@ -1,5 +1,3 @@
-"use client"
-
 import { Montserrat } from "next/font/google"
 import LayoutAd from "@/components/admin/LayoutAd"
 import { Toaster } from "@/components/ui/toaster"
