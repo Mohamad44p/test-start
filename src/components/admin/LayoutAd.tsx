@@ -126,7 +126,7 @@ export default function LayoutAd({ children }: {
             </Breadcrumb>
           </div>
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <main className="flex flex-1 flex-col gap-4 p-4 pt-0 --font-montserrat">
           {children}
         </main>
       </SidebarInset>

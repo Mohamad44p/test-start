@@ -41,7 +41,7 @@ const ProgramCard = ({ backImage, programName, description, nameColor, descColor
       </CardContent>
 
       <CardFooter className="p-5 flex gap-3">
-        <Button
+        <Button 
           variant="outline"
           className="w-full py-2.5 text-sm font-semibold text-[#1b316e] border-[#1b316e] hover:bg-[#1b316e] hover:text-white transition-all duration-300"
         >

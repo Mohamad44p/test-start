@@ -148,7 +148,7 @@ export async function createVideoGallery(
       title_ar: video.title_ar,
       description_en: video.description_en || null,
       description_ar: video.description_ar || null,
-      type: video.type.toUpperCase() as VideoType,  // Convert to uppercase to match enum
+      type: video.type as VideoType,
       thumbnail: video.thumbnail || null,
       featured: video.featured,
     }))
