@@ -1,24 +1,54 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { jwtVerify } from "jose"
 
 const locales = ["en", "ar"];
 const defaultLocale = "en";
 
-export function middleware(request: NextRequest) {
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key");
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const savedLocale = request.cookies.get("NEXT_LOCALE")?.value;
 
-  // Handle video files
+  if (pathname.startsWith("/admin")) {
+    const token = request.cookies.get("ADMIN_TOKEN")?.value
+
+    console.log("Middleware - Token:", token ? "Present" : "Not present")
+
+    // Allow access to login page
+    if (pathname === "/admin/login") {
+      if (token) {
+        try {
+          await jwtVerify(token, JWT_SECRET)
+          return NextResponse.redirect(new URL("/admin", request.url))
+        } catch (error) {
+          console.error("Token verification failed:", error)
+        }
+      }
+      return NextResponse.next()
+    }
+
+    if (!token) {
+      console.log("Middleware - No token, redirecting to login")
+      return NextResponse.redirect(new URL("/admin/login", request.url))
+    }
+
+    try {
+      await jwtVerify(token, JWT_SECRET)
+      return NextResponse.next() 
+    } catch (error) {
+      console.error("Token verification failed:", error)
+      return NextResponse.redirect(new URL("/admin/login", request.url))
+    }
+  }
   if (request.nextUrl.pathname.startsWith("/videos/")) {
-    // Remove any language prefix from the path
     const path = request.nextUrl.pathname.replace(/^\/[a-z]{2}\//, "/");
     const response = NextResponse.rewrite(new URL(path, request.url));
 
-    // Add necessary headers for video streaming
     response.headers.set("Accept-Ranges", "bytes");
     response.headers.set("Content-Type", "video/mp4");
 
-    // Add CSP headers
     response.headers.set(
       "Content-Security-Policy",
       `
@@ -33,48 +63,41 @@ export function middleware(request: NextRequest) {
         frame-ancestors 'self';
       `
         .replace(/\s{2,}/g, " ")
-        .trim(),
+        .trim()
     );
 
-    // Set cookie policies
     response.headers.set("Set-Cookie", "SameSite=Lax; Secure; Path=/;");
 
-    // Set permissions policy
     response.headers.set(
       "Permissions-Policy",
-      "camera=(), microphone=(), geolocation=()",
+      "camera=(), microphone=(), geolocation=()"
     );
 
-    // Add additional security headers
     response.headers.set("X-Frame-Options", "SAMEORIGIN");
     response.headers.set(
       "Permissions-Policy",
-      "accelerometer=(), autoplay=(), camera=(), clipboard-write=(), encrypted-media=(), fullscreen=*, gyroscope=(), magnetometer=(), microphone=(), picture-in-picture=*, sync-xhr=(), usb=()",
+      "accelerometer=(), autoplay=(), camera=(), clipboard-write=(), encrypted-media=(), fullscreen=*, gyroscope=(), magnetometer=(), microphone=(), picture-in-picture=*, sync-xhr=(), usb=()"
     );
 
     return response;
   }
 
-  // Handle video file requests
-  if (request.nextUrl.pathname.startsWith('/uploads/videos/')) {
+  if (request.nextUrl.pathname.startsWith("/uploads/videos/")) {
     const response = NextResponse.next();
-    
-    // Add proper headers for video streaming
-    response.headers.set('Accept-Ranges', 'bytes');
-    response.headers.set('Content-Type', 'video/mp4');
-    
-    // Add CORS headers
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Range');
-    
+
+    response.headers.set("Accept-Ranges", "bytes");
+    response.headers.set("Content-Type", "video/mp4");
+
+    response.headers.set("Access-Control-Allow-Origin", "*");
+    response.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+    response.headers.set("Access-Control-Allow-Headers", "Range");
+
     return response;
   }
 
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
-    pathname.startsWith("/admin") ||
     pathname.match(/\.(ico|jpg|jpeg|png|gif|svg|css|js)$/)
   ) {
     return NextResponse.next();
@@ -101,14 +124,11 @@ export function middleware(request: NextRequest) {
       maxAge: 31536000, // 1 year
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
-      partitioned: true,
     });
   }
 
-  // Set cookie policies
-  response.headers.set("Set-Cookie", "SameSite=Lax; Secure; Path=/; Partitioned");
+  response.headers.set("Set-Cookie", "SameSite=Lax; Secure; Path=/;");
 
-  // Add CSP headers
   response.headers.set(
     "Content-Security-Policy",
     `
@@ -123,25 +143,30 @@ export function middleware(request: NextRequest) {
       frame-ancestors 'self';
     `
       .replace(/\s{2,}/g, " ")
-      .trim(),
+      .trim()
   );
 
-  // Set permissions policy
   response.headers.set(
     "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=()",
+    "camera=(), microphone=(), geolocation=()"
   );
 
-  // Add additional security headers
   response.headers.set("X-Frame-Options", "SAMEORIGIN");
   response.headers.set(
     "Permissions-Policy",
-    "accelerometer=(), autoplay=(), camera=(), clipboard-write=(), encrypted-media=(), fullscreen=*, gyroscope=(), magnetometer=(), microphone=(), picture-in-picture=*, sync-xhr=(), usb=()",
+    "accelerometer=(), autoplay=(), camera=(), clipboard-write=(), encrypted-media=(), fullscreen=*, gyroscope=(), magnetometer=(), microphone=(), picture-in-picture=*, sync-xhr=(), usb=()"
   );
 
   return response;
 }
 
 export const config = {
-  matcher: ["/videos/:path*", "/((?!api|_next|admin|assets|favicon.ico).*)", "/uploads/videos/:path*", '/api/upload-video', '/api/delete-video'],
+  matcher: [
+    "/admin/:path*",
+    "/videos/:path*",
+    "/((?!api|_next|admin|assets|favicon.ico).*)",
+    "/uploads/videos/:path*",
+    "/api/upload-video",
+    "/api/delete-video",
+  ],
 };
