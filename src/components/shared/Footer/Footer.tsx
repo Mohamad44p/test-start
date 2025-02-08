@@ -18,7 +18,6 @@ export default function Footer({ footerData }: FooterProps) {
   const isInView = useInView(footerRef, { once: false })
   const { currentLang } = useLanguage()
 
-  // Provide default values if footerData is undefined
   const {
     gradientColor = "#862996",
     titleColor = "#1b316e",

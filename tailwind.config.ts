@@ -76,7 +76,7 @@ export default {
   		},
   		fontFamily: {
   			serif: [
-  				'var(--font-noto-serif)'
+  				'Almarai'
   			],
   			sans: [
   				'var(--font-montserrat)'
