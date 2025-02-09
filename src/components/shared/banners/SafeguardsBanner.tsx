@@ -57,7 +57,7 @@ const SafeguardsBanner: React.FC<SafeguardsBannerProps> = ({ safeguard }) => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="relative w-full aspect-square max-w-md mx-auto">
+            <div className="relative w-full aspect-square max-w-md mx-auto hidden md:flex">
               <div className="absolute inset-0 bg-gradient-to-br from-[#4169E1]/20 to-[#000080]/20 rounded-full blur-3xl" />
               {safeguard.imageUrl ? (
                 <div className="relative w-full h-full">

@@ -54,92 +54,81 @@ export function SafeScroll({ safeguards = [], initialLang }: SafeScrollProps) {
       {(safeguards || []).map((safeguard, index) => (
         <div
           key={index}
-          className="h-screen flex items-center justify-center sticky top-0"
+          className="min-h-[100dvh] flex items-center justify-center sticky top-0 overflow-hidden"
         >
           <motion.div
             className="w-full h-full absolute inset-0"
             style={{
-              background: `linear-gradient(to bottom right, ${safeguard.bgColor}, ${safeguard.bgColor}cc)`,
+              background: `linear-gradient(135deg, ${safeguard.bgColor}dd, ${safeguard.bgColor}99)`,
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: currentIndex === index ? 1 : 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.8 }}
           />
-          <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between relative z-10">
-            <div className="w-full md:w-1/2 mb-8 md:mb-0">
-              <motion.div
-                className="space-y-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{
-                  opacity: currentIndex === index ? 1 : 0,
-                  y: currentIndex === index ? 0 : 20,
-                }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <span className="text-gray-600 text-lg font-semibold">
+          <div className="container mx-auto px-4 lg:px-8 py-6 sm:py-12 flex flex-col lg:flex-row items-center justify-between relative z-10 gap-6 sm:gap-12">
+            <motion.div 
+              className="w-full lg:w-1/2 max-w-2xl"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{
+                opacity: currentIndex === index ? 1 : 0,
+                x: currentIndex === index ? 0 : -50,
+              }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+            >
+              <div className="space-y-4 sm:space-y-8">
+                <span className="inline-block px-3 py-1 sm:px-4 sm:py-1.5 bg-gray-800/10 rounded-full text-gray-700 text-base sm:text-lg font-medium">
                   {safeguard.domain}
                 </span>
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-800">
-                  {currentLang === "ar"
-                    ? safeguard.title_ar
-                    : safeguard.title_en}
+                <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 leading-tight">
+                  {currentLang === "ar" ? safeguard.title_ar : safeguard.title_en}
                 </h2>
-                <p className="text-lg text-gray-600">
-                  {currentLang === "ar"
-                    ? safeguard.tagline_ar
-                    : safeguard.tagline_en}
+                <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 font-medium">
+                  {currentLang === "ar" ? safeguard.tagline_ar : safeguard.tagline_en}
                 </p>
-                <p className="text-base text-gray-700">
-                  {currentLang === "ar"
-                    ? safeguard.description_ar
-                    : safeguard.description_en}
+                <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
+                  {currentLang === "ar" ? safeguard.description_ar : safeguard.description_en}
                 </p>
                 {safeguard.attachmentUrl && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="inline-flex items-center px-4 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#152756] to-[#862996] text-white rounded-xl 
+                    hover:from-[#1a326e] hover:to-[#9d31b3] transition-all duration-300 shadow-lg hover:shadow-2xl text-sm sm:text-base"
+                    onClick={() => {
+                      const filename =
+                        safeguard.attachmentUrl?.split("/").pop() ||
+                        "document";
+                      handleDownload(
+                        `/api/download?url=${encodeURIComponent(
+                          safeguard.attachmentUrl!
+                        )}`,
+                        filename
+                      );
+                    }}
                   >
-                    <button
-                      onClick={() => {
-                        const filename =
-                          safeguard.attachmentUrl?.split("/").pop() ||
-                          "document";
-                        handleDownload(
-                          `/api/download?url=${encodeURIComponent(
-                            safeguard.attachmentUrl!
-                          )}`,
-                          filename
-                        );
-                      }}
-                      className="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-[#152756] to-[#862996] text-white rounded-lg 
-                      hover:from-[#1a326e] hover:to-[#9d31b3] transition-all duration-300 shadow-lg hover:shadow-xl 
-                      transform hover:scale-105 active:scale-95 font-medium"
+                    <svg
+                      className="w-5 h-5 mr-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      <svg
-                        className="w-5 h-5 mr-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      <span className="tracking-wide">
-                        {currentLang === "ar"
-                          ? "تحميل المستند"
-                          : "Download Document"}
-                      </span>
-                    </button>
-                  </motion.div>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    <span className="tracking-wide">
+                      {currentLang === "ar"
+                        ? "تحميل المستند"
+                        : "Download Document"}
+                    </span>
+                  </motion.button>
                 )}
-              </motion.div>
-            </div>
-            <div className="w-full md:w-1/2">
+              </div>
+            </motion.div>
+            <div className="w-full sm:w-4/5 lg:w-1/2 max-w-lg lg:max-w-2xl">
               <SafeAnimation
                 imageUrl={safeguard.imageUrl}
                 index={index}

@@ -32,7 +32,7 @@ export default function ReusableHero({
   features,
 }: ReusableHeroProps) {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-pink-50 to-white">
+    <div className="relative overflow-hidden bg-gradient-to-r from-purple-100 via-white to-blue-100 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div>
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -55,7 +55,7 @@ export default function ReusableHero({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-4xl lg:text-6xl font-bold tracking-tight text-gray-900"
+                  className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900"
                 >
                   {title}{" "}
                   <span className="text-blue-600 relative">
@@ -83,7 +83,7 @@ export default function ReusableHero({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-xl text-gray-600 max-w-2xl"
+                  className="text-xl sm:text-2xl text-gray-600 max-w-2xl"
                 >
                   {description}
                 </motion.p>
@@ -113,14 +113,14 @@ export default function ReusableHero({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="relative lg:h-[600px]"
+              className="flex justify-center items-center relative lg:h-[600px]"
             >
               <Image
                 src={imageSrc}
                 alt={imageAlt}
                 width={1200}
                 height={1600}
-                className="object-contain"
+                className="object-contain rounded-lg shadow-lg"
                 priority
               />
             </motion.div>
@@ -131,11 +131,11 @@ export default function ReusableHero({
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="grid md:grid-cols-3 gap-8 pb-20"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 pb-20 mt-12"
         >
           {features.map((feature, index) => (
-            <div key={index} className="bg-white rounded-2xl p-8 shadow-lg shadow-blue-100">
-              <div className="size-12 rounded-lg bg-blue-100 flex items-center justify-center mb-6">
+            <div key={index} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="h-12 w-12 rounded-lg bg-blue-100 flex items-center justify-center mb-6">
                 {feature.icon}
               </div>
               <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
