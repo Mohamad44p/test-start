@@ -1,23 +1,24 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import Image from "next/image"
-import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useLanguage } from "@/context/LanguageContext"
-import type { Safeguard } from "@/types/safeguard"
+import type React from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/context/LanguageContext";
+import type { Safeguard } from "@/types/safeguard";
 
 interface SafeguardsBannerProps {
-  safeguard: Safeguard
+  safeguard: Safeguard;
 }
 
 const SafeguardsBanner: React.FC<SafeguardsBannerProps> = ({ safeguard }) => {
-  const { currentLang } = useLanguage()
+  const { currentLang } = useLanguage();
 
-  const title = currentLang === "ar" ? safeguard.title_ar : safeguard.title_en
-  const description = currentLang === "ar" ? safeguard.description_ar : safeguard.description_en
+  const title = currentLang === "ar" ? safeguard.title_ar : safeguard.title_en;
+  const description =
+    currentLang === "ar" ? safeguard.description_ar : safeguard.description_en;
 
   return (
     <div
@@ -32,11 +33,18 @@ const SafeguardsBanner: React.FC<SafeguardsBannerProps> = ({ safeguard }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-[#142451]">{title}</h2>
-            <p className="text-lg sm:text-xl text-[#142451] max-w-2xl">{description}</p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-[#142451]">
+              {title}
+            </h2>
+            <p className="text-lg sm:text-xl text-[#142451] max-w-2xl">
+              {description}
+            </p>
             <div className="flex flex-wrap gap-4">
               {["ESMF", "SEP", "LMP", "ESCP"].map((item) => (
-                <div key={item} className="bg-[#4169E1]/10 text-[#000080] rounded-lg px-3 py-1 text-sm font-medium">
+                <div
+                  key={item}
+                  className="bg-[#4169E1]/10 text-[#000080] rounded-lg px-3 py-1 text-sm font-medium"
+                >
                   {item}
                 </div>
               ))}
@@ -72,9 +80,7 @@ const SafeguardsBanner: React.FC<SafeguardsBannerProps> = ({ safeguard }) => {
                 </div>
               ) : (
                 <div>
-                  <p
-                    className="text-[#142451] text-center text-xl font-medium bg-[#4169E1]/10 rounded-lg p-4"
-                  >
+                  <p className="text-[#142451] text-center text-xl font-medium bg-[#4169E1]/10 rounded-lg p-4">
                     there is no image for this safeguard
                   </p>
                 </div>
@@ -84,8 +90,7 @@ const SafeguardsBanner: React.FC<SafeguardsBannerProps> = ({ safeguard }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SafeguardsBanner
-
+export default SafeguardsBanner;
