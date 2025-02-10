@@ -134,7 +134,7 @@ export default function CreateBlog() {
 
   return (
     <div className="container mx-auto py-10">
-      <Card className="w-full max-w-screen-2xl mx-auto">
+      <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="text-3xl font-bold">Create Blog Post</CardTitle>
           <CardDescription>
@@ -238,24 +238,24 @@ export default function CreateBlog() {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="content_en"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Content (English)</FormLabel>
-                          <FormControl>
-                            <RichTextEditor
-                              content={field.value}
-                              onChange={field.onChange}
-                              dir="ltr"
-                              placeholder="Write your content in English..."
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                   <FormField
+                    control={form.control}
+                    name="content_en"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Content (English)</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            content={field.value}
+                            onChange={field.onChange}
+                            dir="ltr"
+                            placeholder="Write your content in English..."
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   </div>
                 </TabsContent>
                 <TabsContent value="arabic">
@@ -300,15 +300,17 @@ export default function CreateBlog() {
                       control={form.control}
                       name="content_ar"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="col-span-2">
                           <FormLabel>Content (Arabic)</FormLabel>
                           <FormControl>
-                            <RichTextEditor
-                              content={field.value}
-                              onChange={field.onChange}
-                              dir="rtl"
-                              placeholder="Write your content in Arabic..."
-                            />
+                            <div className="min-h-[300px] border rounded-md">
+                              <RichTextEditor
+                                content={field.value}
+                                onChange={field.onChange}
+                                dir="rtl"
+                                placeholder="اكتب المحتوى بالعربية..."
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -392,7 +394,7 @@ export default function CreateBlog() {
                           </FormDescription>
                         </div>
                       </FormItem>
-                    )}
+                    )} 
                   />
                 </div>
                 <FormField

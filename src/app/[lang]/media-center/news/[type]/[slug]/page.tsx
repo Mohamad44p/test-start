@@ -1,5 +1,5 @@
 import { getPostBySlug, getRelatedPosts } from "@/app/actions/fetch-posts";
-import { toPostType } from "@/types/blog";
+import { PostType, toPostType } from "@/types/blog";
 import { BlogHeader } from "@/components/News-blog/BlogHeader";
 import { RelatedPosts } from "@/components/News-blog/RelatedPosts";
 import { ShareButtons } from "@/components/News-blog/ShareButtons";
@@ -16,14 +16,24 @@ interface Props {
   }>;
 }
 
-export default async function BlogPostPage(props: Props) {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ lang: string; type: string; slug: string }>;
+  }
+) {
   const params = await props.params;
+  const { data: post } = await getPostBySlug(params.slug);
 
-  const {
-    lang,
-    type,
-    slug
-  } = params;
+  if (!post) return {};
+
+  return {
+    title: params.lang === 'ar' ? post.title_ar : post.title_en,
+    description: params.lang === 'ar' ? post.description_ar : post.description_en,
+  };
+}
+
+export default async function PostPage({ params }: Props) {
+  const { lang, type, slug } = await params;
 
   const { data: post, error } = await getPostBySlug(slug);
 
@@ -31,8 +41,26 @@ export default async function BlogPostPage(props: Props) {
     notFound();
   }
 
-  // Convert string type to PostType enum before passing to getRelatedPosts
-  const { data: relatedPosts = [] } = await getRelatedPosts(toPostType(post.type), post.slug);
+  // Update type validation to be case-insensitive
+  if (post.type.toLowerCase() !== type.toLowerCase()) {
+    notFound();
+  }
+
+  const postType = toPostType(post.type);
+  const { data: relatedPosts = [] } = await getRelatedPosts(postType, post.slug);
+
+  const getTypeTitle = (type: string) => {
+    switch (type.toLowerCase()) {
+      case PostType.BLOG.toLowerCase():
+        return lang === 'ar' ? 'المدونة' : 'Blog';
+      case PostType.PUBLICATION.toLowerCase():
+        return lang === 'ar' ? 'المنشورات' : 'Publications';
+      case PostType.ANNOUNCEMENT.toLowerCase():
+        return lang === 'ar' ? 'الإعلانات' : 'Announcements';
+      default:
+        return '';
+    }
+  };
 
   return (
     <article className="min-h-screen pb-20">
@@ -42,7 +70,7 @@ export default async function BlogPostPage(props: Props) {
         image={post.imageUrl}
         date={post.createdAt}
         readTime={post.readTime}
-        type={post.type}
+        type={getTypeTitle(post.type)}
       />
       
       <div className="container mx-auto px-4 py-12">
@@ -67,10 +95,9 @@ export default async function BlogPostPage(props: Props) {
             </Link>
           </div>
 
-          {/* Main Content */}
           <div className="lg:col-span-8 space-y-8">
             <div 
-              className="prose prose-lg max-w-none"
+              className="prose prose-lg max-w-none dark:prose-invert"
               dangerouslySetInnerHTML={{ 
                 __html: lang === 'ar' ? post.content_ar : post.content_en 
               }}

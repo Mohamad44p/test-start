@@ -1,17 +1,19 @@
 import { ContentGrid } from "@/components/News-blog/content-grid"
 import { getPostsByType } from "@/app/actions/fetch-posts"
-import {toPostType } from "@/types/blog"
+import { PostType } from "@/types/blog"
 
-export const dynamic = "force-dynamic"
+export const metadata = {
+  title: 'Publications & Reports',
+}
 
-export default async function Publications(props: { params: Promise<{ lang: string }> }) {
+export default async function PublicationsPage(props: { params: Promise<{ lang: string }> }) {
   const params = await props.params;
 
   const {
     lang
   } = params;
 
-  const { data: publications = [], error } = await getPostsByType(toPostType('publication'))
+  const { data: publications = [], error } = await getPostsByType(PostType.PUBLICATION)
 
   if (error) {
     return (
@@ -31,11 +33,13 @@ export default async function Publications(props: { params: Promise<{ lang: stri
     : 'Explore our latest publications and specialized reports'
 
   return (
-    <ContentGrid 
-      title={title}
-      subtitle={subtitle}
-      items={publications}
-    />
+    <div className="py-12">
+      <ContentGrid 
+        title={title}
+        subtitle={subtitle}
+        items={publications}
+      />
+    </div>
   )
 }
 

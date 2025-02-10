@@ -59,7 +59,17 @@ export function isPostType(type: string): type is PostType {
   return Object.values(PostType).includes(type as PostType);
 }
 
+// Update the conversion function to be case-insensitive
 export function toPostType(type: string): PostType {
-  if (isPostType(type)) return type;
-  throw new Error(`Invalid post type: ${type}`);
+  const normalizedType = type.toLowerCase();
+  switch (normalizedType) {
+    case 'blog':
+      return PostType.BLOG;
+    case 'publication':
+      return PostType.PUBLICATION;
+    case 'announcement':
+      return PostType.ANNOUNCEMENT;
+    default:
+      return PostType.BLOG;
+  }
 }

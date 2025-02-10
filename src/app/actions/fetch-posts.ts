@@ -50,63 +50,28 @@ export const getFeaturedPosts = cache(async (): Promise<ApiResponse<BlogPost[]>>
   }
 })
 
-export const getPostsByType = cache(async (type: string): Promise<ApiResponse<BlogPost[]>> => {
-  if (!type) {
-    return { success: false, error: 'Post type is required' }
-  }
-
+export async function getPostsByType(type: PostType | string) {
   try {
+    const postType = typeof type === 'string' ? type.toLowerCase() : type;
     const posts = await db.post.findMany({
       where: {
-        type: type.toLowerCase(),
-        published: true
-      },
-      select: {
-        id: true,
-        type: true,
-        slug: true,
-        title_en: true,
-        title_ar: true,
-        description_en: true,
-        description_ar: true,
-        content_en: true,
-        content_ar: true,
-        imageUrl: true,
-        readTime: true,
+        type: postType,
         published: true,
-        featured: true,
-        authorId: true,
-        createdAt: true,
-        updatedAt: true,
-        tags: {
-          select: {
-            id: true,
-            name_en: true,
-            name_ar: true,
-            slug: true
-          }
-        }
-      }
-    }) as unknown as BlogPost[]
-    
-    if (!posts || posts.length === 0) {
-      return { 
-        success: true, 
-        data: [], 
-        error: `No ${type} posts found` 
-      }
-    }
-    
-    return { success: true, data: posts }
+      },
+      include: {
+        tags: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return { data: posts };
   } catch (error) {
-    console.error(`Error fetching ${type} posts:`, error)
-    return { 
-      success: false, 
-      error: `Failed to fetch ${type} posts`,
-      data: [] 
-    }
+    console.error('Failed to fetch posts:', error);
+    return { error: 'Failed to fetch posts' };
   }
-})
+}
 
 export const getAnnouncementsByCategory = cache(async (category: string): Promise<ApiResponse<BlogPost[]>> => {
   try {
@@ -141,25 +106,33 @@ export const getAnnouncementsByCategory = cache(async (category: string): Promis
   }
 })
 
-export const getPostBySlug = cache(async (slug: string): Promise<ApiResponse<BlogPost>> => {
+export async function getPostBySlug(slug: string) {
   try {
     const post = await db.post.findUnique({
-      where: { slug },
+      where: {
+        slug: slug,
+      },
       include: {
-        tags: true
-      }
-    }) as unknown as BlogPost
+        tags: true,
+      },
+    })
 
     if (!post) {
-      return { success: false, error: 'Post not found' }
+      return { error: 'Post not found' }
     }
 
-    return { success: true, data: post }
+    // Normalize the post type to lowercase
+    return { 
+      data: {
+        ...post,
+        type: post.type.toLowerCase()
+      }
+    };
   } catch (error) {
-    console.error('Error fetching post:', error)
-    return { success: false, error: 'Failed to fetch post' }
+    console.error('Failed to fetch post:', error)
+    return { error: 'Failed to fetch post' }
   }
-})
+}
 
 export const getRelatedPosts = cache(async (
   type: PostType | string, 

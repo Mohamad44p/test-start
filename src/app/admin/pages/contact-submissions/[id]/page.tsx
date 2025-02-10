@@ -7,11 +7,12 @@ import { notFound } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 
-export default async function ContactSubmissionDetail({
-  params,
-}: {
-  params: { id: string }
-}) {
+export default async function ContactSubmissionDetail(
+  props: {
+    params: Promise<{ id: string }>
+  }
+) {
+  const params = await props.params;
   const submission = await getContactSubmission(params.id)
 
   if (!submission) {
