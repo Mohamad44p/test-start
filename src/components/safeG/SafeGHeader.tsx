@@ -21,7 +21,7 @@ export default function SafeGHeader({ initialLang }: SafeGHeaderProps) {
         initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-purple-900 to-gray-900 bg-clip-text text-transparent"
+        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold p-3 tracking-tight bg-gradient-to-r from-gray-900 via-purple-900 to-gray-900 bg-clip-text text-transparent"
       >
         {currentLang === "ar" ? "إرشادات السلامة لدينا" : "Our Safety Guidelines"}
       </motion.h2>

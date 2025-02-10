@@ -77,7 +77,7 @@ export default function Footer({ footerData }: FooterProps) {
     if (currentLang === "ar") {
       return (
         <motion.div
-          className="text-6xl md:text-8xl font-bold"
+          className="text-6xl p-3 md:text-8xl font-bold"
           style={{
             background: `linear-gradient(135deg, ${titleColor}, ${gradientColor})`,
             backgroundClip: "text",

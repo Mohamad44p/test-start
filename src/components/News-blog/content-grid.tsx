@@ -21,6 +21,14 @@ export function ContentGrid({ title, subtitle, items = [] }: ContentGridProps) {
 
   const types = ["all", ...new Set(items.map((item) => item.type))];
 
+  // Add translations for type labels
+  const getTypeLabel = (type: string) => {
+    if (type === "all") {
+      return currentLang === "ar" ? "الكل" : "All";
+    }
+    return type;
+  };
+
   const localizedItems = useMemo(() => items.map((item) => ({
     id: item.id,
     type: item.type as PostType, // Type assertion here
@@ -62,7 +70,11 @@ export function ContentGrid({ title, subtitle, items = [] }: ContentGridProps) {
 
       <div className="flex flex-col gap-6 max-w-xl mx-auto mb-12">
         <Input
-          placeholder="Search by title, description, or tags..."
+          placeholder={
+            currentLang === "ar"
+              ? "ابحث بواسطة العنوان أو الوصف أو الوسوم..."
+              : "Search by title, description, or tags..."
+          }
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full text-center"
@@ -76,7 +88,7 @@ export function ContentGrid({ title, subtitle, items = [] }: ContentGridProps) {
               className="cursor-pointer text-sm capitalize px-4 py-1.5"
               onClick={() => setSelectedType(type)}
             >
-              {type}
+              {getTypeLabel(type)}
             </Badge>
           ))}
         </div>
@@ -84,7 +96,9 @@ export function ContentGrid({ title, subtitle, items = [] }: ContentGridProps) {
 
       {filteredItems.length === 0 ? (
         <p className="text-center text-muted-foreground text-lg">
-          No items found matching your criteria.
+          {currentLang === "ar"
+            ? "لا توجد عناصر تطابق معايير البحث."
+            : "No items found matching your criteria."}
         </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

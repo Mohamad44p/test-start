@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Preloader from "@/components/preloader/Preloader";
 import { LoadingProvider } from "@/context/LoadingContext";
+import localFont from 'next/font/local';
+import { Montserrat } from "next/font/google";
 import LenisProvider from "@/components/lenis/ReactLenisW";
 import { ConditionalNavbar } from "@/components/shared/Nav/ConditionalNavbar";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/context/LanguageContext";
 import FooterWrapper from "@/components/shared/Footer/FooterWrapper";
-import { Montserrat , Almarai } from "next/font/google";
-
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -15,14 +15,11 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
-
-const almarai = Almarai({
-  weight: '400',
-  subsets: ["arabic"],
-  variable: "--font-almarai",
+const neoSans = localFont({
+  src: './fonts/neo-sans-arabic/Neo Sans Arabic Regular.ttf',
+  variable: "--font-neo-sans",
   display: "swap",
-}); 
-
+});
 
 export const metadata: Metadata = {
   title: "Tech Start",
@@ -49,7 +46,7 @@ export default async function LanguageLayout(
       className={
         params.lang === 'en'
           ? `font-sans ${montserrat.variable}`
-          : `font-serif ${almarai.variable}`
+          : `font-serif ${neoSans.variable}`
       }
     >
       <LoadingProvider>

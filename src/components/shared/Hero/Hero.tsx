@@ -132,14 +132,13 @@ const Hero = ({ steps }: HeroProps) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.6 }}
-                    className="block bg-clip-text text-transparent"
+                    className="block bg-clip-text text-transparent py-5"
                     style={{
                       backgroundImage: `linear-gradient(135deg, ${currentSteps[currentStep].color}, ${currentSteps[(currentStep + 1) % currentSteps.length].color})`,
                     }}
                   >
                     {currentSteps[currentStep].title}
                   </motion.span>
-                  <span className="block mt-2">{currentLang === "ar" ? "حلول" : "Solutions"}</span>
                 </h1>
               </div>
 

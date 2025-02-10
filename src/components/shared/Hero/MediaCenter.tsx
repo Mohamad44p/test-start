@@ -139,7 +139,7 @@ export function MediaCenter({ content }: MediaCenterProps) {
       <div className="relative text-center space-y-3 mb-16">
         <h2
           id="media-center-title"
-          className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-[#1b316e] to-[#862996] bg-clip-text text-transparent animate-fade-up"
+          className="text-4xl md:text-5xl p-4 font-bold tracking-tight bg-gradient-to-r from-[#1b316e] to-[#862996] bg-clip-text text-transparent animate-fade-up"
         >
           {currentLang === "ar" ? "المركز الإعلامي" : "Media Center"}
         </h2>

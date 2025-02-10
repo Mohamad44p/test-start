@@ -59,7 +59,7 @@ export default function ProgramsSec({ programs }: ProgramsSecProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-[#1b316e] to-[#862996] bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 p-4 bg-gradient-to-r from-[#1b316e] to-[#862996] bg-clip-text text-transparent">
             {currentLang === "ar" ? "استكشف برامجنا" : "Explore Our Programs"}
           </h2>
           <div className="w-32 h-1.5 bg-gradient-to-r from-[#1b316e] to-[#862996] mx-auto rounded-full mb-16" />
