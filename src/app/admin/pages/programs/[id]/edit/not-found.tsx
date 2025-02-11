@@ -7,7 +7,7 @@ export default function NotFound() {
       <h2 className="text-2xl font-bold">Program Not Found</h2>
       <p className="text-gray-500">The program you&apos;re looking for doesn&apos;t exist.</p>
       <Button asChild>
-        <Link href="/admin/pages/programs">Back to Programs</Link>
+        <Link href="/admin/pages/programs" passHref prefetch>Back to Programs</Link>
       </Button>
     </div>
   );

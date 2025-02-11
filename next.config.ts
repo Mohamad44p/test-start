@@ -3,7 +3,7 @@ const nextConfig = {
   experimental: {
     staleTimes: {
       dynamic: 60,
-      static: 60,
+      static: 3600,
     },
     optimizeCss: true,
     optimisticClientCache: true,

@@ -16,7 +16,7 @@ interface MediaCenterProps {
 
 export function MediaCenter({ content }: MediaCenterProps) {
   const { currentLang } = useLanguage()
-  const bgColor = "#1b316e" // Updated primary color
+  const bgColor = "#1b316e" 
 
   const gradientStyle = {
     backgroundImage: `
@@ -51,7 +51,7 @@ export function MediaCenter({ content }: MediaCenterProps) {
       ),
       className: "md:col-span-2",
       icon: <Copy />,
-      link: content?.latestNews ? `/blog/${content.latestNews.slug}` : "/blog",
+      link: content?.latestNews ? `/${currentLang}/media-center/news/blog/${content.latestNews.slug}` : `/${currentLang}/media-center/news/blog`,
     },
     {
       title: currentLang === "ar" ? "البيانات الصحفية" : "Press Releases",
@@ -74,7 +74,7 @@ export function MediaCenter({ content }: MediaCenterProps) {
       ),
       className: "md:col-span-1",
       icon: <File />,
-      link: content?.pressReleases ? `/announcements/${content.pressReleases.slug}` : "/announcements",
+      link: content?.pressReleases ? `/${currentLang}/media-center/news/announcement/${content.pressReleases.slug}` : `/${currentLang}/media-center/news/announcement`,
     },
     {
       title: currentLang === "ar" ? "معرض الصور" : "Photo Gallery",
@@ -97,7 +97,7 @@ export function MediaCenter({ content }: MediaCenterProps) {
       ),
       className: "md:col-span-1",
       icon: <Camera />,
-      link: "/gallery",
+      link: `/${currentLang}/media-center/gallery/photos`,
     },
     {
       title: currentLang === "ar" ? "قصص الفيديو" : "Video Stories",
@@ -120,7 +120,7 @@ export function MediaCenter({ content }: MediaCenterProps) {
       ),
       className: "md:col-span-2",
       icon: <Video />,
-      link: "/videos",
+      link: `/${currentLang}/media-center/gallery/videos`,
     },
   ]
 
@@ -153,22 +153,21 @@ export function MediaCenter({ content }: MediaCenterProps) {
 
       <BentoGrid className="relative max-w-4xl mx-auto md:auto-rows-[20rem] gap-4 p-4 bg-white/10 backdrop-blur-sm rounded-2xl shadow-lg">
         {items.map((item, i) => (
-          <BentoGridItem
-            key={i}
-            title={item.title}
-            description={item.description}
-            header={item.header}
-            className={`${item.className} group hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm relative hover:-translate-y-1`}
-            icon={item.icon}
+          <Link 
+            key={i} 
+            href={item.link}
+            className={`${item.className} block group hover:-translate-y-1 transition-all duration-300`}
           >
-            <Link
-              href={item.link}
-              className="absolute inset-0 focus:ring-2 focus:ring-[#862996] focus:outline-none rounded-xl"
+            <BentoGridItem
+              title={item.title}
+              description={item.description}
+              header={item.header}
+              className="h-full hover:shadow-xl bg-white/90 backdrop-blur-sm relative"
+              icon={item.icon}
             >
-              <span className="sr-only">{currentLang === "ar" ? `عرض ${item.title}` : `View ${item.title}`}</span>
-            </Link>
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1b316e] to-[#862996] opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-xl" />
-          </BentoGridItem>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1b316e] to-[#862996] opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-xl" />
+            </BentoGridItem>
+          </Link>
         ))}
       </BentoGrid>
     </motion.section>

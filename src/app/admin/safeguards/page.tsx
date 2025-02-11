@@ -42,7 +42,7 @@ export default async function SafeguardsPage() {
       <div className="container mx-auto py-10">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Safeguards Management</h1>
-          <Link href="/admin/safeguards/create">
+          <Link href="/admin/safeguards/create" passHref prefetch>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
               Create Safeguard

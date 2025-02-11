@@ -88,7 +88,7 @@ export const columns: ColumnDef<Focusarea>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link href={`/admin/pages/focusareas/${focusarea.id}`}>
+                <Link href={`/admin/pages/focusareas/${focusarea.id}`} prefetch passHref>
                   Edit
                 </Link>
               </DropdownMenuItem>

@@ -33,7 +33,7 @@ export default async function ContactSubmissionDetail(
   return (
     <div className="container mx-auto py-10 max-w-4xl">
       <div className="mb-6">
-        <Link href="/admin/pages/contact-submissions">
+        <Link prefetch passHref href="/admin/pages/contact-submissions">
           <Button variant="ghost" className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Submissions

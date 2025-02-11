@@ -5,7 +5,11 @@ export interface StatData {
   name_ar: string
   value: number
   icon: string
+  suffix_en: string
+  suffix_ar: string
 }
+
+export type LanguageType = 'en' | 'ar';
 
 interface ApiSuccess<T> {
   success: true
@@ -20,6 +24,4 @@ interface ApiError {
 }
 
 export type ApiResponse<T> = ApiSuccess<T> | ApiError
-
-export type LanguageType = 'en' | 'ar';
 

@@ -63,9 +63,11 @@ export interface Position {
   left: number;
   width: number;
   opacity: number;
+  isRtl?: boolean;  // Add optional isRtl property
 }
 
 export interface DropdownProps {
   setPosition: React.Dispatch<React.SetStateAction<Position>>;
   translations: NavTranslations;
+  currentLang?: string;  // Add optional currentLang property
 }

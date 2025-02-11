@@ -8,7 +8,7 @@ export default function CreateImageGa() {
       <div className="flex justify-between items-center mb-5">
         <h1 className="text-2xl font-bold">Create New Gallery</h1>
         <Button asChild>
-          <Link href="/admin/ImageGallery">View All Galleries</Link>
+          <Link prefetch passHref href="/admin/ImageGallery">View All Galleries</Link>
         </Button>
       </div>
       <CreateImaegGallery />

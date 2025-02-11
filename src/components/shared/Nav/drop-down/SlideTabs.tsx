@@ -56,6 +56,7 @@ const Tab = ({
   setPosition: Dispatch<SetStateAction<Position>>;
 }) => {
   const ref = useRef<null | HTMLLIElement>(null);
+  const { currentLang } = useLanguage();
 
   return (
     <li
@@ -69,6 +70,7 @@ const Tab = ({
           left: ref.current.offsetLeft,
           width,
           opacity: 1,
+          isRtl: currentLang === "ar"
         });
       }}
       className="relative z-10 block cursor-pointer px-3 py-1.5 text-base font-medium text-[#1b316e] transition-colors hover:text-white"

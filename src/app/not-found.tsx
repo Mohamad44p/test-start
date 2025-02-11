@@ -60,6 +60,7 @@ export default function NotFound() {
         >
           <Link
             href="/"
+            prefetch
             className="bg-gradient-to-r from-[#872996] to-[#1C69AD] text-white font-bold py-4 px-10 rounded-full inline-block transition-all duration-300 shadow-lg hover:shadow-2xl relative overflow-hidden group"
           >
             <span className="relative z-10">Teleport to Home Base</span>

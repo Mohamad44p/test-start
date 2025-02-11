@@ -35,7 +35,7 @@ export interface ProgramsHero {
   createdAt: Date
   updatedAt: Date
   programPageId: string | null
-  programPage?: ProgramsPages | null
+  programPage: ProgramsPages | null
 }
 
 export interface ProgramsPages {
@@ -44,6 +44,11 @@ export interface ProgramsPages {
   name_ar: string
   createdAt: Date
   updatedAt: Date
+  categoryId: string | null
+}
+
+export type ProgramsHeroWithProgram = Omit<ProgramsHero, 'programPage'> & {
+  programPage: ProgramsPages | null
 }
 
 export type CreateProgramsHeroInput = Omit<ProgramsHero, "id" | "createdAt" | "updatedAt">

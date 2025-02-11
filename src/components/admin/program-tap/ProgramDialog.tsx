@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -23,6 +24,10 @@ import {
   getCategories,
   deleteProgram,
 } from "@/app/actions/program-actions";
+import { CategoryDialog } from "./CategoryDialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card } from "@/components/ui/card";
+import { Pencil, Trash2, Plus } from "lucide-react";
 
 interface ProgramDialogProps {
   programs: ProgramsPages[];
@@ -167,23 +172,31 @@ export function ProgramDialog({ programs, onProgramsUpdate }: ProgramDialogProps
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Manage Programs</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <div className="flex space-x-2">
+        <DialogTrigger asChild>
+          <Button variant="outline">
+            <Plus className="w-4 h-4 mr-2" />
+            Manage Programs
+          </Button>
+        </DialogTrigger>
+        <CategoryDialog 
+          categories={categories} 
+          onCategoriesUpdate={setCategories} 
+        />
+      </div>
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
             {editingProgram ? "Edit Program" : "Create Program"}
           </DialogTitle>
           <DialogDescription>
             {editingProgram
-              ? "Edit the program details here."
-              : "Add a new program here."}
+              ? "Edit the program details below"
+              : "Add a new program to the system"}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
-            {/* Category Selection */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid gap-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="category" className="text-right">
                 Category
@@ -196,7 +209,7 @@ export function ProgramDialog({ programs, onProgramsUpdate }: ProgramDialogProps
                   <SelectContent>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.id}>
-                        {category.name_en}
+                        {category.name_en} ({category.name_ar})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -204,53 +217,6 @@ export function ProgramDialog({ programs, onProgramsUpdate }: ProgramDialogProps
               </div>
             </div>
 
-            {/* New Category Button */}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowNewCategory(!showNewCategory)}
-              className="w-full"
-            >
-              {showNewCategory ? "Cancel New Category" : "Create New Category"}
-            </Button>
-
-            {/* New Category Fields */}
-            {showNewCategory && (
-              <>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="newCategoryEn" className="text-right">
-                    Category (EN)
-                  </Label>
-                  <Input
-                    id="newCategoryEn"
-                    value={newCategoryEn}
-                    onChange={(e) => setNewCategoryEn(e.target.value)}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="newCategoryAr" className="text-right">
-                    Category (AR)
-                  </Label>
-                  <Input
-                    id="newCategoryAr"
-                    value={newCategoryAr}
-                    onChange={(e) => setNewCategoryAr(e.target.value)}
-                    className="col-span-3"
-                    dir="rtl"
-                  />
-                </div>
-                <Button
-                  type="button"
-                  onClick={handleCreateCategory}
-                  className="w-full"
-                >
-                  Create Category
-                </Button>
-              </>
-            )}
-
-            {/* Program Name Fields */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name_en" className="text-right">
                 Name (EN)
@@ -260,6 +226,7 @@ export function ProgramDialog({ programs, onProgramsUpdate }: ProgramDialogProps
                 value={name_en}
                 onChange={(e) => setNameEn(e.target.value)}
                 className="col-span-3"
+                placeholder="Enter English name"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -271,53 +238,71 @@ export function ProgramDialog({ programs, onProgramsUpdate }: ProgramDialogProps
                 value={name_ar}
                 onChange={(e) => setNameAr(e.target.value)}
                 className="col-span-3"
+                placeholder="Enter Arabic name"
                 dir="rtl"
               />
             </div>
           </div>
+          
           <DialogFooter>
+            {editingProgram && (
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={resetForm}
+              >
+                Cancel Edit
+              </Button>
+            )}
             <Button type="submit">
               {editingProgram ? "Update" : "Create"} Program
             </Button>
           </DialogFooter>
         </form>
 
-        {/* Existing Programs List */}
         {programs.length > 0 && (
-          <div className="mt-4">
-            <h3 className="text-lg font-medium">Existing Programs</h3>
-            <ul className="mt-2 space-y-2">
-              {programs.map((program) => (
-                <li
-                  key={program.id}
-                  className="flex items-center justify-between"
-                >
-                  <span>{program.name_en}</span>
-                  <div className="space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setEditingProgram(program);
-                        setNameEn(program.name_en);
-                        setNameAr(program.name_ar);
-                        setCategoryId(program.categoryId || "");
-                        setOpen(true);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDelete(program.id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+          <div className="mt-6">
+            <h3 className="text-lg font-medium mb-2">Existing Programs</h3>
+            <ScrollArea className="h-[300px] rounded-md border p-4">
+              <div className="space-y-4">
+                {programs.map((program) => (
+                  <Card key={program.id} className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium">{program.name_en}</h4>
+                        <p className="text-sm text-muted-foreground" dir="rtl">
+                          {program.name_ar}
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Category: {categories.find(c => c.id === program.categoryId)?.name_en || 'None'}
+                        </p>
+                      </div>
+                      <div className="space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setEditingProgram(program);
+                            setNameEn(program.name_en);
+                            setNameAr(program.name_ar);
+                            setCategoryId(program.categoryId || "");
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(program.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </ScrollArea>
           </div>
         )}
       </DialogContent>

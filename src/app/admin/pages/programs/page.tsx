@@ -11,7 +11,7 @@ export default async function AdminPrograms() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Programs Management</h1>
-        <Link href="/admin/pages/programs/create">
+        <Link href="/admin/pages/programs/create" passHref prefetch>
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Add Program
@@ -39,7 +39,7 @@ export default async function AdminPrograms() {
                 {program.description_en}
               </p>
               <div className="flex justify-end gap-2 mt-4">
-                <Link href={`/admin/pages/programs/${program.id}/edit`}>
+                <Link href={`/admin/pages/programs/${program.id}/edit`} passHref prefetch>
                   <Button variant="outline" size="sm">
                     <Pencil className="w-4 h-4 mr-2" />
                     Edit

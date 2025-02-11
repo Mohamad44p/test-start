@@ -83,12 +83,12 @@ export const columns: ColumnDef<Complaint>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/admin/complaints/${complaint.id}`}>
+              <Link prefetch passHref href={`/admin/complaints/${complaint.id}`}>
                 <Eye className="mr-2 h-4 w-4" /> View Details
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href={`/admin/complaints/${complaint.id}?tab=notes`}>
+              <Link prefetch passHref href={`/admin/complaints/${complaint.id}?tab=notes`}>
                 <MessageCircle className="mr-2 h-4 w-4" /> Add Note
               </Link>
             </DropdownMenuItem>

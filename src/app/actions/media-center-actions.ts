@@ -5,7 +5,11 @@ import { cache } from "react"
 import { PostType } from "@/lib/schema/schema"
 import type { MediaCenterContent } from "@/types/media-center"
 
-export const getMediaCenterContent = cache(async (): Promise<{ success: boolean; data?: MediaCenterContent; error?: string }> => {
+export const getMediaCenterContent = cache(async (): Promise<{ 
+  success: boolean; 
+  data: MediaCenterContent | null; 
+  error?: string 
+}> => {
   try {
     // Get latest featured blog posts and press releases
     const [blogPosts, announcements] = await Promise.all([
@@ -63,6 +67,6 @@ export const getMediaCenterContent = cache(async (): Promise<{ success: boolean;
     }
   } catch (error) {
     console.error("Failed to fetch media center content:", error)
-    return { success: false, error: "Failed to fetch media center content" }
+    return { success: false, data: null, error: "Failed to fetch media center content" }
   }
 })

@@ -2,23 +2,29 @@
 
 import db from "@/app/db/db"
 import { revalidatePath } from "next/cache"
+import { Focusarea } from "@/types/focusarea"
 
 export type FocusareaData = {
   titleEn: string
   titleAr: string
+  descriptionEn: string
+  descriptionAr: string
   cards: {
     titleEn: string
     titleAr: string
+    descriptionEn: string
+    descriptionAr: string
     imageUrl: string
   }[]
 }
 
-export async function getFocusareas() {
-  return db.focusarea.findMany({
+export async function getFocusareas(): Promise<Focusarea[]> {
+  const focusareas = await db.focusarea.findMany({
     include: {
       cards: true,
     },
   })
+  return focusareas as Focusarea[]
 }
 
 export async function getFocusareaById(id: string) {
@@ -37,7 +43,11 @@ export async function createFocusarea(data: FocusareaData) {
     data: {
       ...focusareaData,
       cards: {
-        create: cards,
+        create: cards.map(card => ({
+          ...card,
+          descriptionEn: card.descriptionEn,
+          descriptionAr: card.descriptionAr,
+        })),
       },
     },
     include: {

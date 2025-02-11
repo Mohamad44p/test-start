@@ -35,7 +35,7 @@ const ProgramCard = ({ backImage, programName, description, nameColor, descColor
       </CardHeader>
 
       <CardContent className="px-5 pb-5">
-        <p className="text-sm leading-relaxed" style={{ color: descColor }}>
+        <p className="text-sm leading-relaxed line-clamp-2" style={{ color: descColor }}>
           {description}
         </p>
       </CardContent>

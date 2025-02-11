@@ -41,7 +41,7 @@ export const columns: ColumnDef<any>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link href={`/admin/pages/footer/${row.original.id}/edit`}>
+              <Link href={`/admin/pages/footer/${row.original.id}/edit`} passHref prefetch>
                 Edit
               </Link>
             </DropdownMenuItem>

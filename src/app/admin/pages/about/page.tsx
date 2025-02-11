@@ -15,7 +15,7 @@ export default async function AboutPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">About Us Page</h1>
         {!aboutUs ? (
-          <Link href="/admin/pages/about/create" className={buttonVariants({ variant: "default" })}>
+          <Link  prefetch passHref href="/admin/pages/about/create" className={buttonVariants({ variant: "default" })}>
             <Plus className="h-4 w-4 mr-2" />
             Create About Us
           </Link>
@@ -64,7 +64,7 @@ export default async function AboutPage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {aboutUs.cards.map((card) => {
-              const IconComponent = AVAILABLE_ICONS[card.icon] as React.ElementType
+              const IconComponent = card.icon ? AVAILABLE_ICONS[card.icon] as React.ElementType : null
               return (
                 <Card key={card.id}>
                   <CardContent className="pt-6">

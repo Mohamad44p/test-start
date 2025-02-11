@@ -106,7 +106,7 @@ export function BeneficiaryForm({
                   <FormControl>
                     <ImageUpload
                       onUpload={(url) => field.onChange(url || "")}
-                      defaultImage={field.value}
+                      defaultImage={field.value || undefined}
                     />
                   </FormControl>
                   <FormMessage />

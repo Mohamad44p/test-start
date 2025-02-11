@@ -6,7 +6,7 @@ import type { CreateProgramInput, UpdateProgramInput, ProgramCategory } from "@/
 
 export async function getCategories(): Promise<{ 
   success: boolean; 
-  categories: Omit<ProgramCategory, 'programs'>[]; // Exclude programs from return type
+  categories: Omit<ProgramCategory, 'programs'>[]; 
   error?: string;
 }> {
   try {
@@ -39,6 +39,46 @@ export async function createCategory(data: { name_en: string; name_ar: string })
   } catch (error) {
     console.error("Failed to create category:", error);
     return { success: false, error: "Failed to create category", categories: [], newCategory: undefined };
+  }
+}
+
+export async function updateCategory(data: { id: string; name_en: string; name_ar: string }) {
+  try {
+    await db.programCategory.update({
+      where: { id: data.id },
+      data: {
+        name_en: data.name_en,
+        name_ar: data.name_ar,
+      },
+    });
+
+    const categories = await db.programCategory.findMany({
+      orderBy: { order: 'asc' }
+    });
+
+    revalidatePath("/admin/program-tabs");
+    return { success: true, categories };
+  } catch (error) {
+    console.error("Failed to update category:", error);
+    return { success: false, error: "Failed to update category", categories: [] };
+  }
+}
+
+export async function deleteCategory(id: string) {
+  try {
+    await db.programCategory.delete({
+      where: { id },
+    });
+
+    const categories = await db.programCategory.findMany({
+      orderBy: { order: 'asc' }
+    });
+
+    revalidatePath("/admin/program-tabs");
+    return { success: true, categories };
+  } catch (error) {
+    console.error("Failed to delete category:", error);
+    return { success: false, error: "Failed to delete category", categories: [] };
   }
 }
 

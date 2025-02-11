@@ -92,7 +92,7 @@ export const columns: ColumnDef<WorkWithUsListing>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link href={`/admin/pages/work-with-us/${listing.id}`}>Edit</Link>
+                <Link href={`/admin/pages/work-with-us/${listing.id}`} passHref prefetch>Edit</Link>
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setShowDeleteDialog(true)}>
                 Delete

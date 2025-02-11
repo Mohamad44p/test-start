@@ -25,6 +25,8 @@ type Stat = {
   name_ar: string
   value: number
   icon: string
+  suffix_en: string
+  suffix_ar: string
 }
 
 export function StatsList({ stats }: { stats: Stat[] }) {
@@ -45,6 +47,8 @@ export function StatsList({ stats }: { stats: Stat[] }) {
             <TableHead>Arabic Name</TableHead>
             <TableHead>Value</TableHead>
             <TableHead>Icon</TableHead>
+            <TableHead>English Suffix</TableHead>
+            <TableHead>Arabic Suffix</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -57,6 +61,8 @@ export function StatsList({ stats }: { stats: Stat[] }) {
                 <TableCell dir="rtl">{stat.name_ar}</TableCell>
                 <TableCell>{stat.value.toLocaleString()}</TableCell>
                 <TableCell>{Icon && <Icon className="h-6 w-6 text-primary" />}</TableCell>
+                <TableCell>{stat.suffix_en}</TableCell>
+                <TableCell dir="rtl">{stat.suffix_ar}</TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
                     <Link href={`/admin/pages/stats/${stat.id}`} passHref>

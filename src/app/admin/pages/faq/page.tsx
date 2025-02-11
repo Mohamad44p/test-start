@@ -1,23 +1,28 @@
-import { getFaqCategories, deleteFaqCategory } from '@/app/actions/pages/faqActions'
-import { buttonVariants } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Plus } from 'lucide-react'
-import Link from 'next/link'
-import { DataActions } from '@/components/shared/data-actions'
-import type { FaqCategory } from '@/types/faq'
+import {
+  getFaqCategories,
+  deleteFaqCategory,
+} from "@/app/actions/pages/faqActions";
+import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plus } from "lucide-react";
+import Link from "next/link";
+import { DataActions } from "@/components/shared/data-actions";
+import type { FaqCategory } from "@/types/faq";
 
-export const revalidate = 30
-export const dynamic = "force-dynamic"
+export const revalidate = 30;
+export const dynamic = "force-dynamic";
 
 export default async function FaqPage() {
-  const categories = (await getFaqCategories()) as FaqCategory[]
+  const categories = (await getFaqCategories()) as FaqCategory[];
 
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">FAQ Management</h1>
-        <Link 
-          href="/admin/pages/faq/create" 
+        <Link
+          href="/admin/pages/faq/create"
+          prefetch
+          passHref
           className={buttonVariants({ variant: "default" })}
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -65,6 +70,8 @@ export default async function FaqPage() {
                 ))}
                 <Link
                   href={`/admin/pages/faq/${category.id}/items/create`}
+                  prefetch
+                  passHref
                   className={buttonVariants({ variant: "outline", size: "sm" })}
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -76,5 +83,5 @@ export default async function FaqPage() {
         ))}
       </div>
     </div>
-  )
+  );
 }

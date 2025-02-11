@@ -84,7 +84,7 @@ export const columns: ColumnDef<Beneficiary>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/admin/beneficiaries/${beneficiary.id}`}>
+              <Link prefetch passHref href={`/admin/beneficiaries/${beneficiary.id}`}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </Link>

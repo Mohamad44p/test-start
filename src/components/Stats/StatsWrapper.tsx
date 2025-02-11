@@ -15,6 +15,8 @@ export default async function StatsWrapper() {
     name_ar: stat.name_ar,
     value: stat.value,
     icon: stat.icon,
+    suffix_en: stat.suffix_en,
+    suffix_ar: stat.suffix_ar
   }))
 
   return <StatsCountUp stats={stats} />

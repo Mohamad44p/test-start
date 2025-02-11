@@ -20,7 +20,7 @@ export function WorkWithUsClient({ procurementListings, recruitmentListings }: W
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <Link href="/admin/pages/work-with-us/create">
+        <Link href="/admin/pages/work-with-us/create" passHref prefetch>
           <Button>Add New Listing</Button>
         </Link>
       </div>

@@ -93,7 +93,7 @@ export const columns: ColumnDef<TeamMember>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link href={`/admin/pages/team/${teamMember.id}`}>Edit</Link>
+                <Link href={`/admin/pages/team/${teamMember.id}`} passHref prefetch>Edit</Link>
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setShowDeleteDialog(true)}>
                 Delete

@@ -25,6 +25,8 @@ export default async function ProgramsPage(
           <Link
             key={program.id}
             href={`/${lang}/programs/${program.id}`}
+            prefetch
+            passHref
             className="block p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow"
           >
             <h2 className="text-xl font-semibold mb-2">

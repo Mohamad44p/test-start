@@ -13,6 +13,8 @@ const StatSchema = z.object({
   name_ar: z.string().min(1, "Arabic name is required"),
   value: z.number().int().positive("Value must be a positive integer"),
   icon: z.string().min(1, "Icon is required"),
+  suffix_en: z.string().min(1, "English suffix is required"),
+  suffix_ar: z.string().min(1, "Arabic suffix is required"),
 })
 
 export type StatFormData = z.infer<typeof StatSchema>
@@ -37,7 +39,6 @@ export async function deleteStat(id: string) {
   revalidatePath('/')
 }
 
-
 export const getStats = cache(async (): Promise<ApiResponse<Stat[]>> => {
   try {
     const stats = await db.stat.findMany()
@@ -51,6 +52,32 @@ export const getStats = cache(async (): Promise<ApiResponse<Stat[]>> => {
     return {
       success: false,
       error: "Failed to fetch stats",
+    }
+  }
+})
+
+export const getStat = cache(async (id: string): Promise<ApiResponse<Stat>> => {
+  try {
+    const stat = await db.stat.findUnique({
+      where: { id }
+    })
+
+    if (!stat) {
+      return {
+        success: false,
+        error: "Stat not found"
+      }
+    }
+
+    return {
+      success: true,
+      data: stat
+    }
+  } catch (error) {
+    console.error("Error fetching stat:", error)
+    return {
+      success: false,
+      error: "Failed to fetch stat"
     }
   }
 })

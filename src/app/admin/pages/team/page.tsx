@@ -12,7 +12,7 @@ export default async function TeamMembers() {
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Team Members</h1>
-        <Link href="/admin/pages/team/create">
+        <Link href="/admin/pages/team/create" passHref prefetch>
           <Button>Add New Team Member</Button>
         </Link>
       </div>

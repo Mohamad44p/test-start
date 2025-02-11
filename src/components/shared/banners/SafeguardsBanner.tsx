@@ -49,7 +49,7 @@ const SafeguardsBanner: React.FC<SafeguardsBannerProps> = ({ safeguard }) => {
                 </div>
               ))}
             </div>
-            <Link href="/safeguards" passHref>
+            <Link href="/Safeguards" passHref prefetch>
               <Button
                 size="lg"
                 className="mt-4 bg-gradient-to-r from-[#142451] to-[#862996] text-white hover:from-[#142451]/80 hover:to-[#862996]/80"

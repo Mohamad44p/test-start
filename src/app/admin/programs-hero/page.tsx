@@ -1,17 +1,17 @@
 import { Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import type { ProgramsHero, ProgramsPages } from "@/types/programs-hero"
+import type { ProgramsHeroWithProgram, ProgramsPages } from "@/types/programs-hero"
 import db from "@/app/db/db"
 import ProgramsHeroList from "@/components/admin/program-tap/ProgramsHeroList"
 
 export const dynamic = "force-dynamic"
 
-async function fetchProgramsHeroes(): Promise<ProgramsHero[] | null> {
+async function fetchProgramsHeroes(): Promise<ProgramsHeroWithProgram[] | null> {
   try {
     const programsHeroes = await db.programsHero.findMany({
       include: { programPage: true },
-    })
+    }) as ProgramsHeroWithProgram[]
     return programsHeroes
   } catch (error) {
     console.error("Failed to fetch programs heroes:", error)
@@ -37,7 +37,7 @@ export default async function ProgramsHeroPage() {
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">Programs Heroes</h1>
       <div className="mb-4">
-        <Link href="/admin/programs-hero/create">
+        <Link href="/admin/programs-hero/create" passHref prefetch>
           <Button>Create New Programs Hero</Button>
         </Link>
       </div>

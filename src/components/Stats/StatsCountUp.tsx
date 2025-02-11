@@ -40,7 +40,7 @@ export default function StatsCountUp({ stats }: StatsCountUpProps) {
   )
 }
 
-function Stat({ name_en, name_ar, value, icon, currentLang }: StatData & { currentLang: LanguageType }) {
+function Stat({ name_en, name_ar, value, icon, suffix_en, suffix_ar, currentLang }: StatData & { currentLang: LanguageType }) {
   const { count, ref, controls } = useCountUp(value)
   const Icon: LucideIcon | undefined = AVAILABLE_ICONS[icon as IconName]
 
@@ -68,7 +68,9 @@ function Stat({ name_en, name_ar, value, icon, currentLang }: StatData & { curre
           <p className="text-4xl font-bold tracking-tight text-[#142451]">
             {count.toLocaleString(currentLang === "ar" ? "ar-SA" : "en-US")}
           </p>
-          <p className="ml-2 text-sm font-medium text-[#862996]">{currentLang === "ar" ? "إجمالي" : "total"}</p>
+          <p className="ml-2 text-sm font-medium text-[#862996]">
+            {currentLang === "ar" ? suffix_ar : suffix_en}
+          </p>
         </div>
         <div className="mt-4 h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
           <motion.div

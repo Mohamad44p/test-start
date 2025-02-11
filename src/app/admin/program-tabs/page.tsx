@@ -46,7 +46,7 @@ export default async function ProgramTabsPage() {
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">Program Tabs</h1>
       <div className="mb-4">
-        <Link href="/admin/program-tabs/create">
+        <Link href="/admin/program-tabs/create" passHref prefetch>
           <Button>Create New Program Tab</Button>
         </Link>
       </div>
