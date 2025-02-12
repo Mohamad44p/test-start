@@ -170,6 +170,35 @@ const data: { navMain: NavItem[] } = {
         },
       ]
     },
+    {
+      title: "Files Management",
+      url: "#",
+      icon: Layers,
+      items: [
+        {
+          title: "All Files",
+          url: "/admin/filesmangemnt",
+        },
+        {
+          title: "Upload",
+          url: "#",
+          items: [
+            {
+              title: "Upload File",
+              url: "/admin/filesmangemnt/upload/file",
+            },
+            {
+              title: "Upload Image",
+              url: "/admin/filesmangemnt/upload/image",
+            },
+            {
+              title: "Upload Video",
+              url: "/admin/filesmangemnt/upload/video",
+            },
+          ]
+        },
+      ]
+    },
   ],
 };
 

@@ -73,6 +73,24 @@ export async function POST(request: Request) {
   }
 }
 
+export async function GET() {
+  try {
+    const items = await db.uploadedItem.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    return NextResponse.json({ success: true, items });
+  } catch (error) {
+    console.error("Fetch error:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to fetch items" },
+      { status: 500 }
+    );
+  }
+}
+
 export const config = {
   api: {
     bodyParser: false,
