@@ -110,13 +110,13 @@ model HeroStep {
 }
 
 model Stat {
-  id          String @id @default(cuid())
-  name_en     String
-  name_ar     String
-  value       Int
-  icon        String
-  suffix_en   String @default("total")
-  suffix_ar   String @default("إجمالي")
+  id        String @id @default(cuid())
+  name_en   String
+  name_ar   String
+  value     Int
+  icon      String
+  suffix_en String @default("total")
+  suffix_ar String @default("إجمالي")
 }
 
 model Program {
@@ -215,13 +215,13 @@ model AboutUs {
 }
 
 model Card {
-  id            String   @id @default(cuid())
+  id            String  @id @default(cuid())
   titleEn       String?
   titleAr       String?
   descriptionEn String?
   descriptionAr String?
   icon          String?
-  aboutUs       AboutUs  @relation(fields: [aboutUsId], references: [id], onDelete: Cascade)
+  aboutUs       AboutUs @relation(fields: [aboutUsId], references: [id], onDelete: Cascade)
   aboutUsId     String
 }
 
@@ -229,8 +229,8 @@ model Focusarea {
   id            String          @id @default(cuid())
   titleEn       String
   titleAr       String
-  descriptionEn String          @default("") 
-  descriptionAr String          @default("") 
+  descriptionEn String          @default("")
+  descriptionAr String          @default("")
   cards         FocusareaCard[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @default(now())
@@ -284,7 +284,7 @@ model ContactSubmission {
   email     String
   subject   String
   message   String
-  status    String   @default("new")  // Add this line
+  status    String   @default("new") // Add this line
   createdAt DateTime @default(now())
 }
 
@@ -355,7 +355,7 @@ model Safeguard {
   attachmentUrl      String?
   imageUrl           String?
   order              Int      @default(0)
-  status             String   @default("DRAFT") 
+  status             String   @default("DRAFT")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -376,16 +376,16 @@ enum ComplaintStatus {
 }
 
 model FaqCategory {
-  id        String        @id @default(cuid())
+  id        String         @id @default(cuid())
   nameEn    String
   nameAr    String
-  slug      String        @unique
-  order     Int           @default(0)
-  programId String?      
+  slug      String         @unique
+  order     Int            @default(0)
+  programId String?
   program   ProgramsPages? @relation(fields: [programId], references: [id])
   faqs      FaqItem[]
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @default(now())
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @default(now())
 
   @@index([slug])
   @@index([order])
@@ -393,18 +393,18 @@ model FaqCategory {
 }
 
 model FaqItem {
-  id          String        @id @default(cuid())
-  questionEn  String
-  questionAr  String
-  answerEn    String       @db.Text
-  answerAr    String       @db.Text
-  order       Int          @default(0)
-  categoryId  String
-  category    FaqCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  programId   String?      // Add this field
-  program     ProgramsPages? @relation(fields: [programId], references: [id])
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @default(now())
+  id         String         @id @default(cuid())
+  questionEn String
+  questionAr String
+  answerEn   String         @db.Text
+  answerAr   String         @db.Text
+  order      Int            @default(0)
+  categoryId String
+  category   FaqCategory    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  programId  String? // Add this field
+  program    ProgramsPages? @relation(fields: [programId], references: [id])
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @default(now())
 
   @@index([categoryId])
   @@index([order])
@@ -439,29 +439,29 @@ model ProgramTab {
 }
 
 model ProgramsPages {
-  id           String         @id @default(cuid())
-  name_en      String
-  name_ar      String
-  categoryId   String?
-  category     ProgramCategory? @relation(fields: [categoryId], references: [id])
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @default(now())
-  ProgramTab   ProgramTab[]
-  ProgramsHero ProgramsHero[]
-  faqs         FaqItem[]   
+  id            String           @id @default(cuid())
+  name_en       String
+  name_ar       String
+  categoryId    String?
+  category      ProgramCategory? @relation(fields: [categoryId], references: [id])
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @default(now())
+  ProgramTab    ProgramTab[]
+  ProgramsHero  ProgramsHero[]
+  faqs          FaqItem[]
   faqCategories FaqCategory[]
 
   @@index([categoryId])
 }
 
 model ProgramCategory {
-  id         String         @id @default(cuid())
-  name_en    String
-  name_ar    String
-  order      Int           @default(0)
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @default(now())
-  programs   ProgramsPages[]
+  id        String          @id @default(cuid())
+  name_en   String
+  name_ar   String
+  order     Int             @default(0)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now())
+  programs  ProgramsPages[]
 
   @@index([order])
 }
@@ -502,4 +502,14 @@ model ProgramsHero {
   programPage         ProgramsPages? @relation(fields: [programPageId], references: [id])
 
   @@index([programPageId])
+}
+
+model UploadedItem {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  type      String
+  mimeType  String
+  size      Int
+  createdAt DateTime @default(now())
 }
