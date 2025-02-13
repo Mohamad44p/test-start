@@ -7,9 +7,13 @@ export async function POST(request: Request) {
     const formData = await request.formData()
     const file = formData.get("file") as File | null
     const type = formData.get("type") as string | null
+    const customName = formData.get("customName") as string | null
 
-    if (!file || !type) {
-      return NextResponse.json({ success: false, error: "No file or type provided" }, { status: 400 })
+    if (!file || !type || !customName) {
+      return NextResponse.json(
+        { success: false, error: "Missing required fields" },
+        { status: 400 }
+      )
     }
 
     const validTypes = {
@@ -43,7 +47,7 @@ export async function POST(request: Request) {
     // Save file information to the database
     const savedItem = await db.uploadedItem.create({
       data: {
-        name: file.name,
+        name: customName,
         url: blob.url,
         type: type,
         mimeType: file.type,
