@@ -5,9 +5,6 @@ export interface Program {
   description_en: string;
   description_ar: string;
   imageUrl: string;
-  nameColor: string;
-  descColor: string;
-  order: number;
 }
 
 export interface ApiResponse<T> {

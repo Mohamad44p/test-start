@@ -1,18 +1,16 @@
 export interface ProgramsHero {
   id: string
   name: string
-  tagline: string
   tagline_en: string
   tagline_ar: string
-  title: string
   title_en: string
   title_ar: string
-  highlightWord: string
   highlightWord_en: string
   highlightWord_ar: string
-  description: string
   description_en: string
   description_ar: string
+  objectives_en: string | null
+  objectives_ar: string | null
   imageUrl: string | null
   card1Title_en: string | null
   card1Title_ar: string | null
@@ -47,10 +45,17 @@ export interface ProgramsPages {
   categoryId: string | null
 }
 
-export type ProgramsHeroWithProgram = Omit<ProgramsHero, 'programPage'> & {
-  programPage: ProgramsPages | null
+export interface CreateProgramsHeroInput extends Omit<ProgramsHero, 'id' | 'createdAt' | 'updatedAt' | 'programPage'> {
+  objectives_en: string | null
+  objectives_ar: string | null
+  programPageId: string | null
 }
 
-export type CreateProgramsHeroInput = Omit<ProgramsHero, "id" | "createdAt" | "updatedAt">
-export type UpdateProgramsHeroInput = Partial<CreateProgramsHeroInput> & { id: string }
+export interface UpdateProgramsHeroInput extends Partial<CreateProgramsHeroInput> {
+  id: string
+}
+
+export type ProgramsHeroWithProgram = ProgramsHero & {
+  programPage: ProgramsPages | null
+}
 

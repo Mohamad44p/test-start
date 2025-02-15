@@ -1,12 +1,12 @@
 "use client";
 
 import ReusableHero from "./reusable-hero";
-import type { ProgramsHero } from "@prisma/client";
+import type { ProgramsHero } from "@/types/programs-hero"; // Make sure to import from your types file
 import { AVAILABLE_ICONS, type IconName } from '@/config/icons';
 import type { LucideIcon } from 'lucide-react';
 
 interface DynamicHeroProps {
-  hero: ProgramsHero;
+  hero: ProgramsHero;  // This should now include objectives_en and objectives_ar
   lang: string;
 }
 
@@ -49,11 +49,13 @@ export default function DynamicHero({ hero, lang }: DynamicHeroProps) {
       title={lang === 'ar' ? hero.title_ar : hero.title_en}
       highlightedWord={lang === 'ar' ? hero.highlightWord_ar : hero.highlightWord_en}
       description={lang === 'ar' ? hero.description_ar : hero.description_en}
+      objectives={lang === 'ar' ? (hero.objectives_ar || '') : (hero.objectives_en || '')}
+      objectivesTitle={{ en: "Program Objectives", ar: "أهداف البرنامج" }}
       primaryButtonText={lang === 'ar' ? "تقدم الآن" : "Apply Now"}
       secondaryButtonText={lang === 'ar' ? "اعرف المزيد" : "Learn More"}
       imageSrc={hero.imageUrl || '/default-hero.png'}
       imageAlt={hero.name}
-      features={features}
+      features={features.length > 0 ? features : undefined}
     />
   );
 }

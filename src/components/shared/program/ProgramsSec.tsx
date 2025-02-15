@@ -73,8 +73,6 @@ export default function ProgramsSec({ programs }: ProgramsSecProps) {
                 backImage={program.imageUrl}
                 programName={currentLang === "ar" ? program.name_ar : program.name_en}
                 description={currentLang === "ar" ? program.description_ar : program.description_en}
-                nameColor={program.nameColor}
-                descColor={program.descColor}
               />
             </div>
           ))}

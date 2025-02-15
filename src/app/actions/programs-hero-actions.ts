@@ -17,8 +17,7 @@ export async function createProgramsHero(data: CreateProgramsHeroInput | CreateP
   }
 
   try {
-    // Filter out programPageId and programPage from the data
-    const { programPageId, programPage, ...cleanedData } = Object.fromEntries(
+    const { programPageId, programPage, objectives_en, objectives_ar, ...cleanedData } = Object.fromEntries(
       Object.entries(programData).filter(([_, v]) => v != null),
     ) as CreateProgramsHeroInput
 
@@ -34,6 +33,8 @@ export async function createProgramsHero(data: CreateProgramsHeroInput | CreateP
 
     const createData = {
       ...cleanedData,
+      objectives_en: objectives_en || null,
+      objectives_ar: objectives_ar || null,
       card2Show: cleanedData.card2Show ?? false,
       card3Show: cleanedData.card3Show ?? false,
     } as const
@@ -66,10 +67,12 @@ export async function createProgramsHero(data: CreateProgramsHeroInput | CreateP
 
 export async function updateProgramsHero(data: UpdateProgramsHeroInput) {
   try {
-    const { programPageId, programPage, id, ...updateData } = data
+    const { programPageId, programPage, id, objectives_en, objectives_ar, ...updateData } = data
 
     const updatePayload = {
       ...updateData,
+      objectives_en: objectives_en || null,
+      objectives_ar: objectives_ar || null,
       ...(programPageId ? { programPageId } : {}),
     }
 

@@ -5,6 +5,7 @@ export interface ProgramTab {
   slug: string
   content_en: string
   content_ar: string
+  processFile?: string | null
   createdAt: Date
   updatedAt: Date
   programPageId?: string | null

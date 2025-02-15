@@ -430,6 +430,7 @@ model ProgramTab {
   slug          String         @unique
   content_en    String         @db.Text
   content_ar    String         @db.Text
+  processFile   String?        // Add this field for the PDF file URL
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   programPage   ProgramsPages? @relation(fields: [programPageId], references: [id])
@@ -496,6 +497,8 @@ model ProgramsHero {
   card3Description_en String?
   card3Description_ar String?
   card3Show           Boolean        @default(true)
+  objectives_en       String?        @db.Text
+  objectives_ar       String?        @db.Text
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @default(now())
   programPageId       String?

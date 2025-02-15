@@ -3,21 +3,25 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
+import Link from "next/link";
 
 interface ReusableHeroProps {
   badge: string;
   title: string;
   highlightedWord: string;
   description: string;
+  objectives?: string;
   primaryButtonText: string;
   secondaryButtonText: string;
   imageSrc: string;
   imageAlt: string;
-  features: Array<{
+  features?: Array<{
     icon: React.ReactNode;
     title: string;
     description: string;
   }>;
+  objectivesTitle?: { en: string; ar: string };
 }
 
 export default function ReusableHero({
@@ -25,17 +29,21 @@ export default function ReusableHero({
   title,
   highlightedWord,
   description,
+  objectives,
   primaryButtonText,
   secondaryButtonText,
   imageSrc,
   imageAlt,
   features,
+  objectivesTitle = { en: "Program Objectives", ar: "أهداف البرنامج" },
 }: ReusableHeroProps) {
+  const { currentLang } = useLanguage();
+
   return (
     <div className="relative overflow-hidden bg-gradient-to-r from-purple-100 via-white to-blue-100 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div>
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-24 items-start">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -79,14 +87,30 @@ export default function ReusableHero({
                     </motion.svg>
                   </span>
                 </motion.h1>
-                <motion.p
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-xl sm:text-2xl text-gray-600 max-w-2xl"
+                  className="space-y-4"
                 >
-                  {description}
-                </motion.p>
+                  <div
+                    className="text-xl sm:text-2xl text-gray-600 max-w-2xl"
+                    dangerouslySetInnerHTML={{ __html: description }}
+                  />
+                  {objectives && (
+                    <div className="mt-8">
+                      <h3 className="text-xl font-semibold mb-4 text-gray-900">
+                        {currentLang === "ar"
+                          ? objectivesTitle.ar
+                          : objectivesTitle.en}
+                      </h3>
+                      <div
+                        className="text-lg text-gray-600 max-w-2xl prose"
+                        dangerouslySetInnerHTML={{ __html: objectives }}
+                      />
+                    </div>
+                  )}
+                </motion.div>
               </div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -94,12 +118,14 @@ export default function ReusableHero({
                 transition={{ delay: 0.5 }}
                 className="flex flex-wrap gap-4"
               >
-                <Button
-                  size="lg"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8"
-                >
-                  {primaryButtonText}
-                </Button>
+                <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
+                  <Button
+                    size="lg"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+                  >
+                    {primaryButtonText}
+                  </Button>
+                </Link>
                 <Button
                   size="lg"
                   variant="outline"
@@ -127,22 +153,27 @@ export default function ReusableHero({
           </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 pb-20 mt-12"
-        >
-          {features.map((feature, index) => (
-            <div key={index} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="h-12 w-12 rounded-lg bg-blue-100 flex items-center justify-center mb-6">
-                {feature.icon}
+        {features && features.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 pb-20 mt-12"
+          >
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="h-12 w-12 rounded-lg bg-blue-100 flex items-center justify-center mb-6">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
               </div>
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
-            </div>
-          ))}
-        </motion.div>
+            ))}
+          </motion.div>
+        )}
       </div>
     </div>
   );

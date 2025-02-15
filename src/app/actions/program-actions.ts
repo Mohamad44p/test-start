@@ -147,3 +147,31 @@ export async function deleteProgram(id: string) {
   }
 }
 
+export async function getProgramsWithHero() {
+  try {
+    const programs = await db.programsPages.findMany({
+      include: {
+        ProgramsHero: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    return { 
+      success: true, 
+      data: programs.map(program => ({
+        id: program.id,
+        name_en: program.name_en,
+        name_ar: program.name_ar,
+        description_en: program.ProgramsHero[0]?.description_en || '',
+        description_ar: program.ProgramsHero[0]?.description_ar || '',
+        imageUrl: program.ProgramsHero[0]?.imageUrl || ''
+      }))
+    };
+  } catch (error) {
+    console.error("Failed to fetch programs with hero:", error);
+    return { success: false, error: "Failed to fetch programs" };
+  }
+}
+

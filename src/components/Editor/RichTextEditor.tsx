@@ -107,109 +107,173 @@ export function RichTextEditor({ content, onChange, dir = "ltr" }: RichTextEdito
     <div className="border rounded-lg overflow-hidden bg-background">
       <div className="border-b p-2 flex flex-wrap gap-2">
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("bold") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleBold().run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().toggleBold().run()
+          }}
         >
           <Bold className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("italic") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleItalic().run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().toggleItalic().run()
+          }}
         >
           <Italic className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("underline") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().toggleUnderline().run()
+          }}
         >
           <Underline className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("strike") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleStrike().run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().toggleStrike().run()
+          }}
         >
           <Strikethrough className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("heading", { level: 1 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(1)}
+          onClick={(e) => {
+            e.preventDefault()
+            toggleHeading(1)
+          }}
         >
           <Heading1 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("heading", { level: 2 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(2)}
+          onClick={(e) => {
+            e.preventDefault()
+            toggleHeading(2)
+          }}
         >
           <Heading2 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("heading", { level: 3 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(3)}
+          onClick={(e) => {
+            e.preventDefault()
+            toggleHeading(3)
+          }}
         >
           <Heading3 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("heading", { level: 4 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(4)}
+          onClick={(e) => {
+            e.preventDefault()
+            toggleHeading(4)
+          }}
         >
           <Heading4 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("heading", { level: 5 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(5)}
+          onClick={(e) => {
+            e.preventDefault()
+            toggleHeading(5)
+          }}
         >
           <Heading5 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("heading", { level: 6 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(6)}
+          onClick={(e) => {
+            e.preventDefault()
+            toggleHeading(6)
+          }}
         >
           <Heading6 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("bulletList") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().toggleBulletList().run()
+          }}
         >
           <List className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("orderedList") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().toggleOrderedList().run()
+          }}
         >
           <ListOrdered className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("taskList") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleTaskList().run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().toggleTaskList().run()
+          }}
         >
           <CheckSquare className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("code") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleCode().run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().toggleCode().run()
+          }}
         >
           <Code className="h-4 w-4" />
         </Button>
-        <Button size="sm" variant={editor.isActive("link") ? "default" : "outline"} onClick={setLink}>
+        <Button
+          type="button"
+          size="sm"
+          variant={editor.isActive("link") ? "default" : "outline"}
+          onClick={(e) => {
+            e.preventDefault()
+            setLink()
+          }}
+        >
           <Link className="h-4 w-4" />
         </Button>
         <Dialog open={showImageDialog} onOpenChange={setShowImageDialog}>
           <DialogTrigger asChild>
-            <Button size="sm" variant="outline">
+            <Button type="button" size="sm" variant="outline">
               <Image className="h-4 w-4" />
             </Button>
           </DialogTrigger>
@@ -228,9 +292,11 @@ export function RichTextEditor({ content, onChange, dir = "ltr" }: RichTextEdito
           </DialogContent>
         </Dialog>
         <Button
+          type="button"
           size="sm"
           variant="outline"
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault()
             const url = prompt("Enter YouTube URL")
             if (url) {
               editor.chain().focus().setYoutubeVideo({ src: url }).run()
@@ -240,51 +306,79 @@ export function RichTextEditor({ content, onChange, dir = "ltr" }: RichTextEdito
           <Youtube className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive({ textAlign: "left" }) ? "default" : "outline"}
-          onClick={() => editor.chain().focus().setTextAlign("left").run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().setTextAlign("left").run()
+          }}
         >
           <AlignLeft className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive({ textAlign: "center" }) ? "default" : "outline"}
-          onClick={() => editor.chain().focus().setTextAlign("center").run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().setTextAlign("center").run()
+          }}
         >
           <AlignCenter className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive({ textAlign: "right" }) ? "default" : "outline"}
-          onClick={() => editor.chain().focus().setTextAlign("right").run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().setTextAlign("right").run()
+          }}
         >
           <AlignRight className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("superscript") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().toggleSuperscript().run()
+          }}
         >
           <Superscript className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("subscript") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleSubscript().run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().toggleSubscript().run()
+          }}
         >
           <Subscript className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("highlight") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleHighlight().run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().toggleHighlight().run()
+          }}
         >
           <Highlighter className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant="outline"
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          onClick={(e) => {
+            e.preventDefault()
+            editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+          }}
         >
           <Table className="h-4 w-4" />
         </Button>
@@ -302,33 +396,49 @@ export function RichTextEditor({ content, onChange, dir = "ltr" }: RichTextEdito
           }}
         >
           <Button
+            type="button"
             size="sm"
             variant={editor.isActive("bold") ? "default" : "outline"}
-            onClick={() => editor.chain().focus().toggleBold().run()}
+            onClick={(e) => {
+              e.preventDefault()
+              editor.chain().focus().toggleBold().run()
+            }}
             className="rounded-none"
           >
             <Bold className="h-4 w-4" />
           </Button>
           <Button
+            type="button"
             size="sm"
             variant={editor.isActive("italic") ? "default" : "outline"}
-            onClick={() => editor.chain().focus().toggleItalic().run()}
+            onClick={(e) => {
+              e.preventDefault()
+              editor.chain().focus().toggleItalic().run()
+            }}
             className="rounded-none"
           >
             <Italic className="h-4 w-4" />
           </Button>
           <Button
+            type="button"
             size="sm"
             variant={editor.isActive("strike") ? "default" : "outline"}
-            onClick={() => editor.chain().focus().toggleStrike().run()}
+            onClick={(e) => {
+              e.preventDefault()
+              editor.chain().focus().toggleStrike().run()
+            }}
             className="rounded-none"
           >
             <Strikethrough className="h-4 w-4" />
           </Button>
           <Button
+            type="button"
             size="sm"
             variant={editor.isActive("link") ? "default" : "outline"}
-            onClick={setLink}
+            onClick={(e) => {
+              e.preventDefault()
+              setLink()
+            }}
             className="rounded-none"
           >
             <Link className="h-4 w-4" />

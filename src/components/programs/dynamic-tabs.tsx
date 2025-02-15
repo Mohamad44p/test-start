@@ -9,6 +9,7 @@ import { FAQSection } from "@/components/faq-section/faq-section";
 import type { ProgramTab, FaqCategory } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
+import Link from "next/link";
 
 interface DynamicTabsProps {
   tabs: ProgramTab[];
@@ -58,8 +59,8 @@ export default function DynamicTabs({
       ar: "معايير الأهلية",
     },
     overview: {
-      en: "Grant Overview",
-      ar: "نظرة عامة على المنحة",
+      en: "Application Process Details",
+      ar: "تفاصيل عملية التقديم",
     },
     apply: {
       en: "APPLY HERE",
@@ -69,6 +70,12 @@ export default function DynamicTabs({
       en: "The provision of this grant is subject to fund availability.",
       ar: "يخضع تقديم هذه المنحة لتوفر التمويل.",
     },
+  };
+
+  const handleProcessDetailsClick = (tab: ProgramTab) => {
+    if (tab.processFile) {
+      window.open(tab.processFile, "_blank");
+    }
   };
 
   return (
@@ -88,28 +95,31 @@ export default function DynamicTabs({
               className="sm:sticky sm:top-0 z-10 rounded-xl shadow-lg overflow-hidden 
                           backdrop-blur-md bg-white/90 border border-gray-100"
             >
-              <TabsList className="flex lg:flex-col flex-row h-auto overflow-y-auto custom-scrollbar">
-                <div className="flex lg:flex-col flex-row lg:items-stretch items-center w-full p-3 gap-2.5">
+              <TabsList
+                className="flex lg:flex-col flex-row h-auto overflow-x-auto overflow-y-auto custom-scrollbar 
+                                 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+              >
+                <div className="flex lg:flex-col flex-row lg:items-stretch items-center w-full p-3 gap-2.5 min-w-full">
                   {allTabs.map((tab) => (
                     <TabsTrigger
                       key={tab.slug}
                       value={tab.slug}
                       className="group flex items-center w-full px-4 py-4 text-start transition-all duration-300
-                               text-sm font-medium text-gray-600
+                               text-sm font-medium text-gray-600 whitespace-nowrap
                                data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1C6AAF] data-[state=active]:to-[#872996]
                                data-[state=active]:text-white rounded-lg
                                hover:bg-gradient-to-r hover:from-[#1C6AAF]/5 hover:to-[#872996]/5
                                focus:outline-none focus:ring-2 focus:ring-[#1C6AAF]/50
-                               relative overflow-hidden"
+                               relative overflow-hidden min-w-[120px] flex-shrink-0 lg:flex-shrink"
                     >
                       <motion.div
-                        className="relative flex items-center gap-3 w-full"
+                        className="relative flex items-center gap-3 w-full justify-center lg:justify-start"
                         whileHover={{ x: 3 }}
                         transition={{ duration: 0.2 }}
                       >
                         <div className="flex-shrink-0 w-2 h-2 rounded-full bg-current opacity-60" />
                         <span
-                          className="truncate max-w-[200px]"
+                          className="block truncate"
                           title={lang === "ar" ? tab.title_ar : tab.title_en}
                         >
                           {lang === "ar" ? tab.title_ar : tab.title_en}
@@ -157,19 +167,23 @@ export default function DynamicTabs({
                     variant="outline"
                     className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
                              transition-all duration-300 border-gray-200"
+                    onClick={() => handleProcessDetailsClick(tab)}
+                    disabled={!tab.processFile}
                   >
                     {currentLang === "ar"
                       ? buttonText.overview.ar
                       : buttonText.overview.en}
                   </Button>
-                  <Button
-                    className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
-                             transition-opacity shadow-lg hover:shadow-xl"
-                  >
-                    {currentLang === "ar"
-                      ? buttonText.apply.ar
-                      : buttonText.apply.en}
-                  </Button>
+                  <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
+                    <Button
+                      className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
+                  transition-opacity shadow-lg hover:shadow-xl"
+                    >
+                      {currentLang === "ar"
+                        ? buttonText.apply.ar
+                        : buttonText.apply.en}
+                    </Button>
+                  </Link>
                 </div>
                 <p className="text-sm text-gray-500 italic">
                   {currentLang === "ar"
@@ -182,7 +196,10 @@ export default function DynamicTabs({
             <TabsContent value="faqs">
               <FaqProvider>
                 <FAQSection
-                  categories={faqCategories}
+                  categories={faqCategories.map((category) => ({
+                    ...category,
+                    faqs: faqsByCategory[category.id] || [],
+                  }))}
                   faqsByCategory={faqsByCategory}
                 />
               </FaqProvider>
@@ -205,14 +222,16 @@ export default function DynamicTabs({
                     ? buttonText.overview.ar
                     : buttonText.overview.en}
                 </Button>
-                <Button
-                  className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
-                           transition-opacity shadow-lg hover:shadow-xl"
-                >
-                  {currentLang === "ar"
-                    ? buttonText.apply.ar
-                    : buttonText.apply.en}
-                </Button>
+                <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
+                  <Button
+                    className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
+                  transition-opacity shadow-lg hover:shadow-xl"
+                  >
+                    {currentLang === "ar"
+                      ? buttonText.apply.ar
+                      : buttonText.apply.en}
+                  </Button>
+                </Link>
               </div>
               <p className="text-sm text-gray-500 italic">
                 {currentLang === "ar"

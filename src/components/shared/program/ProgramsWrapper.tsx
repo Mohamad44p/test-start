@@ -1,9 +1,9 @@
-import { getPrograms } from "@/app/actions/pages/programsAction"
+import { getProgramsWithHero } from "@/app/actions/program-actions"
 import ProgramsSec from "./ProgramsSec"
 import type { Program } from "@/types/program"
 
 export default async function ProgramsWrapper() {
-  const response = await getPrograms()
+  const response = await getProgramsWithHero()
 
   if (!response.success || !response.data) {
     console.error("Failed to fetch programs:", response.error)
@@ -16,10 +16,7 @@ export default async function ProgramsWrapper() {
     name_ar: program.name_ar,
     description_en: program.description_en,
     description_ar: program.description_ar,
-    imageUrl: program.imageUrl,
-    nameColor: program.nameColor,
-    descColor: program.descColor,
-    order: program.order,
+    imageUrl: program.imageUrl
   }))
 
   return <ProgramsSec programs={programs} />

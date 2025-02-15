@@ -16,6 +16,7 @@ import * as z from "zod"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ProgramDialog } from "./ProgramDialog"
 import { RichTextEditor } from "@/components/Editor/RichTextEditor"
+import { FileUpload } from "@/lib/FileUpload"
 
 const programTabSchema = z.object({
   title_en: z.string().min(1, "English title is required"),
@@ -24,6 +25,7 @@ const programTabSchema = z.object({
   content_en: z.string().min(1, "English content is required"),
   content_ar: z.string().min(1, "Arabic content is required"),
   programPageId: z.string().optional().nullable(),
+  processFile: z.string().optional().nullable(),
 })
 
 interface ProgramTabFormProps {
@@ -46,6 +48,7 @@ export default function ProgramTabForm({ programTab, programs }: ProgramTabFormP
       content_en: programTab?.content_en || "",
       content_ar: programTab?.content_ar || "",
       programPageId: programTab?.programPageId || undefined,
+      processFile: programTab?.processFile || undefined,
     },
   })
 
@@ -82,6 +85,12 @@ export default function ProgramTabForm({ programTab, programs }: ProgramTabFormP
   const handleProgramUpdate = (updatedPrograms: ProgramsPages[]) => {
     setProgramsList(updatedPrograms)
   }
+
+  const handleFileUpload = (urls: string[]) => {
+    if (urls.length > 0) {
+      form.setValue("processFile", urls[0]);
+    }
+  };
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -137,6 +146,24 @@ export default function ProgramTabForm({ programTab, programs }: ProgramTabFormP
             />
 
             <ProgramDialog programs={programsList} onProgramsUpdate={handleProgramUpdate} />
+
+            <FormField
+              control={form.control}
+              name="processFile"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Process Details PDF</FormLabel>
+                  <FormControl>
+                    <FileUpload
+                      onUpload={handleFileUpload}
+                      defaultFiles={field.value ? [field.value] : []}
+                      maxFiles={1}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <Tabs defaultValue="english" className="w-full">
               <TabsList className="grid w-full grid-cols-2">

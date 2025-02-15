@@ -19,6 +19,7 @@ import * as z from "zod"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ProgramDialog } from "./ProgramDialog"
+import { RichTextEditor } from "@/components/Editor/RichTextEditor"
 
 const programsHeroSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -50,6 +51,8 @@ const programsHeroSchema = z.object({
   card3Description_ar: z.string().nullable(),
   card3Show: z.boolean(),
   programPageId: z.string().nullable(),
+  objectives_en: z.string().optional().nullable(),
+  objectives_ar: z.string().optional().nullable(),
 })
 
 interface ProgramsHeroFormProps {
@@ -100,6 +103,8 @@ export default function ProgramsHeroForm({ programsHero, programs: initialProgra
           card3Description_ar: null,
           card3Show: true,
           programPageId: null,
+          objectives_en: null,
+          objectives_ar: null,
         },
   })
 
@@ -265,6 +270,24 @@ export default function ProgramsHeroForm({ programsHero, programs: initialProgra
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="objectives_en"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Objectives (English)</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            content={field.value || ""}
+                            onChange={field.onChange}
+                            dir="ltr"
+                            placeholder="Write your objectives in English..."
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </TabsContent>
               <TabsContent value="arabic">
@@ -316,6 +339,24 @@ export default function ProgramsHeroForm({ programsHero, programs: initialProgra
                         <FormLabel>Description (Arabic)</FormLabel>
                         <FormControl>
                           <Textarea placeholder="Enter Arabic description" {...field} dir="rtl" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="objectives_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Objectives (Arabic)</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            content={field.value || ""}
+                            onChange={field.onChange}
+                            dir="rtl"
+                            placeholder="Write your objectives in Arabic..."
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

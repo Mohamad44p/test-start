@@ -37,10 +37,6 @@ const data: { navMain: NavItem[] } = {
           url: "/admin/pages/stats",
         },
         {
-          title: "Programs Section",
-          url: "/admin/pages/programs",
-        },
-        {
           title: "Footer",
           url: "/admin/pages/footer",
         },

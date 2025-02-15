@@ -7,7 +7,10 @@ import type { CreateProgramTabInput, UpdateProgramTabInput } from "@/types/progr
 export async function createProgramTab(data: CreateProgramTabInput) {
   try {
     const programTab = await db.programTab.create({
-      data,
+      data: {
+        ...data,
+        processFile: data.processFile || null,
+      },
       include: {
         programPage: true,
       },
@@ -25,7 +28,10 @@ export async function updateProgramTab(data: UpdateProgramTabInput) {
   try {
     const programTab = await db.programTab.update({
       where: { id: data.id },
-      data,
+      data: {
+        ...data,
+        processFile: data.processFile || null,
+      },
       include: {
         programPage: true,
       },
