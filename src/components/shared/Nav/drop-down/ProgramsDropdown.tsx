@@ -93,42 +93,51 @@ export const ProgramsDropdown: React.FC<DropdownProps> = ({ setPosition, transla
                       >
                         {category.programs?.map((program) => (
                           <div key={program.id}>
-                            <button
-                              onClick={() => setActiveProgramId(activeProgramId === program.id ? null : program.id)}
-                              className="w-full px-6 py-2.5 text-sm text-[#1b316e] hover:bg-gray-100
-                                       flex items-center justify-between transition-all"
-                            >
-                              <span>{currentLang === "ar" ? program.name_ar : program.name_en}</span>
-                              {program.ProgramTab && program.ProgramTab.length > 0 && (
-                                <motion.span
-                                  animate={{ rotate: activeProgramId === program.id ? 180 : 0 }}
-                                  className="text-xs opacity-50"
+                            {program.ProgramTab && program.ProgramTab.length > 0 ? (
+                              <>
+                                <button
+                                  onClick={() => setActiveProgramId(activeProgramId === program.id ? null : program.id)}
+                                  className="w-full px-6 py-2.5 text-sm text-[#1b316e] hover:bg-gray-100
+                                           flex items-center justify-between transition-all"
                                 >
-                                  ▼
-                                </motion.span>
-                              )}
-                            </button>
+                                  <span>{currentLang === "ar" ? program.name_ar : program.name_en}</span>
+                                  <motion.span
+                                    animate={{ rotate: activeProgramId === program.id ? 180 : 0 }}
+                                    className="text-xs opacity-50"
+                                  >
+                                    ▼
+                                  </motion.span>
+                                </button>
 
-                            <AnimatePresence>
-                              {activeProgramId === program.id && program.ProgramTab && (
-                                <motion.div
-                                  initial={{ height: 0 }}
-                                  animate={{ height: "auto" }}
-                                  exit={{ height: 0 }}
-                                  className="bg-white"
-                                >
-                                  {program.ProgramTab.map((tab) => (
-                                    <Link
-                                      key={tab.id}
-                                      href={`/${currentLang}/programs/${program.id}#${tab.slug}`}
-                                      className="block px-8 py-2 text-sm text-[#1b316e] hover:bg-gray-100"
+                                <AnimatePresence>
+                                  {activeProgramId === program.id && (
+                                    <motion.div
+                                      initial={{ height: 0 }}
+                                      animate={{ height: "auto" }}
+                                      exit={{ height: 0 }}
+                                      className="bg-white"
                                     >
-                                      {currentLang === "ar" ? tab.title_ar : tab.title_en}
-                                    </Link>
-                                  ))}
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
+                                      {program.ProgramTab.map((tab) => (
+                                        <Link
+                                          key={tab.id}
+                                          href={`/${currentLang}/programs/${program.id}#${tab.slug}`}
+                                          className="block px-8 py-2 text-sm text-[#1b316e] hover:bg-gray-100"
+                                        >
+                                          {currentLang === "ar" ? tab.title_ar : tab.title_en}
+                                        </Link>
+                                      ))}
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </>
+                            ) : (
+                              <Link
+                                href={`/${currentLang}/programs/${program.id}`}
+                                className="block w-full px-6 py-2.5 text-sm text-[#1b316e] hover:bg-gray-100 text-left"
+                              >
+                                {currentLang === "ar" ? program.name_ar : program.name_en}
+                              </Link>
+                            )}
                           </div>
                         ))}
                       </motion.div>

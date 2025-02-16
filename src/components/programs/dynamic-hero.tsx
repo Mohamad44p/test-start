@@ -52,10 +52,14 @@ export default function DynamicHero({ hero, lang }: DynamicHeroProps) {
       objectives={lang === 'ar' ? (hero.objectives_ar || '') : (hero.objectives_en || '')}
       objectivesTitle={{ en: "Program Objectives", ar: "أهداف البرنامج" }}
       primaryButtonText={lang === 'ar' ? "تقدم الآن" : "Apply Now"}
-      secondaryButtonText={lang === 'ar' ? "اعرف المزيد" : "Learn More"}
+      secondaryButtonText={lang === 'ar' ? "معايير الأهلية" : "Eligibility Criteria"} // This is a fallback
       imageSrc={hero.imageUrl || '/default-hero.png'}
       imageAlt={hero.name}
       features={features.length > 0 ? features : undefined}
+      secondaryButtonProps={{
+        href: `${hero.programPageId}/eligibility`,
+        text: lang === 'ar' ? "معايير الأهلية" : "Eligibility Criteria"
+      }}
     />
   );
 }

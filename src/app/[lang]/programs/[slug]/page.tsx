@@ -3,9 +3,7 @@ import db from "@/app/db/db";
 import DynamicHero from "@/components/programs/dynamic-hero";
 import DynamicTabs from "@/components/programs/dynamic-tabs";
 
-
 export const dynamic = "force-dynamic"
-
 
 async function getProgram(slug: string) {
   try {
@@ -33,12 +31,11 @@ async function getProgram(slug: string) {
   }
 }
 
-export default async function DynamicProgramPage(
-  props: {
-    params: Promise<{ lang: string; slug: string }>
-  }
-) {
-  const params = await props.params;
+export default async function DynamicProgramPage({
+  params
+}: {
+  params: { lang: string; slug: string }
+}) {
   const program = await getProgram(params.slug);
 
   if (!program) {
@@ -46,6 +43,12 @@ export default async function DynamicProgramPage(
   }
 
   const hero = program.ProgramsHero[0];
+  
+  // Add programPage to hero if it's missing
+  const heroWithProgram = hero ? {
+    ...hero,
+    programPage: program
+  } : null;
 
   // Prepare FAQ data
   const faqsByCategory = program.faqCategories.reduce((acc, category) => {
@@ -59,7 +62,7 @@ export default async function DynamicProgramPage(
 
   return (
     <main className="min-h-screen flex flex-col">
-      {hero && <DynamicHero hero={hero} lang={params.lang} />}
+      {heroWithProgram && <DynamicHero hero={heroWithProgram} lang={params.lang} />}
       {program.ProgramTab && (
         <DynamicTabs 
           tabs={program.ProgramTab} 

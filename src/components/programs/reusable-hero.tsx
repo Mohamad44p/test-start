@@ -22,6 +22,10 @@ interface ReusableHeroProps {
     description: string;
   }>;
   objectivesTitle?: { en: string; ar: string };
+  secondaryButtonProps?: {
+    href: string;
+    text: string;
+  };
 }
 
 export default function ReusableHero({
@@ -36,6 +40,7 @@ export default function ReusableHero({
   imageAlt,
   features,
   objectivesTitle = { en: "Program Objectives", ar: "أهداف البرنامج" },
+  secondaryButtonProps,
 }: ReusableHeroProps) {
   const { currentLang } = useLanguage();
 
@@ -126,13 +131,25 @@ export default function ReusableHero({
                     {primaryButtonText}
                   </Button>
                 </Link>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-blue-200 hover:bg-blue-50"
-                >
-                  {secondaryButtonText}
-                </Button>
+                {secondaryButtonProps ? (
+                  <Link href={secondaryButtonProps.href}>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-blue-200 hover:bg-blue-50"
+                    >
+                      {secondaryButtonProps.text}
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-blue-200 hover:bg-blue-50"
+                  >
+                    {secondaryButtonText}
+                  </Button>
+                )}
               </motion.div>
             </motion.div>
             <motion.div

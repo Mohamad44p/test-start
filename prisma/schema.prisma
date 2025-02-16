@@ -499,6 +499,8 @@ model ProgramsHero {
   card3Show           Boolean        @default(true)
   objectives_en       String?        @db.Text
   objectives_ar       String?        @db.Text
+  eligibility_en      String?        @db.Text
+  eligibility_ar      String?        @db.Text
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @default(now())
   programPageId       String?

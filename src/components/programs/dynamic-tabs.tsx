@@ -54,10 +54,6 @@ export default function DynamicTabs({
   ];
 
   const buttonText = {
-    eligibility: {
-      en: "Eligibility Criteria",
-      ar: "معايير الأهلية",
-    },
     overview: {
       en: "Application Process Details",
       ar: "تفاصيل عملية التقديم",
@@ -158,15 +154,6 @@ export default function DynamicTabs({
                     variant="outline"
                     className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
                              transition-all duration-300 border-gray-200"
-                  >
-                    {currentLang === "ar"
-                      ? buttonText.eligibility.ar
-                      : buttonText.eligibility.en}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
-                             transition-all duration-300 border-gray-200"
                     onClick={() => handleProcessDetailsClick(tab)}
                     disabled={!tab.processFile}
                   >
@@ -204,15 +191,6 @@ export default function DynamicTabs({
                 />
               </FaqProvider>
               <div className="flex flex-wrap gap-4">
-                <Button
-                  variant="outline"
-                  className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
-                           transition-all duration-300 border-gray-200"
-                >
-                  {currentLang === "ar"
-                    ? buttonText.eligibility.ar
-                    : buttonText.eligibility.en}
-                </Button>
                 <Button
                   variant="outline"
                   className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 

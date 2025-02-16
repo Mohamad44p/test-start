@@ -5,20 +5,21 @@ import { revalidatePath } from "next/cache"
 import db from "@/app/db/db"
 import type { CreateProgramsHeroInput, UpdateProgramsHeroInput } from "@/types/programs-hero"
 
-export async function createProgramsHero(data: CreateProgramsHeroInput | CreateProgramsHeroInput[]) {
+export async function createProgramsHero(data: CreateProgramsHeroInput) {
   if (!data) {
     return { error: "Invalid input: Payload cannot be null" }
   }
 
-  const programData = Array.isArray(data) ? data[0] : data;
-
-  if (!programData || typeof programData !== 'object') {
-    return { error: "Invalid input: Payload must be a valid object" }
-  }
-
   try {
-    const { programPageId, programPage, objectives_en, objectives_ar, ...cleanedData } = Object.fromEntries(
-      Object.entries(programData).filter(([_, v]) => v != null),
+    const { 
+      programPageId, 
+      objectives_en, 
+      objectives_ar,
+      eligibility_en,
+      eligibility_ar,
+      ...cleanedData 
+    } = Object.fromEntries(
+      Object.entries(data).filter(([_, v]) => v != null),
     ) as CreateProgramsHeroInput
 
     if (!cleanedData.title_en?.trim() || !cleanedData.title_ar?.trim()) {
@@ -35,8 +36,11 @@ export async function createProgramsHero(data: CreateProgramsHeroInput | CreateP
       ...cleanedData,
       objectives_en: objectives_en || null,
       objectives_ar: objectives_ar || null,
+      eligibility_en: eligibility_en || null,
+      eligibility_ar: eligibility_ar || null,
       card2Show: cleanedData.card2Show ?? false,
       card3Show: cleanedData.card3Show ?? false,
+      programPageId,
     } as const
 
     if (programPageId) {
@@ -67,12 +71,22 @@ export async function createProgramsHero(data: CreateProgramsHeroInput | CreateP
 
 export async function updateProgramsHero(data: UpdateProgramsHeroInput) {
   try {
-    const { programPageId, programPage, id, objectives_en, objectives_ar, ...updateData } = data
+    const { 
+      programPageId, 
+      id, 
+      objectives_en, 
+      objectives_ar,
+      eligibility_en,
+      eligibility_ar, 
+      ...updateData 
+    } = data
 
     const updatePayload = {
       ...updateData,
       objectives_en: objectives_en || null,
       objectives_ar: objectives_ar || null,
+      eligibility_en: eligibility_en || null,
+      eligibility_ar: eligibility_ar || null,
       ...(programPageId ? { programPageId } : {}),
     }
 

@@ -53,6 +53,8 @@ const programsHeroSchema = z.object({
   programPageId: z.string().nullable(),
   objectives_en: z.string().optional().nullable(),
   objectives_ar: z.string().optional().nullable(),
+  eligibility_en: z.string().nullable(),
+  eligibility_ar: z.string().nullable(),
 })
 
 interface ProgramsHeroFormProps {
@@ -72,6 +74,8 @@ export default function ProgramsHeroForm({ programsHero, programs: initialProgra
       ? {
           ...programsHero,
           programPageId: programsHero.programPageId || null,
+          eligibility_en: programsHero.eligibility_en || null,
+          eligibility_ar: programsHero.eligibility_ar || null,
         }
       : {
           name: "",
@@ -105,12 +109,25 @@ export default function ProgramsHeroForm({ programsHero, programs: initialProgra
           programPageId: null,
           objectives_en: null,
           objectives_ar: null,
+          eligibility_en: null,
+          eligibility_ar: null,
         },
   })
 
   async function onSubmit(data: CreateProgramsHeroInput) {
     setIsSubmitting(true)
     try {
+      // Add validation for eligibility content
+      if (!data.eligibility_en?.trim() && !data.eligibility_ar?.trim()) {
+        toast({
+          title: "Validation Error",
+          description: "Eligibility criteria in at least one language is required",
+          variant: "destructive",
+        })
+        setIsSubmitting(false)
+        return
+      }
+
       const cleanedData = Object.fromEntries(
         Object.entries(data).map(([key, value]) => [key, value === "" ? null : value]),
       ) as CreateProgramsHeroInput
@@ -169,7 +186,6 @@ export default function ProgramsHeroForm({ programsHero, programs: initialProgra
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="programPageId"
@@ -288,6 +304,24 @@ export default function ProgramsHeroForm({ programsHero, programs: initialProgra
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="eligibility_en"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Eligibility Criteria (English)</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            content={field.value || ""}
+                            onChange={field.onChange}
+                            dir="ltr"
+                            placeholder="Write your eligibility criteria in English..."
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </TabsContent>
               <TabsContent value="arabic">
@@ -356,6 +390,24 @@ export default function ProgramsHeroForm({ programsHero, programs: initialProgra
                             onChange={field.onChange}
                             dir="rtl"
                             placeholder="Write your objectives in Arabic..."
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="eligibility_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Eligibility Criteria (Arabic)</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            content={field.value || ""}
+                            onChange={field.onChange}
+                            dir="rtl"
+                            placeholder="Write your eligibility criteria in Arabic..."
                           />
                         </FormControl>
                         <FormMessage />
