@@ -13,24 +13,49 @@ const StatSchema = z.object({
   name_ar: z.string().min(1, "Arabic name is required"),
   value: z.number().int().positive("Value must be a positive integer"),
   icon: z.string().min(1, "Icon is required"),
-  suffix_en: z.string().min(1, "English suffix is required"),
-  suffix_ar: z.string().min(1, "Arabic suffix is required"),
+  suffix_en: z.string().min(1, "English suffix is required").default("total"),
+  suffix_ar: z.string().min(1, "Arabic suffix is required").default("إجمالي"),
 })
 
 export type StatFormData = z.infer<typeof StatSchema>
 
-export async function createStat(data: StatFormData) {
-  const validatedData = StatSchema.parse(data)
-  await db.stat.create({ data: validatedData })
-  revalidatePath('/admin/pages/stats')
-  revalidatePath('/')
+export async function createStat(data: StatFormData): Promise<ApiResponse<Stat>> {
+  try {
+    const validatedData = StatSchema.parse(data)
+    const newStat = await db.stat.create({ data: validatedData })
+    revalidatePath('/admin/pages/stats')
+    revalidatePath('/')
+    return { success: true, data: newStat }
+  } catch (error) {
+    console.error("Error creating stat:", error)
+    return { 
+      success: false, 
+      error: error instanceof z.ZodError 
+        ? error.errors.map(e => e.message).join(", ")
+        : "Failed to create stat" 
+    }
+  }
 }
 
-export async function updateStat(id: string, data: StatFormData) {
-  const validatedData = StatSchema.parse(data)
-  await db.stat.update({ where: { id }, data: validatedData })
-  revalidatePath('/admin/pages/stats')
-  revalidatePath('/')
+export async function updateStat(id: string, data: StatFormData): Promise<ApiResponse<Stat>> {
+  try {
+    const validatedData = StatSchema.parse(data)
+    const updatedStat = await db.stat.update({ 
+      where: { id }, 
+      data: validatedData 
+    })
+    revalidatePath('/admin/pages/stats')
+    revalidatePath('/')
+    return { success: true, data: updatedStat }
+  } catch (error) {
+    console.error("Error updating stat:", error)
+    return { 
+      success: false, 
+      error: error instanceof z.ZodError 
+        ? error.errors.map(e => e.message).join(", ")
+        : "Failed to update stat" 
+    }
+  }
 }
 
 export async function deleteStat(id: string) {
