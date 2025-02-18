@@ -2,7 +2,8 @@ import { NextResponse } from "next/server"
 import { del } from "@vercel/blob"
 import db from "@/app/db/db"
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const id = params.id
 

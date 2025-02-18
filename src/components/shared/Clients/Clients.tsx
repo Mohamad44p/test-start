@@ -44,6 +44,7 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                         src={partner.imageUrl || "/placeholder.svg"}
                         alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
                         fill
+                        sizes="(max-width: 640px) 100vw, 640px"
                         className="object-contain"
                         priority
                       />
@@ -71,6 +72,7 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                         src={partner.imageUrl || "/placeholder.svg"}
                         alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
                         fill
+                        sizes="(max-width: 640px) 100vw, 640px"
                         className="object-contain"
                         priority={index < 2}
                       />
@@ -101,6 +103,7 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                         src={partner.imageUrl || "/placeholder.svg"}
                         alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
                         fill
+                        sizes="(max-width: 640px) 100vw, 640px"
                         className="object-contain"
                         priority
                       />
@@ -155,6 +158,7 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                           src={partner.imageUrl || "/placeholder.svg"}
                           alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
                           fill
+                          sizes="(max-width: 640px) 100vw, 640px"
                           className="object-contain"
                           priority
                         />
@@ -173,6 +177,7 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                           src={partner.imageUrl || "/placeholder.svg"}
                           alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
                           fill
+                          sizes="(max-width: 640px) 100vw, 640px"
                           className="object-contain"
                           priority={index < 2}
                         />
@@ -194,6 +199,7 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                           src={partner.imageUrl || "/placeholder.svg"}
                           alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
                           fill
+                          sizes="(max-width: 640px) 100vw, 640px"
                           className="object-contain"
                           priority
                         />

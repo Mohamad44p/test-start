@@ -121,7 +121,7 @@ const Hero = ({ steps }: HeroProps) => {
                     className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium"
                     style={{
                       backgroundColor: `${currentSteps[currentStep].color}20`,
-                      color: "#862996",
+                      color: currentSteps[currentStep].color,
                     }}
                   >
                     {currentSteps[currentStep].tagline}
@@ -212,6 +212,7 @@ const Hero = ({ steps }: HeroProps) => {
                     whileHover={{
                       scale: 1.05,
                       backgroundColor: step.color,
+                      color: "white",
                     }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleTabClick(index)}

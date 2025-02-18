@@ -17,6 +17,8 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
   const [playerReady, setPlayerReady] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const hasInitialized = useRef(false);
+  const [userClickedPlay, setUserClickedPlay] = useState(false);
+  const [startPlayback, setStartPlayback] = useState(false);
 
   useEffect(() => {
     if (hasInitialized.current) return;
@@ -54,31 +56,26 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
             controls: 0,
             rel: 0,
             showinfo: 0,
-            mute: 0, // Changed to 0 to not force mute
+            mute: 1, // Start muted
             enablejsapi: 1,
             playsinline: 1,
             origin: window.location.origin,
-            fs: 1
+            fs: 1,
+            modestbranding: 1
           },
           events: {
             onReady: (event: YT.PlayerEvent) => {
               setPlayerReady(true);
               setDuration(event.target.getDuration());
-              // Set initial volume
               event.target.setVolume(50);
-              setIsMuted(false);
             },
             onStateChange: (event: YT.OnStateChangeEvent) => {
               setIsPlaying(event.data === window.YT.PlayerState.PLAYING);
+              
               if (event.data === window.YT.PlayerState.ENDED) {
-                event.target.seekTo(0, true);
-                if (hasUserInteracted) {
-                  event.target.playVideo();
-                }
+                event.target.seekTo(0);
+                setIsPlaying(false);
               }
-            },
-            onError: (error: YT.OnErrorEvent) => {
-              console.error('YouTube Player Error:', error);
             }
           },
         });
@@ -114,20 +111,22 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
 
   const handlePlay = () => {
     if (!playerRef.current || !playerReady) return;
+    
     try {
       if (!hasUserInteracted) {
         setHasUserInteracted(true);
         playerRef.current.unMute();
         playerRef.current.setVolume(50);
+        setIsMuted(false);
       }
-      
+
       if (isPlaying) {
         playerRef.current.pauseVideo();
       } else {
         playerRef.current.playVideo();
       }
     } catch (error) {
-      console.error('Error toggling play state:', error);
+      console.error('Error in handlePlay:', error);
     }
   };
 
@@ -151,7 +150,7 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
   };
 
   const handleMute = (muted: boolean) => {
-    if (!playerRef.current) return;
+    if (!playerRef.current || !playerReady) return;
     try {
       if (muted) {
         playerRef.current.mute();
@@ -161,12 +160,21 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
       }
       setIsMuted(muted);
     } catch (error) {
-      console.error('Error toggling mute:', error);
+      console.error('Error in handleMute:', error);
     }
   };
 
   return (
-    <div ref={containerRef} className="relative w-full h-full">
+    <div 
+      ref={containerRef} 
+      className="relative w-full h-full"
+      // Add touch listeners with passive option
+      onTouchStart={(e) => {
+        if (!hasUserInteracted) {
+          setHasUserInteracted(true);
+        }
+      }}
+    >
       <div id={`youtube-player-${videoId}`} className="w-full h-full" />
       {playerReady && (
         <VideoControls
@@ -187,8 +195,8 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
           onClick={handlePlay}
         >
           <div className="text-white text-center bg-black/70 p-6 rounded-lg">
-            <div className="text-6xl mb-4">🔊</div>
-            <p className="text-lg">Click to play with sound</p>
+            <div className="text-6xl mb-4">▶️</div>
+            <p className="text-lg">Click to play video</p>
           </div>
         </div>
       )}

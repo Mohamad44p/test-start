@@ -10,7 +10,6 @@ import { GalleryFilters } from "./GalleryFilters"
 import { useLanguage } from "@/context/LanguageContext"
 import type { VideoGallery as VideoGalleryType, Video } from "@/types/video-gallery"
 import { VideoControls } from "./VideoControls"
-import { YouTubePlayer } from './YouTubePlayer';
 import { getYoutubeVideoId } from "@/lib/utils";
 
 interface VideoGalleryProps {
@@ -60,8 +59,14 @@ const VideoThumbnail = ({ video, onClick }: { video: Video; onClick: () => void 
 }
 
 const VideoPlayer = ({ video }: { video: Video }) => {
+  // Only handle local videos - YouTube videos will be opened in a new page
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Return null for YouTube videos as they'll be handled separately
+  if (video.type === "youtube") {
+    return null;
+  }
 
   const handleFullscreen = () => {
     if (!containerRef.current) return;
@@ -71,11 +76,6 @@ const VideoPlayer = ({ video }: { video: Video }) => {
       containerRef.current.requestFullscreen();
     }
   };
-
-  if (video.type === "youtube") {
-    const videoId = getYoutubeVideoId(video.url);
-    return <YouTubePlayer videoId={videoId} />;
-  }
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
@@ -169,6 +169,30 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
     setSortOrder(order)
   }, [])
 
+  const handleVideoClick = (gallery: VideoGalleryType, index: number) => {
+    const video = gallery.videos[index];
+    
+    if (video.type === "youtube") {
+      // Open YouTube video in a new page
+      const videoId = getYoutubeVideoId(video.url);
+      const youtubeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&fs=1`;
+      const width = 1280;
+      const height = 720;
+      const left = (window.screen.width - width) / 2;
+      const top = (window.screen.height - height) / 2;
+      
+      window.open(
+        youtubeUrl,
+        'YouTubeVideo',
+        `width=${width},height=${height},top=${top},left=${left},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`
+      );
+    } else {
+      // Handle local videos with modal
+      setSelectedGallery(gallery);
+      setCurrentVideoIndex(index);
+    }
+  };
+
   return (
     <div className={cn("min-h-screen bg-gray-100")}>
       <header className="sticky top-0 z-50 bg-white shadow-sm">
@@ -200,10 +224,7 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
                 <VideoThumbnail
                   key={video.id}
                   video={video}
-                  onClick={() => {
-                    setSelectedGallery(gallery)
-                    setCurrentVideoIndex(index)
-                  }}
+                  onClick={() => handleVideoClick(gallery, index)}
                 />
               ))}
             </div>
@@ -212,7 +233,7 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
       </main>
 
       <AnimatePresence>
-        {selectedGallery && (
+        {selectedGallery && selectedGallery.videos[currentVideoIndex].type !== "youtube" && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

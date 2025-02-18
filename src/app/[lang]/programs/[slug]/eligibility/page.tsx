@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import db from "@/app/db/db";
 
-export default async function EligibilityPage({
-  params,
-}: {
-  params: { lang: string; slug: string };
-}) {
+export default async function EligibilityPage(
+  props: {
+    params: Promise<{ lang: string; slug: string }>;
+  }
+) {
+  const params = await props.params;
   const program = await db.programsPages.findFirst({
     where: { id: params.slug },
     include: {

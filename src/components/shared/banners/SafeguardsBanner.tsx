@@ -36,7 +36,7 @@ const SafeguardsBanner: React.FC<SafeguardsBannerProps> = ({ safeguard }) => {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-[#142451]">
               {title}
             </h2>
-            <p className="text-lg sm:text-xl text-[#142451] max-w-2xl">
+            <p className="text-lg sm:text-xl text-[#142451] max-w-2xl line-clamp-3">
               {description}
             </p>
             <div className="flex flex-wrap gap-4">
