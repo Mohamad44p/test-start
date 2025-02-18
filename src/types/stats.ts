@@ -3,7 +3,7 @@ import type { FieldErrors } from 'react-hook-form'
 export interface StatData {
   name_en: string
   name_ar: string
-  value: number
+  value: number // Changed from explicitly requiring an integer
   icon: string
   suffix_en: string
   suffix_ar: string

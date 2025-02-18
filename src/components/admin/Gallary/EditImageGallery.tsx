@@ -57,21 +57,19 @@ export default function EditImageGallery({ gallery }: EditImageGalleryProps) {
       title_ar: gallery.title_ar,
       date: gallery.createdAt.split('T')[0],
       imageUrls: gallery.images.map(img => img.url),
-      imageTitles_en: gallery.images.map(img => img.title_en),
-      imageTitles_ar: gallery.images.map(img => img.title_ar),
+      imageTitles_en: gallery.images.map(img => img.title_en ?? null),
+      imageTitles_ar: gallery.images.map(img => img.title_ar ?? null),
       imageFeatured: gallery.images.map(img => img.featured),
       deletedImageIds: [],
     },
   });
 
   const handleFeaturedChange = (index: number, checked: boolean) => {
-    const currentFeatured = form.getValues("imageFeatured");
+    const currentFeatured = form.getValues("imageFeatured") ?? [];
     let newFeatured;
     if (checked) {
-      // If checking a new one, uncheck all others
       newFeatured = currentFeatured.map((_, i) => i === index);
     } else {
-      // If unchecking, check the first image if no other is checked
       newFeatured = currentFeatured.map((value, i) => {
         if (i === index) return false;
         if (!currentFeatured.some(Boolean) && i === 0) return true;
@@ -83,7 +81,7 @@ export default function EditImageGallery({ gallery }: EditImageGalleryProps) {
 
   useEffect(() => {
     const images = form.watch("imageUrls");
-    const featured = form.getValues("imageFeatured");
+    const featured = form.getValues("imageFeatured") ?? [];
     if (images.length > 0 && !featured.some(Boolean)) {
       const newFeatured = images.map((_, index) => index === 0);
       form.setValue("imageFeatured", newFeatured);
@@ -99,9 +97,9 @@ export default function EditImageGallery({ gallery }: EditImageGalleryProps) {
     
     data.imageUrls.forEach((url, index) => {
       formData.append("imageUrls", url);
-      formData.append("imageTitles_en", data.imageTitles_en[index] || "");
-      formData.append("imageTitles_ar", data.imageTitles_ar[index] || "");
-      formData.append("imageFeatured", String(data.imageFeatured[index] || false));
+      formData.append("imageTitles_en", data.imageTitles_en?.[index] ?? '');
+      formData.append("imageTitles_ar", data.imageTitles_ar?.[index] ?? '');
+      formData.append("imageFeatured", String(data.imageFeatured?.[index] ?? false));
     });
 
     data.deletedImageIds.forEach(id => {

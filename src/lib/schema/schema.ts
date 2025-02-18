@@ -37,16 +37,13 @@ export type CreateTagInput = z.infer<typeof createTagSchema>
 
 
 export const createGallerySchema = z.object({
-  title_en: z.string().min(1, "Title in English is required"),
-  title_ar: z.string().min(1, "Title in Arabic is required"),
+  title_en: z.string().min(1, "English title is required"),
+  title_ar: z.string().min(1, "Arabic title is required"),
   date: z.string(),
   imageUrls: z.array(z.string()).min(1, "At least one image is required"),
-  imageTitles_en: z.array(z.string().nullable()),
-  imageTitles_ar: z.array(z.string().nullable()),
-  imageFeatured: z.array(z.boolean()).refine(
-    (featured) => featured.filter(Boolean).length === 1,
-    "Exactly one image must be featured"
-  ),
+  imageTitles_en: z.array(z.string().nullish()).optional(),
+  imageTitles_ar: z.array(z.string().nullish()).optional(),
+  imageFeatured: z.array(z.boolean()).optional(),
 });
 
 export type CreateGalleryInput = z.infer<typeof createGallerySchema>;

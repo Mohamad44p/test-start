@@ -28,7 +28,8 @@ export const useCountUp = (end: number, duration: number = 2) => {
         animate(0, end, {
           duration,
           onUpdate: (latest) => {
-            setCount(Math.floor(latest));
+            // Use the actual number without rounding
+            setCount(latest);
           },
         });
       };

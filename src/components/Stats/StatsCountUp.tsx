@@ -44,6 +44,14 @@ function Stat({ name_en, name_ar, value, icon, suffix_en, suffix_ar, currentLang
   const { count, ref, controls } = useCountUp(value)
   const Icon: LucideIcon | undefined = AVAILABLE_ICONS[icon as IconName]
 
+  const formatNumber = (num: number) => {
+    const hasDecimal = num % 1 !== 0;
+    return num.toLocaleString(currentLang === "ar" ? "ar-SA" : "en-US", {
+      minimumFractionDigits: hasDecimal ? 1 : 0,
+      maximumFractionDigits: 1
+    })
+  }
+
   if (!Icon) {
     console.error(`Icon not found: ${icon}`)
     return null
@@ -66,7 +74,7 @@ function Stat({ name_en, name_ar, value, icon, suffix_en, suffix_ar, currentLang
       <dd className="mt-auto">
         <div className="flex items-baseline">
           <p className="text-4xl font-bold tracking-tight text-[#142451]">
-            {count.toLocaleString(currentLang === "ar" ? "ar-SA" : "en-US")}
+            {formatNumber(count)}
           </p>
           <p className="ml-2 text-sm font-medium text-[#862996]">
             {currentLang === "ar" ? suffix_ar : suffix_en}

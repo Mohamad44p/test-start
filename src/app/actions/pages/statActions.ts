@@ -11,7 +11,7 @@ import { z } from 'zod'
 const StatSchema = z.object({
   name_en: z.string().min(1, "English name is required"),
   name_ar: z.string().min(1, "Arabic name is required"),
-  value: z.number().int().positive("Value must be a positive integer"),
+  value: z.number().positive("Value must be a positive number"), // Removed .int()
   icon: z.string().min(1, "Icon is required"),
   suffix_en: z.string().min(1, "English suffix is required").default("total"),
   suffix_ar: z.string().min(1, "Arabic suffix is required").default("إجمالي"),
