@@ -149,7 +149,7 @@ export default function DynamicTabs({
                     }}
                   />
                 </div>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 mt-6">
                   <Button
                     variant="outline"
                     className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
@@ -162,17 +162,15 @@ export default function DynamicTabs({
                       : buttonText.overview.en}
                   </Button>
                   <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
-                    <Button
-                      className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
-                  transition-opacity shadow-lg hover:shadow-xl"
-                    >
+                    <Button className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
+                                   transition-opacity shadow-lg hover:shadow-xl">
                       {currentLang === "ar"
                         ? buttonText.apply.ar
                         : buttonText.apply.en}
                     </Button>
                   </Link>
                 </div>
-                <p className="text-sm text-gray-500 italic">
+                <p className="text-sm text-gray-500 italic mt-4">
                   {currentLang === "ar"
                     ? buttonText.availability.ar
                     : buttonText.availability.en}
@@ -190,32 +188,6 @@ export default function DynamicTabs({
                   faqsByCategory={faqsByCategory}
                 />
               </FaqProvider>
-              <div className="flex flex-wrap gap-4">
-                <Button
-                  variant="outline"
-                  className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
-                           transition-all duration-300 border-gray-200"
-                >
-                  {currentLang === "ar"
-                    ? buttonText.overview.ar
-                    : buttonText.overview.en}
-                </Button>
-                <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
-                  <Button
-                    className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
-                  transition-opacity shadow-lg hover:shadow-xl"
-                  >
-                    {currentLang === "ar"
-                      ? buttonText.apply.ar
-                      : buttonText.apply.en}
-                  </Button>
-                </Link>
-              </div>
-              <p className="text-sm text-gray-500 italic">
-                {currentLang === "ar"
-                  ? buttonText.availability.ar
-                  : buttonText.availability.en}
-              </p>
             </TabsContent>
           </div>
         </Tabs>

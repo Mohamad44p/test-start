@@ -6,7 +6,7 @@ import { AVAILABLE_ICONS, type IconName } from '@/config/icons';
 import type { LucideIcon } from 'lucide-react';
 
 interface DynamicHeroProps {
-  hero: ProgramsHero;  // This should now include objectives_en and objectives_ar
+  hero: ProgramsHero;
   lang: string;
 }
 
