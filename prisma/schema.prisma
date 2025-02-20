@@ -363,6 +363,19 @@ model Safeguard {
   @@map("safeguards")
 }
 
+model HomeBanner {
+  id            String   @id @default(cuid())
+  title_en      String
+  title_ar      String
+  bgColor       String   @default("#f3f4f6")
+  buttonColor   String   @default("#142451")
+  imageUrl      String?
+  buttonText_en String   @default("Learn More")
+  buttonText_ar String   @default("اعرف المزيد")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+}
+
 enum ComplaintType {
   REGULAR
   ANONYMOUS

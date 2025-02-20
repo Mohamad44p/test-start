@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "npx prisma generate"
+    "postinstall": "npx prisma generate",
+    "seed:faq": "tsx prisma/seed-faq.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.1",
@@ -96,6 +97,7 @@
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "techstart": "file:",
+    "tsx": "^4.19.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {

@@ -178,20 +178,13 @@ const Hero = ({ steps }: HeroProps) => {
                 animate={{ opacity: 1, scale: 1, rotateY: 0 }}
                 exit={{ opacity: 0, scale: 1.05, rotateY: 15 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
-                className="relative w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] xl:h-[500px] rounded-2xl bg-white/50 shadow-xl overflow-hidden backdrop-blur-sm"
-                style={{ boxShadow: `0 0 40px ${currentSteps[currentStep].color}30` }}
+                className="relative w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] xl:h-[500px] rounded-2xl overflow-hidden"
               >
                 <Image
                   src={currentSteps[currentStep].imageUrl || "/placeholder.svg"}
                   alt={currentSteps[currentStep].title}
                   fill
                   className="object-cover"
-                />
-                <div
-                  className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"
-                  style={{
-                    backgroundImage: `linear-gradient(to top, ${currentSteps[currentStep].color}20, transparent)`,
-                  }}
                 />
               </motion.div>
             </AnimatePresence>

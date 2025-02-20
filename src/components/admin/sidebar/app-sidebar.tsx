@@ -37,6 +37,10 @@ const data: { navMain: NavItem[] } = {
           url: "/admin/pages/stats",
         },
         {
+          title: "home Saf Banner",
+          url: "/admin/home-banner",
+        },
+        {
           title: "Footer",
           url: "/admin/pages/footer",
         },
