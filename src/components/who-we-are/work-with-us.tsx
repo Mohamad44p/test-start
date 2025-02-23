@@ -47,12 +47,31 @@ export function WorkWithUs({ procurementListings, recruitmentListings }: WorkWit
     description: isArabic 
       ? "استكشف فرص التعاون والنمو مع تيك ستارت. نقدم طرقًا متنوعة للمشاركة في مشروعنا والمساهمة في تطوير قطاع تكنولوجيا المعلومات الفلسطيني."
       : "Explore opportunities to collaborate and grow with TechStart. We offer various ways to engage with our project and contribute to the Palestinian IT sector's development.",
-    procurement: isArabic ? "المشتريات" : "Procurement",
+    procurement: isArabic ? "العطائات" : "Procurement",
     recruitment: isArabic ? "التوظيف" : "Recruitment",
     deadline: isArabic ? "الموعد النهائي" : "Deadline",
     applyNow: isArabic ? "قدم الآن" : "Apply Now",
     comingSoon: isArabic ? "قريباً" : "Coming Soon",
+    noListingsYet: isArabic ? "سيتم إضافة الفرص قريباً" : "Opportunities will be added soon",
+    stayTuned: isArabic ? "ترقبوا المزيد" : "Stay tuned",
   }
+
+  const ComingSoonMessage = () => (
+    <motion.div 
+      variants={itemVariants} 
+      className="text-center p-12 bg-gray-50 rounded-lg w-full"
+    >
+      <h3 className="text-2xl font-semibold text-gray-700 mb-4">
+        {translations.comingSoon}
+      </h3>
+      <p className="text-gray-600">
+        {translations.noListingsYet}
+      </p>
+      <p className="text-gray-500 mt-2">
+        {translations.stayTuned}
+      </p>
+    </motion.div>
+  )
 
   return (
     <div className={`bg-gradient-to-b from-blue-50 via-white to-green-50 py-24 ${isArabic ? 'rtl' : 'ltr'}`}>
@@ -90,27 +109,39 @@ export function WorkWithUs({ procurementListings, recruitmentListings }: WorkWit
 
           <TabsContent value="procurements">
             <motion.div variants={itemVariants} className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {procurementListings.map((listing) => (
-                <ListingCard 
-                  key={listing.id} 
-                  listing={listing}
-                  variant="procurement"
-                  translations={translations}
-                />
-              ))}
+              {procurementListings.length > 0 ? (
+                procurementListings.map((listing) => (
+                  <ListingCard 
+                    key={listing.id} 
+                    listing={listing}
+                    variant="procurement"
+                    translations={translations}
+                  />
+                ))
+              ) : (
+                <div className="col-span-3">
+                  <ComingSoonMessage />
+                </div>
+              )}
             </motion.div>
           </TabsContent>
 
           <TabsContent value="recruitment">
             <motion.div variants={itemVariants} className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {recruitmentListings.map((listing) => (
-                <ListingCard 
-                  key={listing.id} 
-                  listing={listing}
-                  variant="recruitment"
-                  translations={translations}
-                />
-              ))}
+              {recruitmentListings.length > 0 ? (
+                recruitmentListings.map((listing) => (
+                  <ListingCard 
+                    key={listing.id} 
+                    listing={listing}
+                    variant="recruitment"
+                    translations={translations}
+                  />
+                ))
+              ) : (
+                <div className="col-span-3">
+                  <ComingSoonMessage />
+                </div>
+              )}
             </motion.div>
           </TabsContent>
         </Tabs>
@@ -130,7 +161,6 @@ function ListingCard({ listing, variant, translations }: ListingCardProps) {
   const isArabic = currentLang === 'ar'
   const Icon = AVAILABLE_ICONS[listing.iconName] || AVAILABLE_ICONS.briefcase
 
-  // Format date based on language
   const formattedDate = isArabic
     ? new Date(listing.deadline).toLocaleDateString('ar-SA', {
         year: 'numeric',

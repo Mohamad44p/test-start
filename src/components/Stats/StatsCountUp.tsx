@@ -46,7 +46,7 @@ function Stat({ name_en, name_ar, value, icon, suffix_en, suffix_ar, currentLang
 
   const formatNumber = (num: number) => {
     const hasDecimal = num % 1 !== 0;
-    return num.toLocaleString(currentLang === "ar" ? "ar-SA" : "en-US", {
+    return num.toLocaleString("en-US", {
       minimumFractionDigits: hasDecimal ? 1 : 0,
       maximumFractionDigits: 1
     })

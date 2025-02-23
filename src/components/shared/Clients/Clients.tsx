@@ -21,9 +21,7 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
     <section className="relative px-4">
       <div className="container mx-auto">
         <div className="max-w-7xl mx-auto">
-          {/* Mobile Layout */}
           <div className="md:hidden space-y-8">
-            {/* Project Partners Mobile */}
             <div className="space-y-4">
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
@@ -54,7 +52,6 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
               </div>
             </div>
 
-            {/* Funded Partners Mobile */}
             <div className="space-y-4">
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
@@ -82,7 +79,6 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
               </div>
             </div>
 
-            {/* Implemented Partners Mobile */}
             <div className="space-y-4">
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
@@ -114,9 +110,7 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
             </div>
           </div>
 
-          {/* Desktop Layout */}
           <div className="hidden md:block">
-            {/* Titles Desktop */}
             <div className="flex justify-between items-center mb-6">
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
@@ -144,14 +138,13 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
               </motion.span>
             </div>
 
-            {/* Content Desktop */}
-            <div className="flex justify-between items-start">
+            <div className="flex justify-between items-center">
               <motion.div className="w-[200px]">
                 <div className="space-y-4">
                   {projectPartners.map((partner, index) => (
                     <div
                       key={index}
-                      className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 md:mb-4"
+                      className="bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition-all duration-300 md:mb-4"
                     >
                       <div className="relative h-[80px]">
                         <Image
@@ -168,11 +161,11 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                 </div>
               </motion.div>
 
-              <motion.div className="flex-1 mx-8">
+              <motion.div className="flex-1 mx-8 mb-3">
                 <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
                   <div className="grid grid-cols-3 lg:grid-cols-4 gap-6">
                     {fundedPartners.map((partner, index) => (
-                      <div key={index} className="relative h-[60px] md:h-[80px]">
+                      <div key={index} className="relative h-[80px]">
                         <Image
                           src={partner.imageUrl || "/placeholder.svg"}
                           alt={currentLang === "ar" ? partner.name_ar : partner.name_en}

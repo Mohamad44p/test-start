@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
 import { FaqProvider } from "@/context/FaqContext";
 import { FAQSection } from "@/components/faq-section/faq-section";
@@ -10,11 +10,13 @@ import type { ProgramTab, FaqCategory } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 interface DynamicTabsProps {
   tabs: ProgramTab[];
   lang: string;
   faqCategories: FaqCategory[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   faqsByCategory: Record<string, any[]>;
 }
 
@@ -26,6 +28,7 @@ export default function DynamicTabs({
 }: DynamicTabsProps) {
   const { currentLang } = useLanguage();
   const [activeTab, setActiveTab] = React.useState(tabs[0]?.slug || "");
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   React.useEffect(() => {
     const hash = window.location.hash.replace("#", "");
@@ -74,6 +77,44 @@ export default function DynamicTabs({
     }
   };
 
+  const renderTabContent = (tab: ProgramTab) => (
+    <div className="space-y-6">
+      <div className="prose max-w-none">
+        <div
+          dangerouslySetInnerHTML={{
+            __html: lang === "ar" ? tab.content_ar : tab.content_en,
+          }}
+        />
+      </div>
+      <div className="flex flex-wrap gap-4">
+        <Button
+          variant="outline"
+          className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
+                   transition-all duration-300 border-gray-200"
+          onClick={() => handleProcessDetailsClick(tab)}
+          disabled={!tab.processFile}
+        >
+          {currentLang === "ar"
+            ? buttonText.overview.ar
+            : buttonText.overview.en}
+        </Button>
+        <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
+          <Button className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
+                         transition-opacity shadow-lg hover:shadow-xl">
+            {currentLang === "ar"
+              ? buttonText.apply.ar
+              : buttonText.apply.en}
+          </Button>
+        </Link>
+      </div>
+      <p className="text-sm text-gray-500 italic">
+        {currentLang === "ar"
+          ? buttonText.availability.ar
+          : buttonText.availability.en}
+      </p>
+    </div>
+  );
+
   return (
     <div className="flex-grow bg-gradient-to-b py-[3rem] from-gray-50 to-white">
       <motion.div
@@ -81,116 +122,108 @@ export default function DynamicTabs({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="flex flex-col lg:flex-row items-start h-full gap-6"
-        >
-          <div className="lg:w-80 w-full">
-            <div
-              className="sm:sticky sm:top-0 z-10 rounded-xl shadow-lg overflow-hidden 
-                          backdrop-blur-md bg-white/90 border border-gray-100"
-            >
-              <TabsList
-                className="flex lg:flex-col flex-row h-auto overflow-x-auto overflow-y-auto custom-scrollbar 
-                                 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
-              >
-                <div className="flex lg:flex-col flex-row lg:items-stretch items-center w-full p-3 gap-2.5 min-w-full">
-                  {allTabs.map((tab) => (
-                    <TabsTrigger
-                      key={tab.slug}
-                      value={tab.slug}
-                      className="group flex items-center w-full px-4 py-4 text-start transition-all duration-300
-                               text-sm font-medium text-gray-600 whitespace-nowrap
-                               data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1C6AAF] data-[state=active]:to-[#872996]
-                               data-[state=active]:text-white rounded-lg
-                               hover:bg-gradient-to-r hover:from-[#1C6AAF]/5 hover:to-[#872996]/5
-                               focus:outline-none focus:ring-2 focus:ring-[#1C6AAF]/50
-                               relative overflow-hidden min-w-[120px] flex-shrink-0 lg:flex-shrink"
-                    >
-                      <motion.div
-                        className="relative flex items-center gap-3 w-full justify-center lg:justify-start"
-                        whileHover={{ x: 3 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="flex-shrink-0 w-2 h-2 rounded-full bg-current opacity-60" />
-                        <span
-                          className="block truncate"
-                          title={lang === "ar" ? tab.title_ar : tab.title_en}
-                        >
-                          {lang === "ar" ? tab.title_ar : tab.title_en}
-                        </span>
-                        <div
-                          className="absolute inset-0 bg-gradient-to-r from-[#1C6AAF]/10 to-[#872996]/10 
-                                      opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"
-                        />
-                      </motion.div>
-                    </TabsTrigger>
-                  ))}
-                </div>
-              </TabsList>
-            </div>
-          </div>
-
-          <div
-            className="flex-grow w-full lg:max-w-[calc(100%-21rem)] bg-white rounded-xl 
-                         shadow-lg p-8 border border-gray-100"
-          >
-            {tabs.map((tab) => (
-              <TabsContent
-                key={tab.slug}
-                value={tab.slug}
-                className="[&[data-state=active]]:animate-in [&[data-state=active]]:fade-in-50"
-              >
-                <div className="prose max-w-none">
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: lang === "ar" ? tab.content_ar : tab.content_en,
-                    }}
-                  />
-                </div>
-                <div className="flex flex-wrap gap-4 mt-6">
-                  <Button
-                    variant="outline"
-                    className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
-                             transition-all duration-300 border-gray-200"
-                    onClick={() => handleProcessDetailsClick(tab)}
-                    disabled={!tab.processFile}
-                  >
-                    {currentLang === "ar"
-                      ? buttonText.overview.ar
-                      : buttonText.overview.en}
-                  </Button>
-                  <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
-                    <Button className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
-                                   transition-opacity shadow-lg hover:shadow-xl">
-                      {currentLang === "ar"
-                        ? buttonText.apply.ar
-                        : buttonText.apply.en}
-                    </Button>
-                  </Link>
-                </div>
-                <p className="text-sm text-gray-500 italic mt-4">
-                  {currentLang === "ar"
-                    ? buttonText.availability.ar
-                    : buttonText.availability.en}
-                </p>
-              </TabsContent>
+        {isMobile ? (
+          <Accordion type="single" collapsible className="w-full space-y-4">
+            {allTabs.map((tab) => (
+              <AccordionItem key={tab.slug} value={tab.slug}>
+                <AccordionTrigger className="text-lg font-semibold hover:bg-gradient-to-r hover:from-[#1C6AAF]/5 hover:to-[#872996]/5 px-4 py-2 rounded-lg transition-all duration-300">
+                  {lang === "ar" ? tab.title_ar : tab.title_en}
+                </AccordionTrigger>
+                <AccordionContent className="px-4 py-6">
+                  {tab.slug === "faqs" ? (
+                    <FaqProvider>
+                      <FAQSection
+                        categories={faqCategories.map((category) => ({
+                          ...category,
+                          faqs: faqsByCategory[category.id] || [],
+                        }))}
+                        faqsByCategory={faqsByCategory}
+                      />
+                    </FaqProvider>
+                  ) : (
+                    renderTabContent(tab as ProgramTab)
+                  )}
+                </AccordionContent>
+              </AccordionItem>
             ))}
+          </Accordion>
+        ) : (
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="flex flex-col lg:flex-row items-start h-full gap-6"
+          >
+            <div className="lg:w-96 w-full">
+              <div
+                className="sticky top-4 z-10 rounded-xl shadow-lg overflow-hidden 
+                            backdrop-blur-md bg-white/90 border border-gray-100"
+              >
+                <TabsList
+                  className="flex flex-col h-auto overflow-y-auto custom-scrollbar 
+                                   scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+                >
+                  <div className="flex flex-col items-stretch w-full p-3 gap-2.5">
+                    {allTabs.map((tab) => (
+                      <TabsTrigger
+                        key={tab.slug}
+                        value={tab.slug}
+                        className="group flex items-center w-full px-4 py-4 text-start transition-all duration-300
+                                 text-sm font-medium text-gray-600
+                                 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1C6AAF] data-[state=active]:to-[#872996]
+                                 data-[state=active]:text-white rounded-lg
+                                 hover:bg-gradient-to-r hover:from-[#1C6AAF]/5 hover:to-[#872996]/5
+                                 focus:outline-none focus:ring-2 focus:ring-[#1C6AAF]/50
+                                 relative overflow-hidden"
+                      >
+                        <motion.div
+                          className="relative flex items-center gap-3 w-full"
+                          whileHover={{ x: 3 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div className="flex-shrink-0 w-2 h-2 rounded-full bg-current opacity-60" />
+                          <span className="flex-grow text-left">
+                            {lang === "ar" ? tab.title_ar : tab.title_en}
+                          </span>
+                          <div
+                            className="absolute inset-0 bg-gradient-to-r from-[#1C6AAF]/10 to-[#872996]/10 
+                                        opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"
+                          />
+                        </motion.div>
+                      </TabsTrigger>
+                    ))}
+                  </div>
+                </TabsList>
+              </div>
+            </div>
 
-            <TabsContent value="faqs">
-              <FaqProvider>
-                <FAQSection
-                  categories={faqCategories.map((category) => ({
-                    ...category,
-                    faqs: faqsByCategory[category.id] || [],
-                  }))}
-                  faqsByCategory={faqsByCategory}
-                />
-              </FaqProvider>
-            </TabsContent>
-          </div>
-        </Tabs>
+            <div
+              className="flex-grow w-full lg:max-w-[calc(100%-25rem)] bg-white rounded-xl 
+                           shadow-lg p-8 border border-gray-100"
+            >
+              {tabs.map((tab) => (
+                <TabsContent
+                  key={tab.slug}
+                  value={tab.slug}
+                  className="[&[data-state=active]]:animate-in [&[data-state=active]]:fade-in-50"
+                >
+                  {renderTabContent(tab)}
+                </TabsContent>
+              ))}
+
+              <TabsContent value="faqs">
+                <FaqProvider>
+                  <FAQSection
+                    categories={faqCategories.map((category) => ({
+                      ...category,
+                      faqs: faqsByCategory[category.id] || [],
+                    }))}
+                    faqsByCategory={faqsByCategory}
+                  />
+                </FaqProvider>
+              </TabsContent>
+            </div>
+          </Tabs>
+        )}
       </motion.div>
     </div>
   );

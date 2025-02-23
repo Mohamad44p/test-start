@@ -45,7 +45,7 @@ export default function ReusableHero({
   const { currentLang } = useLanguage();
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-r from-purple-100 via-white to-blue-100 py-8">
+    <div className="relative overflow-hidden bg-gradient-to-r from-purple-100 via-white to-blue-100 py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-8">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
