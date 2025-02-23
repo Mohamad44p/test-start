@@ -1,6 +1,7 @@
 import { ContentGrid } from "@/components/News-blog/content-grid"
 import { getPostsByType } from "@/app/actions/fetch-posts"
-import { PostType } from "@/types/blog"
+import { PostType, PostTypeValue } from "@/lib/schema/schema"
+import type { ContentItem } from "@/types/blog"
 
 export const metadata = {
   title: 'Publications & Reports',
@@ -32,12 +33,27 @@ export default async function PublicationsPage(props: { params: Promise<{ lang: 
     ? 'استكشف أحدث المنشورات والتقارير المتخصصة لدينا'
     : 'Explore our latest publications and specialized reports'
 
+  const transformedPublications: ContentItem[] = publications.map(pub => ({
+    ...pub,
+    type: pub.type as PostTypeValue,
+    isPdf: true,
+    title: lang === 'ar' ? pub.title_ar : pub.title_en,
+    description: lang === 'ar' ? pub.description_ar : pub.description_en,
+    tags: pub.tags.map(tag => ({
+      id: tag.id,
+      name_en: tag.name_en,
+      name_ar: tag.name_ar,
+      slug: tag.slug,
+      name: lang === 'ar' ? tag.name_ar : tag.name_en
+    }))
+  }));
+
   return (
     <div className="py-12">
       <ContentGrid 
         title={title}
         subtitle={subtitle}
-        items={publications}
+        items={transformedPublications}
       />
     </div>
   )

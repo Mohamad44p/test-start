@@ -4,27 +4,34 @@ export const PostType = {
   BLOG: 'blog',
   PUBLICATION: 'publication',
   ANNOUNCEMENT: 'announcement'
-} as const
+} as const;
 
-export type PostType = typeof PostType[keyof typeof PostType]
+export type PostTypeValue = typeof PostType[keyof typeof PostType];
 
 export const createPostSchema = z.object({
   slug: z.string().min(1, "Slug is required"),
-  type: z.enum([PostType.BLOG, PostType.PUBLICATION, PostType.ANNOUNCEMENT], {
-    required_error: "Type is required",
-  }),
+  type: z.enum([PostType.BLOG, PostType.PUBLICATION, PostType.ANNOUNCEMENT]),
   title_en: z.string().min(1, "English title is required"),
   title_ar: z.string().min(1, "Arabic title is required"),
-  description_en: z.string().optional(),
-  description_ar: z.string().optional(),
-  content_en: z.string().min(1, "English content is required"),
-  content_ar: z.string().min(1, "Arabic content is required"),
+  description_en: z.string().optional().nullable(),
+  description_ar: z.string().optional().nullable(),
+  content_en: z.string().optional().nullable(),
+  content_ar: z.string().optional().nullable(),
+  pdfUrl: z.string().optional().nullable(),
   imageUrl: z.string().nullable(),
-  readTime: z.string().optional(),  // Changed from number to string
+  readTime: z.string().optional(),
   published: z.boolean(),
   featured: z.boolean(),
   tags: z.array(z.string()),
-})
+}).refine((data) => {
+  if (data.type === PostType.PUBLICATION) {
+    return data.title_en && data.title_ar && data.pdfUrl;
+  }
+  return data.content_en && data.content_ar;
+}, {
+  message: "Required fields are missing",
+  path: ["content"]
+});
 
 export type CreatePostInput = z.infer<typeof createPostSchema>
 

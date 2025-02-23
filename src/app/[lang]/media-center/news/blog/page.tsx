@@ -1,7 +1,7 @@
 import { ContentGrid } from "@/components/News-blog/content-grid"
 import { FeaturedPosts } from "@/components/News-blog/FeaturedPosts"
 import { getFeaturedPosts, getPostsByType } from "@/app/actions/fetch-posts"
-import { PostType } from "@/types/blog"
+import { PostType } from "@/lib/schema/schema";
 
 export default async function BlogPage(props: { params: Promise<{ lang: string }> }) {
   const params = await props.params;

@@ -29,6 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ImageUpload } from "@/lib/ImageUpload";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
+import { FileUpload } from "@/lib/FileUpload";
 import {
   CreatePostInput,
   createPostSchema,
@@ -78,8 +79,8 @@ export default function CreateBlog() {
       type: PostType.BLOG, // Set a default type
       title_en: "",
       title_ar: "",
-      description_en: "",
-      description_ar: "",
+      description_en: "", // Change from null to empty string
+      description_ar: "", // Change from null to empty string
       content_en: "",
       content_ar: "",
       imageUrl: null,
@@ -87,8 +88,11 @@ export default function CreateBlog() {
       published: false,
       featured: false,
       tags: [],
+      pdfUrl: null,
     },
   });
+
+  const isPublication = form.watch("type") === PostType.PUBLICATION;
 
   async function onSubmit(data: CreatePostInput) {
     setIsSubmitting(true);
@@ -202,8 +206,9 @@ export default function CreateBlog() {
                   <TabsTrigger value="english">English</TabsTrigger>
                   <TabsTrigger value="arabic">Arabic</TabsTrigger>
                 </TabsList>
-                <TabsContent value="english">
-                  <div className="space-y-4">
+                <div className="space-y-4">
+                  {/* Always show title fields */}
+                  <TabsContent value="english">
                     <FormField
                       control={form.control}
                       name="title_en"
@@ -211,55 +216,14 @@ export default function CreateBlog() {
                         <FormItem>
                           <FormLabel>Title (English)</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Enter English title"
-                              {...field}
-                              className="w-full"
-                            />
+                            <Input {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="description_en"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description (English)</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Enter English description"
-                              {...field}
-                              className="w-full min-h-[100px] resize-y"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                   <FormField
-                    control={form.control}
-                    name="content_en"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Content (English)</FormLabel>
-                        <FormControl>
-                          <RichTextEditor
-                            content={field.value}
-                            onChange={field.onChange}
-                            dir="ltr"
-                            placeholder="Write your content in English..."
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  </div>
-                </TabsContent>
-                <TabsContent value="arabic">
-                  <div className="space-y-4">
+                  </TabsContent>
+                  <TabsContent value="arabic">
                     <FormField
                       control={form.control}
                       name="title_ar"
@@ -267,57 +231,156 @@ export default function CreateBlog() {
                         <FormItem>
                           <FormLabel>Title (Arabic)</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Enter Arabic title"
-                              {...field}
-                              className="w-full text-right"
-                              dir="rtl"
-                            />
+                            <Input {...field} dir="rtl" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="description_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description (Arabic)</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Enter Arabic description"
-                              {...field}
-                              className="w-full min-h-[100px] resize-y text-right"
-                              dir="rtl"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="content_ar"
-                      render={({ field }) => (
-                        <FormItem className="col-span-2">
-                          <FormLabel>Content (Arabic)</FormLabel>
-                          <FormControl>
-                            <div className="min-h-[300px] border rounded-md">
-                              <RichTextEditor
-                                content={field.value}
-                                onChange={field.onChange}
-                                dir="rtl"
-                                placeholder="اكتب المحتوى بالعربية..."
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </TabsContent>
+                  </TabsContent>
+                </div>
+
+                {isPublication ? (
+                  <FormField
+                    control={form.control}
+                    name="pdfUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>PDF Document</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            onUpload={(urls) => field.onChange(urls[0])}
+                            defaultFiles={field.value ? [field.value] : []}
+                            maxFiles={1}
+                            acceptedFileTypes={{ "application/pdf": [".pdf"] }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  <>
+                    <TabsContent value="english">
+                      <div className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="title_en"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Title (English)</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Enter English title"
+                                  {...field}
+                                  className="w-full"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="description_en"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Description (English)</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Enter English description"
+                                  {...field}
+                                  className="w-full min-h-[100px] resize-y"
+                                  value={field.value || ''}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="content_en"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Content (English)</FormLabel>
+                              <FormControl>
+                                <RichTextEditor
+                                  content={field.value ?? ""}
+                                  onChange={field.onChange}
+                                  dir="ltr"
+                                  placeholder="Write your content in English..."
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </TabsContent>
+                    <TabsContent value="arabic">
+                      <div className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="title_ar"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Title (Arabic)</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Enter Arabic title"
+                                  {...field}
+                                  className="w-full text-right"
+                                  dir="rtl"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="description_ar"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Description (Arabic)</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Enter Arabic description"
+                                  {...field}
+                                  className="w-full min-h-[100px] resize-y text-right"
+                                  dir="rtl"
+                                  value={field.value || ''} // Add null check
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="content_ar"
+                          render={({ field }) => (
+                            <FormItem className="col-span-2">
+                              <FormLabel>Content (Arabic)</FormLabel>
+                              <FormControl>
+                                <div className="min-h-[300px] border rounded-md">
+                                  <RichTextEditor
+                                    content={field.value ?? ""}
+                                    onChange={field.onChange}
+                                    dir="rtl"
+                                    placeholder="اكتب المحتوى بالعربية..."
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </TabsContent>
+                  </>
+                )}
               </Tabs>
 
               <FormField

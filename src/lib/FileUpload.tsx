@@ -12,6 +12,7 @@ interface FileUploadProps {
   onUpload: (urls: string[]) => void;
   defaultFiles?: string[];
   maxFiles?: number;
+  acceptedFileTypes?: Record<string, string[]>; // Add this prop
 }
 
 const allowedFileTypes = {
@@ -37,6 +38,7 @@ export function FileUpload({
   onUpload,
   defaultFiles = [],
   maxFiles = 3,
+  acceptedFileTypes = allowedFileTypes, // Use provided types or default
 }: FileUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [files, setFiles] = useState<string[]>(defaultFiles);
@@ -158,7 +160,7 @@ export function FileUpload({
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: allowedFileTypes,
+    accept: acceptedFileTypes,
     maxFiles: maxFiles - files.length,
     disabled: files.length >= maxFiles || uploading,
   });

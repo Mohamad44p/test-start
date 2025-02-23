@@ -21,8 +21,8 @@ model Post {
   title_ar       String
   description_en String?  @db.Text
   description_ar String?  @db.Text
-  content_en     String   @db.Text
-  content_ar     String   @db.Text
+  content_en     String?  @db.Text
+  content_ar     String?  @db.Text
   imageUrl       String?
   readTime       String?
   published      Boolean  @default(false)
@@ -30,6 +30,7 @@ model Post {
   authorId       Int?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  pdfUrl         String?
 
   tags Tag[]
 }

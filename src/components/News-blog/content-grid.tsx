@@ -6,22 +6,21 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
-import type { BlogPost, PostType } from "@/types/blog";
+import type { ContentItem } from "@/types/blog";
 
 interface ContentGridProps {
   title: string;
-  subtitle?: string;
-  items: BlogPost[];
+  subtitle: string;
+  items: ContentItem[];
 }
 
-export function ContentGrid({ title, subtitle, items = [] }: ContentGridProps) {
+export function ContentGrid({ title, subtitle, items }: ContentGridProps) {
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState<string>("all");
   const { currentLang } = useLanguage();
 
   const types = ["all", ...new Set(items.map((item) => item.type))];
 
-  // Add translations for type labels
   const getTypeLabel = (type: string) => {
     if (type === "all") {
       return currentLang === "ar" ? "الكل" : "All";
@@ -29,20 +28,21 @@ export function ContentGrid({ title, subtitle, items = [] }: ContentGridProps) {
     return type;
   };
 
-  const localizedItems = useMemo(() => items.map((item) => ({
-    id: item.id,
-    type: item.type as PostType, // Type assertion here
-    title: currentLang === "ar" ? item.title_ar : item.title_en,
-    description: currentLang === "ar" ? item.description_ar : item.description_en,
-    date: item.createdAt,
-    readTime: item.readTime,
-    imageUrl: item.imageUrl,
-    slug: item.slug,
-    tags: item.tags.map((tag) => ({
-      name: currentLang === "ar" ? tag.name_ar : tag.name_en,
-      slug: tag.slug,
-    })),
-  })), [items, currentLang]);
+  const localizedItems = useMemo(
+    () =>
+      items.map((item) => ({
+        ...item,
+        title: currentLang === "ar" ? item.title_ar : item.title_en,
+        description:
+          currentLang === "ar" ? item.description_ar : item.description_en,
+        tags:
+          item.tags?.map((tag) => ({
+            name: currentLang === "ar" ? tag.name_ar : tag.name_en,
+            slug: tag.slug,
+          })) || [],
+      })),
+    [items, currentLang]
+  );
 
   const filteredItems = localizedItems.filter((item) => {
     const matchesSearch =
@@ -62,9 +62,7 @@ export function ContentGrid({ title, subtitle, items = [] }: ContentGridProps) {
           {title}
         </h2>
         {subtitle && (
-          <p className="mt-4 text-lg leading-8 text-gray-600">
-            {subtitle}
-          </p>
+          <p className="mt-4 text-lg leading-8 text-gray-600">{subtitle}</p>
         )}
       </div>
 
@@ -108,8 +106,19 @@ export function ContentGrid({ title, subtitle, items = [] }: ContentGridProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="cursor-pointer hover:scale-105 transition-transform"
+              onClick={() =>
+                item.isPdf && item.pdfUrl
+                  ? window.open(item.pdfUrl, "_blank")
+                  : null
+              }
             >
-              <ContentCard {...item} />
+              <ContentCard {...item} isPdf={item.isPdf} tags={item.tags} />
+              {item.isPdf && (
+                <div className="absolute top-2 right-2 bg-primary text-white px-2 py-1 rounded text-sm">
+                  PDF
+                </div>
+              )}
             </motion.div>
           ))}
         </div>

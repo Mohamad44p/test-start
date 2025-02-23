@@ -1,5 +1,5 @@
 import { getPostBySlug, getRelatedPosts } from "@/app/actions/fetch-posts";
-import { PostType, toPostType } from "@/types/blog";
+import {  toPostType } from "@/types/blog";
 import { BlogHeader } from "@/components/News-blog/BlogHeader";
 import { RelatedPosts } from "@/components/News-blog/RelatedPosts";
 import { ShareButtons } from "@/components/News-blog/ShareButtons";
@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { PostType } from "@/lib/schema/schema";
 
 interface Props {
   params: Promise<{
@@ -102,7 +103,7 @@ export default async function PostPage({ params }: Props) {
             <div
               className="prose prose-lg max-w-none dark:prose-invert"
               dangerouslySetInnerHTML={{
-                __html: lang === "ar" ? post.content_ar : post.content_en,
+                __html: lang === "ar" ? post.content_ar ?? "" : post.content_en ?? "",
               }}
             />
 
