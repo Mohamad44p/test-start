@@ -15,7 +15,12 @@ async function fetchProgramTabs(): Promise<ProgramTab[] | null> {
       },
       include: {
         programPage: true,
-      },
+        buttons: {
+          orderBy: {
+            order: 'asc'
+          }
+        }
+      }
     })
     return programTabs
   } catch (error) {

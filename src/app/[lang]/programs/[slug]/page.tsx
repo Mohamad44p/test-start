@@ -12,7 +12,16 @@ async function getProgram(slug: string) {
       include: {
         ProgramsHero: true,
         ProgramTab: {
-          orderBy: { createdAt: 'asc' }
+          include: {
+            buttons: {
+              orderBy: {
+                order: 'asc'
+              }
+            }
+          },
+          orderBy: { 
+            createdAt: 'asc' 
+          }
         },
         faqCategories: {
           include: {
@@ -45,13 +54,11 @@ export default async function DynamicProgramPage(
 
   const hero = program.ProgramsHero[0];
 
-  // Add programPage to hero if it's missing
   const heroWithProgram = hero ? {
     ...hero,
     programPage: program
   } : null;
 
-  // Prepare FAQ data
   const faqsByCategory = program.faqCategories.reduce((acc, category) => {
     acc[category.id] = category.faqs.map(faq => ({
       ...faq,

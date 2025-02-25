@@ -11,12 +11,13 @@ import { createProgramTab, updateProgramTab } from "@/app/actions/program-tab-ac
 import { useToast } from "@/hooks/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter } from "next/navigation"
-import type { CreateProgramTabInput, ProgramTab, ProgramsPages } from "@/types/program-tab"
+import type { CreateProgramTabInput, ProgramTab, TabButton } from "@/types/program-tab"
 import * as z from "zod"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ProgramDialog } from "./ProgramDialog"
 import { RichTextEditor } from "@/components/Editor/RichTextEditor"
 import { FileUpload } from "@/lib/FileUpload"
+import type { ProgramsPages as PrismaProgram } from "@prisma/client"
 
 const programTabSchema = z.object({
   title_en: z.string().min(1, "English title is required"),
@@ -24,13 +25,24 @@ const programTabSchema = z.object({
   slug: z.string().min(1, "Slug is required"),
   content_en: z.string().min(1, "English content is required"),
   content_ar: z.string().min(1, "Arabic content is required"),
-  programPageId: z.string().optional().nullable(),
-  processFile: z.string().optional().nullable(),
-})
+  programPageId: z.string().nullable(),
+  processFile: z.string().nullable(),
+  buttons: z.array(
+    z.object({
+      name_en: z.string(),
+      name_ar: z.string(),
+      content_en: z.string(),
+      content_ar: z.string(),
+      order: z.number().optional(),
+    })
+  ).optional(),
+});
+
+type FormData = z.infer<typeof programTabSchema>;
 
 interface ProgramTabFormProps {
-  programTab?: ProgramTab
-  programs: ProgramsPages[]
+  programTab?: ProgramTab;
+  programs: PrismaProgram[];
 }
 
 export default function ProgramTabForm({ programTab, programs }: ProgramTabFormProps) {
@@ -38,8 +50,11 @@ export default function ProgramTabForm({ programTab, programs }: ProgramTabFormP
   const [programsList, setProgramsList] = useState(programs)
   const { toast } = useToast()
   const router = useRouter()
+  const [buttons, setButtons] = useState<TabButton[]>(() => {
+    return programTab?.buttons || [];
+  });
 
-  const form = useForm<CreateProgramTabInput>({
+  const form = useForm<FormData>({
     resolver: zodResolver(programTabSchema),
     defaultValues: {
       title_en: programTab?.title_en || "",
@@ -49,13 +64,35 @@ export default function ProgramTabForm({ programTab, programs }: ProgramTabFormP
       content_ar: programTab?.content_ar || "",
       programPageId: programTab?.programPageId || undefined,
       processFile: programTab?.processFile || undefined,
+      buttons: programTab?.buttons?.map(button => ({
+        name_en: button.name_en,
+        name_ar: button.name_ar,
+        content_en: button.content_en,
+        content_ar: button.content_ar,
+        order: button.order || 0
+      })) || []
     },
-  })
+  });
 
-  async function onSubmit(data: CreateProgramTabInput) {
-    setIsSubmitting(true)
+  const onSubmit = async (formData: FormData) => {
+    setIsSubmitting(true);
     try {
-      const result = programTab ? await updateProgramTab({ ...data, id: programTab.id }) : await createProgramTab(data)
+      const submitData: CreateProgramTabInput = {
+        ...formData,
+        programPageId: formData.programPageId || null,
+        processFile: formData.processFile || null,
+        buttons: buttons.map((button, index) => ({
+          name_en: button.name_en || "",
+          name_ar: button.name_ar || "",
+          content_en: button.content_en || "",
+          content_ar: button.content_ar || "",
+          order: index
+        }))
+      };
+
+      const result = programTab 
+        ? await updateProgramTab({ ...submitData, id: programTab.id }) 
+        : await createProgramTab(submitData);
 
       if (result.success) {
         toast({
@@ -82,7 +119,7 @@ export default function ProgramTabForm({ programTab, programs }: ProgramTabFormP
     }
   }
 
-  const handleProgramUpdate = (updatedPrograms: ProgramsPages[]) => {
+  const handleProgramUpdate = (updatedPrograms: PrismaProgram[]) => {
     setProgramsList(updatedPrograms)
   }
 
@@ -91,6 +128,128 @@ export default function ProgramTabForm({ programTab, programs }: ProgramTabFormP
       form.setValue("processFile", urls[0]);
     }
   };
+
+  const addButton = () => {
+    const newButton: TabButton = {
+      name_en: "",
+      name_ar: "",
+      content_en: "",
+      content_ar: "",
+      order: buttons.length
+    };
+    
+    const updatedButtons = [...buttons, newButton];
+    setButtons(updatedButtons);
+
+    form.setValue("buttons", [...buttons, newButton], {
+      shouldValidate: false,
+    });
+  };
+
+  const removeButton = (index: number) => {
+    const filteredButtons = buttons.filter((_, i) => i !== index);
+    setButtons(filteredButtons);
+
+    form.setValue("buttons", filteredButtons, {
+      shouldValidate: false,
+    });
+  };
+
+  type ButtonFormFields = 'name_en' | 'name_ar' | 'content_en' | 'content_ar' | 'order';
+  const updateButtonField = (index: number, field: ButtonFormFields, value: string) => {
+    const updatedButtons = buttons.map((button, i) => {
+      if (i === index) {
+        const updatedButton = { ...button, [field]: value };
+        return updatedButton;
+      }
+      return button;
+    });
+    setButtons(updatedButtons);
+
+    form.setValue(`buttons.${index}.${field}`, value, {
+      shouldValidate: false,
+    });
+  };
+
+  const renderButtonFields = (index: number) => (
+    <div className="grid grid-cols-2 gap-4">
+      <FormField
+        control={form.control}
+        name={`buttons.${index}.name_en`}
+        render={() => (
+          <FormItem>
+            <FormLabel>Button Name (English)</FormLabel>
+            <FormControl>
+              <Input 
+                value={buttons[index]?.name_en || ""}
+                onChange={(e) => updateButtonField(index, 'name_en', e.target.value)}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`buttons.${index}.name_ar`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Button Name (Arabic)</FormLabel>
+            <FormControl>
+              <Input {...field} dir="rtl" value={buttons[index]?.name_ar || ""} onChange={(e) => updateButtonField(index, 'name_ar', e.target.value)} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <div className="col-span-2">
+        <FormField
+          control={form.control}
+          name={`buttons.${index}.content_en`}
+          render={() => (
+            <FormItem>
+              <FormLabel>Content (English)</FormLabel>
+              <FormControl>
+                <RichTextEditor
+                  content={buttons[index]?.content_en || ""}
+                  onChange={(value) => updateButtonField(index, 'content_en', value)}
+                  dir="ltr"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+      <div className="col-span-2">
+        <FormField
+          control={form.control}
+          name={`buttons.${index}.content_ar`}
+          render={() => (
+            <FormItem>
+              <FormLabel>Content (Arabic)</FormLabel>
+              <FormControl>
+                <RichTextEditor
+                  content={buttons[index]?.content_ar || ""}
+                  onChange={(value) => updateButtonField(index, 'content_ar', value)}
+                  dir="rtl"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+      <Button
+        type="button"
+        variant="destructive"
+        onClick={() => removeButton(index)}
+        className="col-span-2"
+      >
+        Remove Button
+      </Button>
+    </div>
+  );
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -164,6 +323,23 @@ export default function ProgramTabForm({ programTab, programs }: ProgramTabFormP
                 </FormItem>
               )}
             />
+
+            <div className="space-y-4 mt-6">
+              <h3 className="text-lg font-semibold">Custom Buttons</h3>
+              {buttons.map((button, index) => (
+                <Card key={button.id || index} className="p-4">
+                  {renderButtonFields(index)}
+                </Card>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addButton}
+                className="w-full"
+              >
+                Add New Button
+              </Button>
+            </div>
 
             <Tabs defaultValue="english" className="w-full">
               <TabsList className="grid w-full grid-cols-2">

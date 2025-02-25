@@ -444,13 +444,31 @@ model ProgramTab {
   slug          String         @unique
   content_en    String         @db.Text
   content_ar    String         @db.Text
-  processFile   String?        // Add this field for the PDF file URL
+  processFile   String?        
+  buttons       TabButton[]    // Add this line
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   programPage   ProgramsPages? @relation(fields: [programPageId], references: [id])
   programPageId String?
 
   @@index([programPageId])
+}
+
+// Add this new model
+model TabButton {
+  id          String     @id @default(cuid())
+  name_en     String
+  name_ar     String
+  content_en  String     @db.Text
+  content_ar  String     @db.Text
+  order       Int        @default(0)
+  programTab  ProgramTab @relation(fields: [tabId], references: [id], onDelete: Cascade)
+  tabId       String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+
+  @@index([tabId])
+  @@index([order])
 }
 
 model ProgramsPages {

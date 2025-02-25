@@ -1,3 +1,15 @@
+import type { ProgramsPages as PrismaProgram } from "@prisma/client"
+
+export interface TabButton {
+  id?: string;
+  tabId?: string;
+  name_en: string;
+  name_ar: string;
+  content_en: string;
+  content_ar: string;
+  order?: number;
+}
+
 export interface ProgramTab {
   id: string
   title_en: string
@@ -5,11 +17,12 @@ export interface ProgramTab {
   slug: string
   content_en: string
   content_ar: string
-  processFile?: string | null
+  processFile: string | null
+  programPageId: string | null
+  programPage?: PrismaProgram | null
+  buttons: TabButton[];
   createdAt: Date
   updatedAt: Date
-  programPageId?: string | null
-  programPage?: ProgramsPages | null
 }
 
 export interface ProgramsPages {
@@ -30,7 +43,7 @@ export interface ProgramCategory {
   order: number;
   createdAt: Date;
   updatedAt: Date;
-  programs?: ProgramWithTabs[]; // Make programs optional since it's not always included
+  programs?: ProgramsPages[];
 }
 
 export interface ProgramWithTabs {
@@ -64,8 +77,20 @@ export interface ProgramsResponse {
   error?: string;
 }
 
-export type CreateProgramTabInput = Omit<ProgramTab, "id" | "createdAt" | "updatedAt" | "programPage">
-export type UpdateProgramTabInput = Partial<CreateProgramTabInput> & { id: string }
+export interface CreateProgramTabInput {
+  title_en: string;
+  title_ar: string;
+  slug: string;
+  content_en: string;
+  content_ar: string;
+  programPageId: string | null;
+  processFile?: string | null;
+  buttons?: Omit<TabButton, 'id' | 'tabId'>[];
+}
+
+export interface UpdateProgramTabInput extends CreateProgramTabInput {
+  id: string
+}
 
 export interface CreateProgramInput {
   name_en: string;

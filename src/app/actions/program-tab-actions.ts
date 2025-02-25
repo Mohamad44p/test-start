@@ -6,42 +6,76 @@ import type { CreateProgramTabInput, UpdateProgramTabInput } from "@/types/progr
 
 export async function createProgramTab(data: CreateProgramTabInput) {
   try {
+    const { buttons = [], ...tabData } = data;
+    
+    console.log('Creating program tab with buttons:', buttons); // Debug log
+
     const programTab = await db.programTab.create({
       data: {
-        ...data,
-        processFile: data.processFile || null,
+        ...tabData,
+        processFile: tabData.processFile || null,
+        buttons: {
+          create: buttons.map((button, index) => ({
+            name_en: button.name_en,
+            name_ar: button.name_ar,
+            content_en: button.content_en,
+            content_ar: button.content_ar,
+            order: index,
+          }))
+        }
       },
       include: {
         programPage: true,
+        buttons: true,
       },
-    })
+    });
 
-    revalidatePath("/admin/program-tabs")
-    return { success: true, programTab }
+    revalidatePath("/admin/program-tabs");
+    return { success: true, programTab };
   } catch (error) {
-    console.error("Failed to create program tab:", error)
-    return { error: "Failed to create program tab" }
+    console.error("Failed to create program tab:", error);
+    return { error: "Failed to create program tab" };
   }
 }
 
 export async function updateProgramTab(data: UpdateProgramTabInput) {
   try {
+    const { buttons = [], id, ...tabData } = data;
+
+    console.log('Updating program tab with buttons:', buttons); // Debug log
+
+    // First delete existing buttons
+    await db.tabButton.deleteMany({
+      where: { tabId: id }
+    });
+
+    // Then update the tab with new buttons
     const programTab = await db.programTab.update({
-      where: { id: data.id },
+      where: { id },
       data: {
-        ...data,
-        processFile: data.processFile || null,
+        ...tabData,
+        processFile: tabData.processFile || null,
+        buttons: {
+          create: buttons.map((button, index) => ({
+            name_en: button.name_en,
+            name_ar: button.name_ar,
+            content_en: button.content_en,
+            content_ar: button.content_ar,
+            order: index,
+          }))
+        }
       },
       include: {
         programPage: true,
+        buttons: true,
       },
-    })
+    });
 
-    revalidatePath("/admin/program-tabs")
-    return { success: true, programTab }
+    revalidatePath("/admin/program-tabs");
+    return { success: true, programTab };
   } catch (error) {
-    console.error("Failed to update program tab:", error)
-    return { error: "Failed to update program tab" }
+    console.error("Failed to update program tab:", error);
+    return { error: "Failed to update program tab" };
   }
 }
 

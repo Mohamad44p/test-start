@@ -1,35 +1,31 @@
 import { z } from 'zod'
+import type { FaqCategory as PrismaFaqCategory, FaqItem as PrismaFaqItem } from "@prisma/client"
 
 export type LanguageType = 'en' | 'ar'
 
-export interface FaqCategory {
-  id: string
-  nameEn: string
-  nameAr: string
-  slug: string
-  order: number
-  faqs: FaqItem[]
-  createdAt: Date
-  updatedAt: Date
+export interface FaqItem extends PrismaFaqItem {
+  id: string;
+  questionEn: string;
+  questionAr: string;
+  answerEn: string;
+  answerAr: string;
+  order: number;
+  categoryId: string;
+  programId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface FaqItem {
-  id: string
-  questionEn: string
-  questionAr: string
-  answerEn: string
-  answerAr: string
-  order: number
-  categoryId: string
-  category?: FaqCategory // Make category optional
-  programId?: string | null;
-  program?: {
-    id: string;
-    name_en: string;
-    name_ar: string;
-  } | null;
-  createdAt: Date
-  updatedAt: Date
+export interface FaqCategory extends PrismaFaqCategory {
+  id: string;
+  nameEn: string;
+  nameAr: string;
+  slug: string;
+  order: number;
+  programId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  faqs: FaqItem[];
 }
 
 export interface FaqData {

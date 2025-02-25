@@ -1,34 +1,39 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
 import { FaqProvider } from "@/context/FaqContext";
 import { FAQSection } from "@/components/faq-section/faq-section";
-import type { ProgramTab, FaqCategory } from "@prisma/client";
+import type { ProgramTab as PrismaProgramTab, FaqCategory, FaqItem, ProgramsPages as PrismaProgram } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { TabButtonDialog } from "./tab-button-dialog";
+import type { TabButton } from "@/types/program-tab";
 
-interface DynamicTabsProps {
-  tabs: ProgramTab[];
-  lang: string;
-  faqCategories: FaqCategory[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  faqsByCategory: Record<string, any[]>;
+interface ExtendedProgramTab extends Omit<PrismaProgramTab, 'buttons'> {
+  buttons: TabButton[];
+  programPage?: PrismaProgram | null;
 }
 
-export default function DynamicTabs({
-  tabs,
-  lang,
-  faqCategories,
-  faqsByCategory,
-}: DynamicTabsProps) {
+interface DynamicTabsProps {
+  tabs: ExtendedProgramTab[];
+  lang: string;
+  faqCategories: FaqCategory[];
+  faqsByCategory: Record<string, FaqItem[]>;
+}
+
+export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory }: DynamicTabsProps): JSX.Element {
+  console.log('Tabs with buttons:', tabs); // Debug log
+  
   const { currentLang } = useLanguage();
   const [activeTab, setActiveTab] = React.useState(tabs[0]?.slug || "");
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedButton, setSelectedButton] = useState<{ title: string; content: string } | null>(null);
 
   React.useEffect(() => {
     const hash = window.location.hash.replace("#", "");
@@ -43,17 +48,23 @@ export default function DynamicTabs({
     }
   }, [tabs]);
 
-  if (!tabs.length) return null;
+  if (!tabs.length) return <></>;
 
   const allTabs = [
     ...tabs,
     {
+      id: "faqs",
       slug: "faqs",
       title_en: "FAQs",
       title_ar: "الأسئلة الشائعة",
       content_en: "",
       content_ar: "",
-    },
+      buttons: [],
+      processFile: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      programPageId: null,
+    } as ExtendedProgramTab,
   ];
 
   const buttonText = {
@@ -71,13 +82,13 @@ export default function DynamicTabs({
     },
   };
 
-  const handleProcessDetailsClick = (tab: ProgramTab) => {
+  const handleProcessDetailsClick = (tab: ExtendedProgramTab) => {
     if (tab.processFile) {
       window.open(tab.processFile, "_blank");
     }
   };
 
-  const renderTabContent = (tab: ProgramTab) => (
+  const renderTabContent = (tab: ExtendedProgramTab) => (
     <div className="space-y-6">
       <div className="prose max-w-none">
         <div
@@ -86,6 +97,28 @@ export default function DynamicTabs({
           }}
         />
       </div>
+
+      {tab.buttons && tab.buttons.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+          {tab.buttons.map((button) => (
+            <Button
+              key={button.id}
+              variant="outline"
+              className="w-full text-center p-4 h-auto"
+              onClick={() => {
+                setSelectedButton({
+                  title: currentLang === "ar" ? button.name_ar : button.name_en,
+                  content: currentLang === "ar" ? button.content_ar : button.content_en,
+                });
+                setIsDialogOpen(true);
+              }}
+            >
+              {currentLang === "ar" ? button.name_ar : button.name_en}
+            </Button>
+          ))}
+        </div>
+      )}
+
       <div className="flex flex-wrap gap-4">
         <Button
           variant="outline"
@@ -141,7 +174,7 @@ export default function DynamicTabs({
                       />
                     </FaqProvider>
                   ) : (
-                    renderTabContent(tab as ProgramTab)
+                    renderTabContent(tab as ExtendedProgramTab)
                   )}
                 </AccordionContent>
               </AccordionItem>
@@ -225,6 +258,12 @@ export default function DynamicTabs({
           </Tabs>
         )}
       </motion.div>
+      <TabButtonDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        title={selectedButton?.title || ""}
+        content={selectedButton?.content || ""}
+      />
     </div>
   );
 }

@@ -7,9 +7,9 @@ import { cn } from '@/lib/utils'
 import { useFaq } from '@/context/FaqContext'
 import type { FaqCategory, FaqItem } from '@/types/faq'
 
-interface FAQSectionProps {
-  categories: FaqCategory[]
-  faqsByCategory: Record<string, FaqItem[]>
+export interface FAQSectionProps {
+  categories: FaqCategory[];
+  faqsByCategory: Record<string, FaqItem[]>;
 }
 
 export function FAQSection({ categories, faqsByCategory }: FAQSectionProps) {
