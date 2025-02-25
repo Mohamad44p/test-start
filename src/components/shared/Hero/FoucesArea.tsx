@@ -61,7 +61,7 @@ const ServiceCard = ({
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
         </div>
         <div className="p-6">
-          <h2 className="mb-2 text-2xl font-bold text-gray-800 transition-colors duration-300 group-hover:text-purple-600 dark:text-gray-100 dark:group-hover:text-purple-400">
+          <h2 className="mb-2 text-2xl font-bold text-[#1F6DB3] transition-colors duration-300 group-hover:text-purple-600 dark:text-gray-100 dark:group-hover:text-purple-400">
             {currentLang === "ar" ? card.titleAr : card.titleEn}
           </h2>
         </div>

@@ -37,7 +37,7 @@ const AboutHero = ({ aboutUsData }: AboutHeroProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-block px-4 py-1 rounded-full bg-purple-100 text-purple-700 text-sm font-medium dark:bg-purple-900 dark:text-purple-300"
+              className="inline-block px-4 py-1 rounded-full bg-[#142452] text-white text-sm font-medium dark:bg-purple-900 dark:text-purple-300"
             >
               {currentLang === "ar" ? "تعرف علينا" : "About Us"}
             </motion.span>
@@ -45,34 +45,17 @@ const AboutHero = ({ aboutUsData }: AboutHeroProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-4xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-gray-100"
+              className="text-4xl lg:text-6xl font-bold tracking-tight text-[#142452] dark:text-gray-100"
             >
-              <span className="block text-black mt-2 relative">
+              <span className="block bg-gradient-to-r from-[#1F6DB3] to-[#142452] bg-clip-text text-transparent mt-2 relative">
                 {currentLang === "ar" ? aboutUsData.titleAr : aboutUsData.titleEn}
-                <motion.svg
-                  width="100%"
-                  height="20"
-                  viewBox="0 0 120 20"
-                  fill="none"
-                  className="absolute -bottom-2 md:right-48 right-32 w-full"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ delay: 0.5, duration: 0.8 }}
-                >
-                  <path
-                    d="M3 17C32.3385 7.45614 93.1615 -2.04386 117 17"
-                    stroke="#FCD34D"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                  />
-                </motion.svg>
               </span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed"
+              className="text-xl text-[#1F6DB3] dark:text-gray-300 leading-relaxed"
             >
               {currentLang === "ar" ? aboutUsData.descriptionAr : aboutUsData.descriptionEn}
             </motion.p>
@@ -151,12 +134,12 @@ const AboutCard = ({ card, index, currentLang, isVisible }: AboutCardProps) => {
             <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg group-hover:shadow-xl transition-all duration-300">
               <Icon className="h-7 w-7" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-800 group-hover:text-purple-600 transition-colors duration-300 dark:text-gray-100 dark:group-hover:text-purple-400">
+            <h3 className="text-2xl font-bold text-[#142452] group-hover:text-[#1F6DB3] transition-colors duration-300 dark:text-gray-100 dark:group-hover:text-[#1F6DB3]">
               {currentLang === "ar" ? card.titleAr : card.titleEn}
             </h3>
           </motion.div>
           <motion.p
-            className="text-lg text-gray-600 group-hover:text-gray-800 transition-colors duration-300 dark:text-gray-300 dark:group-hover:text-gray-200"
+            className="text-lg text-[#1F6DB3] group-hover:text-[#142452] transition-colors duration-300 dark:text-gray-300 dark:group-hover:text-gray-200"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}

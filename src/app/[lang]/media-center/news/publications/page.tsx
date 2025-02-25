@@ -30,8 +30,8 @@ export default async function PublicationsPage(props: { params: Promise<{ lang: 
 
   const title = lang === 'ar' ? 'المنشورات والتقارير' : 'Publications & Reports'
   const subtitle = lang === 'ar'
-    ? 'استكشف أحدث المنشورات والتقارير المتخصصة لدينا'
-    : 'Explore our latest publications and specialized reports'
+    ? 'استكشف أحدث المنشوراتا'
+    : 'Explore our latest publications'
 
   const transformedPublications: ContentItem[] = publications.map(pub => ({
     ...pub,

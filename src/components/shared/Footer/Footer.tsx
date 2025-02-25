@@ -3,7 +3,7 @@
 import React from "react"
 import Link from "next/link"
 import { motion, useInView } from "framer-motion"
-import { Instagram, Facebook, Twitter, Linkedin, Youtube } from "lucide-react"
+import { Instagram, Facebook, Linkedin, Youtube } from "lucide-react"
 import AnimatedNetworkBackground from "../Nav/AnimatedBackground"
 import Clients from "../Clients/Clients"
 import { useLanguage } from "@/context/LanguageContext"
@@ -28,7 +28,6 @@ export default function Footer({ footerData }: FooterProps) {
     linkedin = null,
     facebook = null,
     youtube = null,
-    twitter = null,
   } = footerData || {};
 
   const gradientStyle = {
@@ -156,7 +155,6 @@ export default function Footer({ footerData }: FooterProps) {
                 { Icon: Linkedin, url: linkedin },
                 { Icon: Facebook, url: facebook },
                 { Icon: Youtube, url: youtube },
-                { Icon: Twitter, url: twitter },
               ].map(
                 ({ Icon, url }, i) =>
                   url && (

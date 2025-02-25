@@ -106,7 +106,7 @@ export function ContentGrid({ title, subtitle, items }: ContentGridProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="cursor-pointer hover:scale-105 transition-transform"
+              className="relative cursor-pointer hover:scale-105 transition-transform"
               onClick={() =>
                 item.isPdf && item.pdfUrl
                   ? window.open(item.pdfUrl, "_blank")

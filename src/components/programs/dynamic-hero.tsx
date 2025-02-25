@@ -1,7 +1,7 @@
 "use client";
 
 import ReusableHero from "./reusable-hero";
-import type { ProgramsHero } from "@/types/programs-hero"; // Make sure to import from your types file
+import type { ProgramsHero } from "@/types/programs-hero";
 import { AVAILABLE_ICONS, type IconName } from '@/config/icons';
 import type { LucideIcon } from 'lucide-react';
 
@@ -44,39 +44,21 @@ export default function DynamicHero({ hero, lang }: DynamicHeroProps) {
   );
 
   return (
-    <>
-      <ReusableHero
-        badge={lang === 'ar' ? hero.tagline_ar : hero.tagline_en}
-        title={lang === 'ar' ? hero.title_ar : hero.title_en}
-        highlightedWord={lang === 'ar' ? hero.highlightWord_ar : hero.highlightWord_en}
-        description={lang === 'ar' ? hero.description_ar : hero.description_en}
-        primaryButtonText={lang === 'ar' ? "تقدم الآن" : "Apply Now"}
-        secondaryButtonText={lang === 'ar' ? "معايير الأهلية" : "Eligibility Criteria"}
-        imageSrc={hero.imageUrl || '/default-hero.png'}
-        imageAlt={hero.name}
-        features={features.length > 0 ? features : undefined}
-        secondaryButtonProps={{
-          href: `${hero.programPageId}/eligibility`,
-          text: lang === 'ar' ? "معايير الأهلية" : "Eligibility Criteria"
-        }}
-      />
-
-      {(hero.objectives_en || hero.objectives_ar) && (
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl font-bold text-center mb-8 text-gray-900">
-                {lang === 'ar' ? "أهداف البرنامج" : "Program Objectives"}
-              </h2>
-              <div className="prose prose-lg mx-auto">
-                <div dangerouslySetInnerHTML={{ 
-                  __html: lang === 'ar' ? (hero.objectives_ar || '') : (hero.objectives_en || '') 
-                }} />
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-    </>
+    <ReusableHero
+      badge={lang === 'ar' ? hero.tagline_ar : hero.tagline_en}
+      title={lang === 'ar' ? hero.title_ar : hero.title_en}
+      highlightedWord={lang === 'ar' ? hero.highlightWord_ar : hero.highlightWord_en}
+      description={lang === 'ar' ? hero.description_ar : hero.description_en}
+      objectives={lang === 'ar' ? hero.objectives_ar : hero.objectives_en}
+      primaryButtonText={lang === 'ar' ? "تقدم الآن" : "Apply Now"}
+      secondaryButtonText={lang === 'ar' ? "معايير الأهلية" : "Eligibility Criteria"}
+      imageSrc={hero.imageUrl || '/default-hero.png'}
+      imageAlt={hero.name}
+      features={features.length > 0 ? features : undefined}
+      secondaryButtonProps={{
+        href: `${hero.programPageId}/eligibility`,
+        text: lang === 'ar' ? "معايير الأهلية" : "Eligibility Criteria"
+      }}
+    />
   );
 }

@@ -159,10 +159,6 @@ const Hero = ({ steps }: HeroProps) => {
               >
                 <RainbowButton
                   className="w-full sm:w-auto px-8 py-4 text-lg font-semibold shadow-lg shadow-current/20 hover:shadow-xl hover:shadow-current/30 transition-all duration-300"
-                  style={{
-                    backgroundColor: currentSteps[currentStep].color,
-                    color: "white",
-                  }}
                 >
                   {currentLang === "ar" ? " ابدأ الآن " : " Get Started Now "}
                 </RainbowButton>

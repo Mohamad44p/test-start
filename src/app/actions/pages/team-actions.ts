@@ -13,7 +13,7 @@ export type TeamMemberData = {
 
 export async function getTeamMembers() {
   return db.teamMember.findMany({
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: "asc" },
   })
 }
 

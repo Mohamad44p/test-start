@@ -1,13 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface ProgramCardProps {
@@ -38,14 +32,8 @@ const ProgramCard = ({
         />
       </div>
 
-      <CardHeader className="p-5">
-        <CardTitle className="text-xl font-bold tracking-tight text-[#1b316e]">
-          {programName}
-        </CardTitle>
-      </CardHeader>
-
       <CardContent className="px-5 pb-5">
-        <p className="text-sm leading-relaxed line-clamp-2 text-[#862996]">
+        <p className="text-sm leading-relaxed line-clamp-4 text-[#862996]">
           {description}
         </p>
       </CardContent>
