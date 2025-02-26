@@ -154,7 +154,7 @@ export async function getProgramsWithHero() {
         ProgramsHero: true
       },
       orderBy: {
-        createdAt: 'desc'
+        createdAt: 'asc'
       }
     });
 

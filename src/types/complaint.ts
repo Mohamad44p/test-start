@@ -1,71 +1,88 @@
 export interface AnonymousComplaint {
-    id: string
-    date: Date
-    willProvideContact: boolean
-    description: string
-    entityAgainst: string
-    filedInCourt: boolean
-    previousComplaint: boolean
-    previousEntityAgainst?: string
-    previousFilingDate?: Date
-    receivedResponse?: boolean
-    responseDate?: Date
-    factsAndGrounds: string
-    confirmed: boolean
-    createdAt: Date
-    updatedAt: Date
-  }
-  
-  export type ComplaintType = 'REGULAR' | 'ANONYMOUS';
-  export type ComplaintStatus = 'PENDING' | 'IN_REVIEW' | 'RESOLVED' | 'REJECTED';
-  
-  export interface ComplaintAttachment {
-    id: string;
-    fileUrl: string;
-    fileName: string;
-    fileType: string;
-    fileSize: number;
-    uploadedAt: Date;
-  }
-  
-  export interface ComplaintNote {
-    id: string;
-    authorName: string;
-    content: string;
-    createdAt: Date;
-    updatedAt: Date;
-    complaintId: string;
-  }
-  
-  export interface Complaint {
-    id: string;
-    complaintNumber: string;
-    type: ComplaintType;
-    status: ComplaintStatus;
-    submittedAt: Date;
-    updatedAt: Date;
-    complainantType?: string;
-    complainantName?: string;
-    complainantGender?: string;
-    complainantEmail?: string;
-    complainantPhone?: string;
-    firmName?: string;
-    firmEmail?: string;
-    firmPhone?: string;
-    description: string;
-    entityAgainst: string;
-    filedInCourt: boolean;
-    hasPreviousComplaint: boolean;
-    previousComplaintEntity?: string;
-    previousComplaintDate?: Date;
-    facts: string;
-    confirmed: boolean;
-    attachments: ComplaintAttachment[];
-    notes: ComplaintNote[];
-  }
+  id: string;
+  date: Date;
+  willProvideContact: boolean;
+  description: string;
+  entityAgainst: string;
+  filedInCourt: boolean;
+  previousComplaint: boolean;
+  previousEntityAgainst?: string;
+  previousFilingDate?: Date;
+  receivedResponse?: boolean;
+  responseDate?: Date;
+  factsAndGrounds: string;
+  confirmed: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type ComplaintType = "REGULAR" | "ANONYMOUS";
+export type ComplaintStatus = "PENDING" | "IN_REVIEW" | "RESOLVED" | "REJECTED";
+
+export interface ComplaintAttachment {
+  id: string;
+  fileUrl: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  uploadedAt: Date;
+}
+
+export interface ComplaintNote {
+  id: string;
+  text: string;
+  createdAt: Date;
+  createdBy: string;
+  complaintId: string;
+}
+
+export interface Complaint {
+  id: string;
+  type: ComplaintType;
+  complaintNumber: string;
+  submittedAt: Date;
+  status: "PENDING" | "IN_REVIEW" | "RESOLVED" | "REJECTED";
+
+  // Regular complaint fields
+  complainantType?: "INDIVIDUAL" | "ORGANIZATION";
+  complainantName?: string;
+  complainantGender?: string;
+
+  // Contact info - used for both regular and anonymous (when provided)
+  complainantEmail?: string;
+  complainantPhone?: string;
+
+  // Organization fields
+  firmName?: string;
+  firmEmail?: string;
+  firmPhone?: string;
+
+  // Complaint details
+  description: string;
+  entityAgainst: string;
+  filedInCourt: boolean;
+
+  // Previous complaints
+  hasPreviousComplaint: boolean;
+  previousComplaintEntity?: string;
+  previousComplaintDate?: Date;
+
+  // Additional details
+  facts: string;
+  confirmed: boolean;
+
+  // Handling info
+  assignedToName?: string;
+  assignedToEmail?: string;
+  updatedAt?: Date;
+
+  // Related records
+  attachments: ComplaintAttachment[];
+  notes: ComplaintNote[];
+}
 
 export interface ComplainantData {
-  complainantType: 'individual' | 'firm';
+  complainantType: "INDIVIDUAL" | "ORGANIZATION";
   name?: string;
   gender?: string;
   phone?: string;
@@ -101,35 +118,56 @@ export interface AttachmentData {
 }
 
 export interface ComplaintFormData {
-  type: ComplaintType;
-  complainantInfo?: ComplainantData;
-  complaintDescription: ComplaintDescriptionData;
-  previousComplaints: PreviousComplaintData;
-  complaintDetails: ComplaintDetailsData;
+  type?: ComplaintType; 
+  complainantInfo?: {
+    complainantType: "INDIVIDUAL" | "ORGANIZATION";
+    name: string;
+    gender?: string;
+    email: string;
+    phone: string;
+    firmName?: string;
+    firmEmail?: string;
+    firmPhone?: string;
+  };
+  complaintDescription: {
+    description: string;
+    entity: string;
+    filedInCourt: boolean;
+  };
+  previousComplaints: {
+    hasPreviousComplaint: boolean;
+    previousComplaintEntity?: string;
+    previousComplaintDate?: string;
+    receivedResponse?: boolean;
+    responseDate?: string;
+  };
+  complaintDetails: {
+    facts: string;
+  };
   attachments: AttachmentData[];
   confirmed: boolean;
 }
 
 // Add initial state constant
 export const initialFormData: ComplaintFormData = {
-  type: 'REGULAR',
+  type: "REGULAR",
   complainantInfo: undefined,
   complaintDescription: {
-    description: '',
-    entity: '',
-    filedInCourt: false
+    description: "",
+    entity: "",
+    filedInCourt: false,
   },
   previousComplaints: {
     hasPreviousComplaint: false,
-    previousComplaintEntity: '',
-    previousComplaintDate: '',
+    previousComplaintEntity: "",
+    previousComplaintDate: "",
     receivedResponse: false,
-    responseDate: ''
+    responseDate: "",
   },
   complaintDetails: {
-    facts: ''
+    facts: "",
   },
   attachments: [],
-  confirmed: false
+  confirmed: false,
 };
 

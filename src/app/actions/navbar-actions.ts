@@ -13,7 +13,7 @@ export async function getNavbarPrograms(): Promise<NavbarProgramsResponse> {
     const categories = await db.programCategory.findMany({
       where: {
         programs: {
-          some: {} // Only get categories that have programs
+          some: {} 
         }
       },
       include: {

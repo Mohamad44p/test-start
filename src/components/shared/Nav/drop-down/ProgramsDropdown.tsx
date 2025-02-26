@@ -42,6 +42,7 @@ export const ProgramsDropdown: React.FC<DropdownProps> = ({ setPosition, transla
           left: ref.current.offsetLeft,
           width,
           opacity: 1,
+          isRtl: currentLang === "ar"
         });
         setIsOpen(true);
       }}
@@ -68,8 +69,10 @@ export const ProgramsDropdown: React.FC<DropdownProps> = ({ setPosition, transla
                 <div key={category.id} className="border-b border-gray-100 last:border-none">
                   <button
                     onClick={() => setActiveCategory(activeCategory === category.id ? null : category.id)}
-                    className="w-full px-4 py-3 text-sm font-medium text-[#1b316e] hover:bg-gray-50 
-                             flex items-center justify-between transition-all"
+                    className={`w-full px-4 py-3 text-sm font-medium text-[#1b316e] hover:bg-gray-50 
+                             flex items-center justify-between transition-all ${
+                               currentLang === "ar" ? "text-right" : "text-left"
+                             }`}
                   >
                     <span>{currentLang === "ar" ? category.name_ar : category.name_en}</span>
                     <motion.span
@@ -93,7 +96,9 @@ export const ProgramsDropdown: React.FC<DropdownProps> = ({ setPosition, transla
                           <Link
                             key={program.id}
                             href={`/${currentLang}/programs/${program.id}`}
-                            className="block w-full px-6 py-2.5 text-sm text-[#1b316e] hover:bg-gray-100 text-left"
+                            className={`block w-full px-6 py-2.5 text-sm text-[#1b316e] hover:bg-gray-100 ${
+                              currentLang === "ar" ? "text-right" : "text-left"
+                            }`}
                           >
                             {currentLang === "ar" ? program.name_ar : program.name_en}
                           </Link>

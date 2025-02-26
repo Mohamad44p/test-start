@@ -49,7 +49,7 @@ const navbarTranslations: NavbarTranslations = {
     programs: "البرامج",
     aboutUs: "من نحن",
     mediaCenter: "المركز الإعلامي",
-    safeguards: "الضمانات",
+    safeguards: "معايير الحماية",
     contactUs: "اتصل بنا",
     menuItems: {
       programs: {

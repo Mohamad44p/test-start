@@ -35,8 +35,6 @@ export default function ReusableHero({
   imageAlt,
   features,
 }: ReusableHeroProps) {
-  const { currentLang } = useLanguage();
-
   return (
     <div className="relative overflow-hidden bg-gradient-to-r from-purple-100 via-white to-blue-100 py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -58,7 +56,6 @@ export default function ReusableHero({
               </motion.span>
               
               <div className="space-y-6">
-                {/* Program Title */}
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -71,41 +68,25 @@ export default function ReusableHero({
                   </span>
                 </motion.h1>
 
-                <div className="space-y-6">
-                  {/* Program Objectives */}
-                  {objectives && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="bg-white/50 backdrop-blur-sm rounded-xl p-6"
-                    >
-                      <h3 className="text-xl font-semibold mb-4 text-gray-900">
-                        {currentLang === "ar" ? "أهداف البرنامج" : "Program Objectives"}
-                      </h3>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="bg-white/50 backdrop-blur-sm rounded-xl p-6"
+                >
+                  <div className="space-y-4">
+                    {objectives && (
                       <div
                         className="text-lg text-gray-600 prose prose-blue max-w-none prose-p:leading-relaxed prose-headings:text-gray-900"
                         dangerouslySetInnerHTML={{ __html: objectives }}
                       />
-                    </motion.div>
-                  )}
-                  
-                  {/* Description/Overview */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="bg-white/50 backdrop-blur-sm rounded-xl p-6"
-                  >
-                    <h3 className="text-xl font-semibold mb-4 text-gray-900">
-                      {currentLang === "ar" ? "نظرة عامة" : "Overview"}
-                    </h3>
+                    )}
                     <div
                       className="text-lg text-[#481640]"
                       dangerouslySetInnerHTML={{ __html: description }}
                     />
-                  </motion.div>
-                </div>
+                  </div>
+                </motion.div>
               </div>
             </motion.div>
 

@@ -6,7 +6,6 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
     
-    // Validate required fields
     if (!data.type || !['REGULAR', 'ANONYMOUS'].includes(data.type) ||
         !data.complaintDescription?.description ||
         !data.complaintDescription?.entity ||
@@ -51,20 +50,32 @@ export async function POST(req: Request) {
       }
     };
 
-    // Add regular complaint specific fields if type is REGULAR
-    const complaintData = data.type === 'REGULAR' 
-      ? {
-          ...baseComplaintData,
-          complainantType: data.complainantInfo?.complainantType,
-          complainantName: data.complainantInfo?.name,
-          complainantGender: data.complainantInfo?.gender,
-          complainantEmail: data.complainantInfo?.email,
-          complainantPhone: data.complainantInfo?.phone,
-          firmName: data.complainantInfo?.firmName,
-          firmEmail: data.complainantInfo?.firmEmail,
-          firmPhone: data.complainantInfo?.firmPhone,
-        }
-      : baseComplaintData;
+    let complaintData;
+
+    // Add fields based on complaint type
+    if (data.type === 'REGULAR') {
+      complaintData = {
+        ...baseComplaintData,
+        complainantType: data.complainantInfo?.complainantType,
+        complainantName: data.complainantInfo?.name,
+        complainantGender: data.complainantInfo?.gender,
+        complainantEmail: data.complainantInfo?.email,
+        complainantPhone: data.complainantInfo?.phone,
+        firmName: data.complainantInfo?.firmName,
+        firmEmail: data.complainantInfo?.firmEmail,
+        firmPhone: data.complainantInfo?.firmPhone,
+      };
+    } else {
+      // For anonymous complaints with optional contact info
+      complaintData = {
+        ...baseComplaintData,
+        // Add contact info if provided for anonymous complaints
+        ...(data.contactInfo && {
+          complainantEmail: data.contactInfo.email || null,
+          complainantPhone: data.contactInfo.phone || null
+        })
+      };
+    }
 
     const complaint = await db.complaint.create({
       data: complaintData

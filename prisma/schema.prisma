@@ -445,7 +445,7 @@ model ProgramTab {
   content_en    String         @db.Text
   content_ar    String         @db.Text
   processFile   String?        
-  buttons       TabButton[]    // Add this line
+  buttons       TabButton[]   
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   programPage   ProgramsPages? @relation(fields: [programPageId], references: [id])
@@ -454,7 +454,6 @@ model ProgramTab {
   @@index([programPageId])
 }
 
-// Add this new model
 model TabButton {
   id          String     @id @default(cuid())
   name_en     String

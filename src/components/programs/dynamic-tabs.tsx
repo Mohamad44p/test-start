@@ -27,8 +27,6 @@ interface DynamicTabsProps {
 }
 
 export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory }: DynamicTabsProps): JSX.Element {
-  console.log('Tabs with buttons:', tabs); // Debug log
-  
   const { currentLang } = useLanguage();
   const [activeTab, setActiveTab] = React.useState(tabs[0]?.slug || "");
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -80,6 +78,10 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
       en: "The provision of this grant is subject to fund availability.",
       ar: "يخضع تقديم هذه المنحة لتوفر التمويل.",
     },
+    eligibility: {
+      en: "Eligibility Criteria",
+      ar: "معايير الأهلية",
+    }
   };
 
   const handleProcessDetailsClick = (tab: ExtendedProgramTab) => {
@@ -120,6 +122,16 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
       )}
 
       <div className="flex flex-wrap gap-4">
+        {/* Eligibility Criteria Button */}
+        {tab.programPageId && (
+          <Link href={`/${currentLang}/programs/${tab.programPageId}/eligibility`}>
+            <Button variant="outline" className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
+                   transition-all duration-300 border-gray-200">
+              {currentLang === "ar" ? buttonText.eligibility.ar : buttonText.eligibility.en}
+            </Button>
+          </Link>
+        )}
+        
         <Button
           variant="outline"
           className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 

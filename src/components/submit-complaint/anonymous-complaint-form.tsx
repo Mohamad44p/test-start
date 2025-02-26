@@ -17,6 +17,8 @@ export function AnonymousComplaintForm() {
     date: string
     complaintNumber: string
     willProvideContact: boolean
+    email: string
+    phone: string
     description: string
     entityAgainst: string
     filedInCourt: boolean
@@ -34,6 +36,8 @@ export function AnonymousComplaintForm() {
     date: new Date().toISOString().split("T")[0],
     complaintNumber: Math.random().toString(36).substr(2, 9),
     willProvideContact: false,
+    email: "",
+    phone: "",
     description: "",
     entityAgainst: "",
     filedInCourt: false,
@@ -88,6 +92,28 @@ export function AnonymousComplaintForm() {
       })
       return false
     }
+    if (formData.willProvideContact) {
+      if (!formData.email.trim() && !formData.phone.trim()) {
+        toast({
+          title: currentLang === "ar" ? "خطأ" : "Error",
+          description: currentLang === "ar" 
+            ? "يرجى تقديم البريد الإلكتروني أو رقم الهاتف للاتصال" 
+            : "Please provide either email or phone for contact",
+          variant: "destructive",
+        })
+        return false
+      }
+      if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        toast({
+          title: currentLang === "ar" ? "خطأ" : "Error",
+          description: currentLang === "ar"
+            ? "يرجى تقديم بريد إلكتروني صالح"
+            : "Please provide a valid email",
+          variant: "destructive",
+        })
+        return false
+      }
+    }
     if (!formData.confirmed) {
       toast({
         title: currentLang === "ar" ? "خطأ" : "Error",
@@ -113,6 +139,10 @@ export function AnonymousComplaintForm() {
         },
         body: JSON.stringify({
           type: "ANONYMOUS",
+          contactInfo: formData.willProvideContact ? {
+            email: formData.email,
+            phone: formData.phone,
+          } : null,
           complaintDescription: {
             description: formData.description,
             entity: formData.entityAgainst,
@@ -156,6 +186,8 @@ export function AnonymousComplaintForm() {
           date: new Date().toISOString().split("T")[0],
           complaintNumber: Math.random().toString(36).substr(2, 9),
           willProvideContact: false,
+          email: "",
+          phone: "",
           description: "",
           entityAgainst: "",
           filedInCourt: false,
@@ -190,6 +222,8 @@ export function AnonymousComplaintForm() {
       willProvideContact: "Are you willing to provide a tool to contact you?",
       yes: "Yes",
       no: "No",
+      email: "Email (Optional)",
+      phone: "Phone Number (Optional)",
       description: "Description of the Complaint",
       entityAgainst: "The entity against which the complaint is filed",
       filedInCourt: "Was this complaint filed in a court of law?",
@@ -204,6 +238,7 @@ export function AnonymousComplaintForm() {
         "I, the complainant (Anonymous), do hereby assert and confirm that the aforementioned information, data and attachments are genuine, legitimate and accurate, and I undertake to bear full legal liability if they were found to be otherwise at any point of time, or if the complaint was found to be filed maliciously or with ill-intention.",
       submit: "Submit Anonymous Complaint",
       submitting: "Submitting...",
+      contactNote: "Please provide at least one method of contact",
     },
     ar: {
       date: "التاريخ",
@@ -211,6 +246,8 @@ export function AnonymousComplaintForm() {
       willProvideContact: "هل أنت على استعداد لتقديم وسيلة للاتصال بك؟",
       yes: "نعم",
       no: "لا",
+      email: "البريد الإلكتروني (اختياري)",
+      phone: "رقم الهاتف (اختياري)",
       description: "وصف الشكوى",
       entityAgainst: "الجهة المشتكى عليها",
       filedInCourt: "هل تم تقديم هذه الشكوى في المحكمة؟",
@@ -225,6 +262,7 @@ export function AnonymousComplaintForm() {
         "أنا، مقدم الشكوى (مجهول الهوية)، أؤكد وأقر بأن المعلومات والبيانات والمرفقات المذكورة أعلاه صحيحة وشرعية ودقيقة، وأتعهد بتحمل المسؤولية القانونية الكاملة إذا تبين أنها غير ذلك في أي وقت، أو إذا تبين أن الشكوى قدمت بسوء نية أو بقصد الإضرار.",
       submit: "تقديم شكوى مجهولة",
       submitting: "جاري التقديم...",
+      contactNote: "يرجى تقديم طريقة واحدة على الأقل للاتصال",
     },
   }
 
@@ -271,6 +309,7 @@ export function AnonymousComplaintForm() {
             <RadioGroup
               onValueChange={(value) => handleRadioChange("willProvideContact", value === "yes")}
               className="flex space-x-4 mt-2"
+              defaultValue="no"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="yes" id="willProvideContact-yes" />
@@ -282,6 +321,41 @@ export function AnonymousComplaintForm() {
               </div>
             </RadioGroup>
           </div>
+
+          {formData.willProvideContact && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
+              <div>
+                <Label htmlFor="email">{t.email}</Label>
+                <Input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
+                />
+              </div>
+              <div>
+                <Label htmlFor="phone">{t.phone}</Label>
+                <Input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
+                />
+              </div>
+              <div className="md:col-span-2 text-sm text-muted-foreground">
+                {t.contactNote}
+              </div>
+            </motion.div>
+          )}
 
           <div className="mt-6">
             <Label htmlFor="description">{t.description}</Label>
