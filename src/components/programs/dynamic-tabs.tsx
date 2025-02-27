@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { TabButtonDialog } from "./tab-button-dialog";
 import type { TabButton } from "@/types/program-tab";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 interface ExtendedProgramTab extends Omit<PrismaProgramTab, 'buttons'> {
   buttons: TabButton[];
@@ -33,10 +33,8 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedButton, setSelectedButton] = useState<{ title: string; content: string } | null>(null);
-  const router = useRouter();
   const pathname = usePathname();
 
-  // Handle hash navigation
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace("#", "");
@@ -44,22 +42,15 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
         setActiveTab(hash);
       }
     };
-
-    // Set initial tab based on hash
     handleHashChange();
-
-    // Listen for hash changes
     window.addEventListener("hashchange", handleHashChange);
-    
     return () => {
       window.removeEventListener("hashchange", handleHashChange);
     };
   }, [tabs]);
 
-  // Update URL hash when tab changes without forcing a page reload
   useEffect(() => {
     if (activeTab && !window.location.hash.includes(activeTab)) {
-      // Update URL without full navigation
       window.history.replaceState(null, "", `${pathname}#${activeTab}`);
     }
   }, [activeTab, pathname]);
@@ -85,8 +76,8 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
 
   const buttonText = {
     overview: {
-      en: "Application Process Details",
-      ar: "تفاصيل عملية التقديم",
+      en: "Grant overview",
+      ar: "نظرة عامة على المنحة",
     },
     apply: {
       en: "APPLY HERE",
@@ -96,10 +87,6 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
       en: "The provision of this grant is subject to fund availability.",
       ar: "يخضع تقديم هذه المنحة لتوفر التمويل.",
     },
-    eligibility: {
-      en: "Eligibility Criteria",
-      ar: "معايير الأهلية",
-    }
   };
 
   const handleProcessDetailsClick = (tab: ExtendedProgramTab) => {
@@ -109,7 +96,7 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
   };
 
   const renderTabContent = (tab: ExtendedProgramTab) => (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${currentLang === 'ar' ? 'rtl' : 'ltr'}`}>
       <div className="prose max-w-none">
         <div
           dangerouslySetInnerHTML={{
@@ -118,72 +105,64 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
         />
       </div>
 
-      {tab.buttons && tab.buttons.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          {tab.buttons.map((button) => (
+      <div className="space-y-4">
+        <div className="w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             <Button
-              key={button.id}
               variant="outline"
-              className="w-full text-center p-3 h-auto text-sm sm:text-base 
-                         hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
-                         border-gray-200 transition-all duration-300"
-              onClick={() => {
-                setSelectedButton({
-                  title: currentLang === "ar" ? button.name_ar : button.name_en,
-                  content: currentLang === "ar" ? button.content_ar : button.content_en,
-                });
-                setIsDialogOpen(true);
-              }}
-            >
-              {currentLang === "ar" ? button.name_ar : button.name_en}
-            </Button>
-          ))}
-        </div>
-      )}
-
-      <div className="flex flex-wrap gap-3">
-        {tab.programPageId && (
-          <Link href={`/${currentLang}/programs/${tab.programPageId}/eligibility`}>
-            <Button 
-              variant="outline" 
-              size={isMobile ? "sm" : "default"}
+              size="sm"
               className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
-                       transition-all duration-300 border-gray-200 text-sm sm:text-base"
+                       transition-all duration-300 border-gray-200"
+              onClick={() => handleProcessDetailsClick(tab)}
+              disabled={!tab.processFile}
             >
-              {currentLang === "ar" ? buttonText.eligibility.ar : buttonText.eligibility.en}
+              {currentLang === "ar" ? buttonText.overview.ar : buttonText.overview.en}
             </Button>
-          </Link>
-        )}
-        
-        <Button
-          variant="outline"
-          size={isMobile ? "sm" : "default"}
-          className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
-                   transition-all duration-300 border-gray-200 text-sm sm:text-base"
-          onClick={() => handleProcessDetailsClick(tab)}
-          disabled={!tab.processFile}
-        >
+
+            {tab.buttons && tab.buttons.length > 0 &&
+              tab.buttons.map((button) => (
+                <Button
+                  key={button.id}
+                  variant="outline"
+                  size="sm"
+                  className="h-auto hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 
+                           hover:to-[#872996]/10 border-gray-200 transition-all duration-300"
+                  onClick={() => {
+                    setSelectedButton({
+                      title: currentLang === "ar" ? button.name_ar : button.name_en,
+                      content: currentLang === "ar" ? button.content_ar : button.content_en,
+                    });
+                    setIsDialogOpen(true);
+                  }}
+                >
+                  {currentLang === "ar" ? button.name_ar : button.name_en}
+                </Button>
+              ))
+            }
+          </div>
+
+          <div className="mt-6">
+            <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
+              <Button
+                size="default"
+                className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
+                         transition-opacity shadow-lg hover:shadow-xl text-sm sm:text-base
+                         px-8 py-2.5"
+              >
+                {currentLang === "ar"
+                  ? buttonText.apply.ar
+                  : buttonText.apply.en}
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        <p className="text-xs sm:text-sm text-gray-500 italic">
           {currentLang === "ar"
-            ? buttonText.overview.ar
-            : buttonText.overview.en}
-        </Button>
-        <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
-          <Button 
-            size={isMobile ? "sm" : "default"}
-            className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
-                     transition-opacity shadow-lg hover:shadow-xl text-sm sm:text-base"
-          >
-            {currentLang === "ar"
-              ? buttonText.apply.ar
-              : buttonText.apply.en}
-          </Button>
-        </Link>
+            ? buttonText.availability.ar
+            : buttonText.availability.en}
+        </p>
       </div>
-      <p className="text-xs sm:text-sm text-gray-500 italic">
-        {currentLang === "ar"
-          ? buttonText.availability.ar
-          : buttonText.availability.en}
-      </p>
     </div>
   );
 
@@ -223,7 +202,8 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
-            className="flex flex-col lg:flex-row items-start h-full gap-6"
+            className={`flex flex-col lg:flex-row items-start h-full gap-6 ${currentLang === 'ar' ? 'lg:flex-row-reverse' : ''
+              }`}
           >
             <div className="lg:w-96 w-full">
               <div
@@ -239,22 +219,26 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
                       <TabsTrigger
                         key={tab.slug}
                         value={tab.slug}
-                        className="group flex items-center w-full px-4 py-4 text-start transition-all duration-300
-                                 text-sm font-medium text-gray-600 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1C6AAF] data-[state=active]:to-[#872996] data-[state=active]:text-white rounded-lg hover:bg-gradient-to-r hover:from-[#1C6AAF]/5 hover:to-[#872996]/5 focus:outline-none focus:ring-2 focus:ring-[#1C6AAF]/50 relative overflow-hidden"
+                        className={`group flex items-center w-full px-4 py-4 text-start transition-all duration-300
+                                 text-sm font-medium text-gray-600 data-[state=active]:bg-gradient-to-r 
+                                 ${currentLang === 'ar'
+                            ? 'data-[state=active]:from-[#872996] data-[state=active]:to-[#1C6AAF] text-right'
+                            : 'data-[state=active]:from-[#1C6AAF] data-[state=active]:to-[#872996] text-left'
+                          } 
+                                 data-[state=active]:text-white rounded-lg hover:bg-gradient-to-r 
+                                 hover:from-[#1C6AAF]/5 hover:to-[#872996]/5 focus:outline-none 
+                                 focus:ring-2 focus:ring-[#1C6AAF]/50 relative overflow-hidden`}
                       >
                         <motion.div
-                          className="relative flex items-center gap-3 w-full"
-                          whileHover={{ x: 3 }}
+                          className={`relative flex items-center gap-3 w-full ${currentLang === 'ar' ? 'flex-row-reverse' : ''
+                            }`}
+                          whileHover={{ x: currentLang === 'ar' ? -3 : 3 }}
                           transition={{ duration: 0.2 }}
                         >
                           <div className="flex-shrink-0 w-2 h-2 rounded-full bg-current opacity-60" />
-                          <span className="flex-grow text-left">
+                          <span className="flex-grow">
                             {lang === "ar" ? tab.title_ar : tab.title_en}
                           </span>
-                          <div
-                            className="absolute inset-0 bg-gradient-to-r from-[#1C6AAF]/10 to-[#872996]/10 
-                                        opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"
-                          />
                         </motion.div>
                       </TabsTrigger>
                     ))}

@@ -82,10 +82,10 @@ export function SafeScroll({ safeguards = [], initialLang }: SafeScrollProps) {
                 <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 leading-tight">
                   {currentLang === "ar" ? safeguard.title_ar : safeguard.title_en}
                 </h2>
-                <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 font-medium">
+                <p className="text-lg sm:text-xs lg:text-xl text-gray-600 font-medium">
                   {currentLang === "ar" ? safeguard.tagline_ar : safeguard.tagline_en}
                 </p>
-                <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
+                <p className="text-base sm:text-[16px] text-gray-700 leading-relaxed">
                   {currentLang === "ar" ? safeguard.description_ar : safeguard.description_en}
                 </p>
                 {safeguard.attachmentUrl && (

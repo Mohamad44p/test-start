@@ -33,7 +33,7 @@ export function SafeAnimation({ imageUrl, index, currentIndex }: SafeAnimationPr
               duration: 0.4
             }
           }}
-          className="w-full aspect-square max-w-[280px] sm:max-w-lg lg:max-w-2xl mx-auto relative rounded-xl sm:rounded-2xl overflow-hidden shadow-lg sm:shadow-2xl"
+          className="w-full aspect-square max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] rounded-xl sm:rounded-2xl"
         >
           {imageUrl ? (
             <motion.div 
@@ -44,10 +44,10 @@ export function SafeAnimation({ imageUrl, index, currentIndex }: SafeAnimationPr
               <Image
                 src={imageUrl}
                 alt="Safeguard illustration"
-                fill
+                width={1200}
+                height={800}
                 className="rounded-xl sm:rounded-2xl object-cover"
                 priority
-                sizes="(max-width: 640px) 280px, (max-width: 1024px) 32rem, 42rem"
               />
             </motion.div>
           ) : (

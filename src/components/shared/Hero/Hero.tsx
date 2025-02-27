@@ -173,14 +173,30 @@ const Hero = ({ steps }: HeroProps) => {
                 animate={{ opacity: 1, scale: 1, rotateY: 0 }}
                 exit={{ opacity: 0, scale: 1.05, rotateY: 15 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
-                className="relative w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] xl:h-[500px] rounded-2xl overflow-hidden"
+                className="relative w-full h-[200px] sm:h-[250px] md:h-[300px] lg:h-[350px] xl:h-[400px] rounded-2xl overflow-hidden"
               >
-                <Image
-                  src={currentSteps[currentStep].imageUrl || "/placeholder.svg"}
-                  alt={currentSteps[currentStep].title}
-                  fill
-                  className="object-cover"
-                />
+                <div className="absolute inset-0 p-2 sm:p-4">
+                  <div className="relative w-full h-full rounded-xl overflow-hidden">
+                    <Image
+                      src={currentSteps[currentStep].imageUrl || "/placeholder.svg"}
+                      alt={currentSteps[currentStep].title}
+                      fill
+                      sizes="(max-width: 640px) 90vw,
+                             (max-width: 768px) 70vw,
+                             (max-width: 1024px) 60vw,
+                             50vw"
+                      priority={currentStep === 0}
+                      quality={85}
+                      className="object-contain object-center transform transition-transform duration-300 hover:scale-102"
+                      style={{
+                        WebkitBackfaceVisibility: 'hidden',
+                        backfaceVisibility: 'hidden',
+                        maxWidth: '100%',
+                        maxHeight: '100%'
+                      }}
+                    />
+                  </div>
+                </div>
               </motion.div>
             </AnimatePresence>
 

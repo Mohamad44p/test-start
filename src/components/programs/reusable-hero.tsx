@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useLanguage } from "@/context/LanguageContext";
 
 interface ReusableHeroProps {
   badge: string;
@@ -101,7 +100,7 @@ export default function ReusableHero({
                   src={imageSrc}
                   alt={imageAlt}
                   fill
-                  className="object-cover rounded-lg shadow-lg"
+                  className="object-contain rounded-lg shadow-lg"
                   priority
                 />
               </div>
