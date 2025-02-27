@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { TabButtonDialog } from "./tab-button-dialog";
 import type { TabButton } from "@/types/program-tab";
+import { useRouter, usePathname } from "next/navigation";
 
 interface ExtendedProgramTab extends Omit<PrismaProgramTab, 'buttons'> {
   buttons: TabButton[];
@@ -28,23 +29,40 @@ interface DynamicTabsProps {
 
 export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory }: DynamicTabsProps): JSX.Element {
   const { currentLang } = useLanguage();
-  const [activeTab, setActiveTab] = React.useState(tabs[0]?.slug || "");
+  const [activeTab, setActiveTab] = useState(tabs[0]?.slug || "");
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedButton, setSelectedButton] = useState<{ title: string; content: string } | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  React.useEffect(() => {
-    const hash = window.location.hash.replace("#", "");
-    if (hash && tabs.some((tab) => tab.slug === hash)) {
-      setActiveTab(hash);
-      setTimeout(() => {
-        const element = document.getElementById(hash);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 100);
-    }
+  // Handle hash navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash && tabs.some((tab) => tab.slug === hash)) {
+        setActiveTab(hash);
+      }
+    };
+
+    // Set initial tab based on hash
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener("hashchange", handleHashChange);
+    
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
   }, [tabs]);
+
+  // Update URL hash when tab changes without forcing a page reload
+  useEffect(() => {
+    if (activeTab && !window.location.hash.includes(activeTab)) {
+      // Update URL without full navigation
+      window.history.replaceState(null, "", `${pathname}#${activeTab}`);
+    }
+  }, [activeTab, pathname]);
 
   if (!tabs.length) return <></>;
 
@@ -101,12 +119,14 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
       </div>
 
       {tab.buttons && tab.buttons.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
           {tab.buttons.map((button) => (
             <Button
               key={button.id}
               variant="outline"
-              className="w-full text-center p-4 h-auto"
+              className="w-full text-center p-3 h-auto text-sm sm:text-base 
+                         hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
+                         border-gray-200 transition-all duration-300"
               onClick={() => {
                 setSelectedButton({
                   title: currentLang === "ar" ? button.name_ar : button.name_en,
@@ -121,12 +141,15 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
         </div>
       )}
 
-      <div className="flex flex-wrap gap-4">
-        {/* Eligibility Criteria Button */}
+      <div className="flex flex-wrap gap-3">
         {tab.programPageId && (
           <Link href={`/${currentLang}/programs/${tab.programPageId}/eligibility`}>
-            <Button variant="outline" className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
-                   transition-all duration-300 border-gray-200">
+            <Button 
+              variant="outline" 
+              size={isMobile ? "sm" : "default"}
+              className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
+                       transition-all duration-300 border-gray-200 text-sm sm:text-base"
+            >
               {currentLang === "ar" ? buttonText.eligibility.ar : buttonText.eligibility.en}
             </Button>
           </Link>
@@ -134,8 +157,9 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
         
         <Button
           variant="outline"
+          size={isMobile ? "sm" : "default"}
           className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
-                   transition-all duration-300 border-gray-200"
+                   transition-all duration-300 border-gray-200 text-sm sm:text-base"
           onClick={() => handleProcessDetailsClick(tab)}
           disabled={!tab.processFile}
         >
@@ -144,15 +168,18 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
             : buttonText.overview.en}
         </Button>
         <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
-          <Button className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
-                         transition-opacity shadow-lg hover:shadow-xl">
+          <Button 
+            size={isMobile ? "sm" : "default"}
+            className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
+                     transition-opacity shadow-lg hover:shadow-xl text-sm sm:text-base"
+          >
             {currentLang === "ar"
               ? buttonText.apply.ar
               : buttonText.apply.en}
           </Button>
         </Link>
       </div>
-      <p className="text-sm text-gray-500 italic">
+      <p className="text-xs sm:text-sm text-gray-500 italic">
         {currentLang === "ar"
           ? buttonText.availability.ar
           : buttonText.availability.en}
@@ -161,7 +188,7 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
   );
 
   return (
-    <div className="flex-grow bg-gradient-to-b py-[3rem] from-gray-50 to-white">
+    <div className="flex-grow bg-gradient-to-b py-[1rem] from-gray-50 to-white" id="tabs-section">
       <motion.div
         className="container mx-auto h-full pt-8 pb-0"
         initial={{ opacity: 0 }}
@@ -213,12 +240,7 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory 
                         key={tab.slug}
                         value={tab.slug}
                         className="group flex items-center w-full px-4 py-4 text-start transition-all duration-300
-                                 text-sm font-medium text-gray-600
-                                 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1C6AAF] data-[state=active]:to-[#872996]
-                                 data-[state=active]:text-white rounded-lg
-                                 hover:bg-gradient-to-r hover:from-[#1C6AAF]/5 hover:to-[#872996]/5
-                                 focus:outline-none focus:ring-2 focus:ring-[#1C6AAF]/50
-                                 relative overflow-hidden"
+                                 text-sm font-medium text-gray-600 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1C6AAF] data-[state=active]:to-[#872996] data-[state=active]:text-white rounded-lg hover:bg-gradient-to-r hover:from-[#1C6AAF]/5 hover:to-[#872996]/5 focus:outline-none focus:ring-2 focus:ring-[#1C6AAF]/50 relative overflow-hidden"
                       >
                         <motion.div
                           className="relative flex items-center gap-3 w-full"

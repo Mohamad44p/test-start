@@ -88,9 +88,8 @@ const Hero = ({ steps }: HeroProps) => {
   return (
     <motion.div
       ref={containerRef}
-      className={`relative min-h-screen overflow-hidden transition-all duration-500 ease-in-out ${
-        currentLang === "ar" ? "rtl" : "ltr"
-      }`}
+      className={`relative min-h-screen overflow-hidden transition-all duration-500 ease-in-out ${currentLang === "ar" ? "rtl" : "ltr"
+        }`}
       animate={{
         backgroundColor: `${currentSteps[currentStep].color}05`,
         transition: { duration: 0.5, ease: "easeInOut" },
@@ -132,7 +131,7 @@ const Hero = ({ steps }: HeroProps) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.6 }}
-                    className="block bg-clip-text text-transparent py-5"
+                    className="block bg-clip-text text-transparent py-5 leading-[1.2] tracking-wider"
                     style={{
                       backgroundImage: `linear-gradient(135deg, ${currentSteps[currentStep].color}, ${currentSteps[(currentStep + 1) % currentSteps.length].color})`,
                     }}
@@ -190,9 +189,8 @@ const Hero = ({ steps }: HeroProps) => {
                 {currentSteps.map((step, index) => (
                   <motion.button
                     key={index}
-                    className={`text-xs sm:text-sm font-medium px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all duration-300 flex-grow md:flex-grow-0 ${
-                      index === currentStep ? "text-white shadow-lg" : "bg-white/50 hover:bg-white/80"
-                    }`}
+                    className={`text-[12px] font-medium px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all duration-300 flex-grow md:flex-grow-0 ${index === currentStep ? "text-white shadow-lg" : "bg-white/50 hover:bg-white/80"
+                      }`}
                     style={{
                       backgroundColor: index === currentStep ? step.color : "transparent",
                       border: `2px solid ${step.color}`,

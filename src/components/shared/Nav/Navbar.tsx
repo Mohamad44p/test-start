@@ -13,8 +13,10 @@ import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/context/LanguageContext";
 import navbarTranslations from "@/translations/navbar";
+import { useNavbarStore } from '@/store/navbar-store';
 
 export const Navbar: React.FC = () => {
+  const { isFixed } = useNavbarStore();
   const { currentLang, setLanguage } = useLanguage();
   const [isMounted, setIsMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -32,12 +34,17 @@ export const Navbar: React.FC = () => {
   const t = navbarTranslations[currentLang];
 
   useMotionValueEvent(scrollY, "change", (y) => {
-    const difference = y - lastYRef.current;
-    if (Math.abs(difference) > 180) {
-      setHidden(difference > 0);
-      lastYRef.current = y;
+    if (isFixed) {
+      // Only hide navbar when scrolling down in program pages
+      setHidden(y > 150); // Increased threshold for smoother experience
+    } else {
+      const difference = y - lastYRef.current;
+      if (Math.abs(difference) > 180) {
+        setHidden(difference > 0);
+        lastYRef.current = y;
+      }
+      setIsScrolled(y > 50);
     }
-    setIsScrolled(y > 50);
   });
 
   useLayoutEffect(() => {
@@ -50,13 +57,28 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-[100] flex justify-center">
+      <motion.div 
+        className={cn(
+          "fixed top-0 left-0 right-0 z-[100] flex justify-center w-full",
+          isFixed && "transition-all duration-500"
+        )}
+        animate={{ 
+          y: hidden && isFixed ? -100 : 0,
+          opacity: hidden && isFixed ? 0 : 1
+        }}
+        transition={{
+          y: { type: "spring", stiffness: 300, damping: 30 },
+          opacity: { duration: 0.2 }
+        }}
+      >
         <motion.nav
           className={cn(
             "w-full max-w-7xl mx-auto pt-3 py-4 px-4 sm:px-6 lg:px-8 transition-all duration-300",
-            isScrolled
-              ? "bg-white/80 backdrop-blur-md shadow-md rounded-full my-2"
-              : "bg-transparent"
+            isFixed 
+              ? "rounded-b-2xl border-b border-gray-100"
+              : isScrolled
+                ? "bg-white/80 backdrop-blur-md shadow-md rounded-full my-2"
+                : "bg-transparent"
           )}
           dir={currentLang === "ar" ? "rtl" : "ltr"}
         >
@@ -95,7 +117,7 @@ export const Navbar: React.FC = () => {
             </div>
           </div>
         </motion.nav>
-      </div>
+      </motion.div>
       {isMounted &&
         createPortal(
           <MobileMenu

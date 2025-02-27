@@ -47,7 +47,7 @@ const AboutHero = ({ aboutUsData }: AboutHeroProps) => {
               transition={{ delay: 0.3 }}
               className="text-4xl lg:text-6xl font-bold tracking-tight text-[#142452] dark:text-gray-100"
             >
-              <span className="block bg-gradient-to-r from-[#1F6DB3] to-[#142452] bg-clip-text text-transparent mt-2 relative">
+              <span className="block bg-gradient-to-r from-[#1F6DB3] to-[#142452] bg-clip-text text-transparent mt-2 relative p-5 leading-tight">
                 {currentLang === "ar" ? aboutUsData.titleAr : aboutUsData.titleEn}
               </span>
             </motion.h1>

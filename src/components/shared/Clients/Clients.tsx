@@ -116,7 +116,7 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-lg text-[#1b316e] font-semibold"
+                className="text-lg text-[#1b316e] font-semibold w-[200px] text-center"
               >
                 {currentLang === "ar" ? "مشروع من" : "A Project of"}
               </motion.span>
@@ -124,7 +124,7 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-lg text-[#1b316e] font-semibold"
+                className="text-lg text-[#1b316e] font-semibold flex-1 text-center"
               >
                 {currentLang === "ar" ? "بتمويل من" : "Funded By"}
               </motion.span>
@@ -132,38 +132,33 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-lg text-[#1b316e] font-semibold"
+                className="text-lg text-[#1b316e] font-semibold w-[200px] text-center"
               >
                 {currentLang === "ar" ? "تنفيذ" : "Implemented By"}
               </motion.span>
             </div>
 
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-start gap-8">
               <motion.div className="w-[200px]">
-                <div className="space-y-4">
+                <div className="bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition-all duration-300 h-[120px] flex items-center justify-center">
                   {projectPartners.map((partner, index) => (
-                    <div
-                      key={index}
-                      className="bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition-all duration-300 md:mb-4"
-                    >
-                      <div className="relative h-[80px]">
-                        <Image
-                          src={partner.imageUrl || "/placeholder.svg"}
-                          alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
-                          fill
-                          sizes="(max-width: 640px) 100vw, 640px"
-                          className="object-contain"
-                          priority
-                        />
-                      </div>
+                    <div key={index} className="relative h-[80px] w-full">
+                      <Image
+                        src={partner.imageUrl || "/placeholder.svg"}
+                        alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 640px"
+                        className="object-contain"
+                        priority
+                      />
                     </div>
                   ))}
                 </div>
               </motion.div>
 
-              <motion.div className="flex-1 mx-8 mb-3">
-                <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
-                  <div className="grid grid-cols-3 lg:grid-cols-4 gap-6">
+              <motion.div className="flex-1">
+                <div className="bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition-all duration-300 h-[120px] flex items-center justify-center">
+                  <div className="grid grid-cols-3 lg:grid-cols-4 gap-6 w-full">
                     {fundedPartners.map((partner, index) => (
                       <div key={index} className="relative h-[80px]">
                         <Image
@@ -181,22 +176,17 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
               </motion.div>
 
               <motion.div className="w-[200px]">
-                <div className="space-y-4">
+                <div className="bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition-all duration-300 h-[120px] flex items-center justify-center">
                   {implementedPartners.map((partner, index) => (
-                    <div
-                      key={index}
-                      className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 md:mb-4"
-                    >
-                      <div className="relative h-[80px]">
-                        <Image
-                          src={partner.imageUrl || "/placeholder.svg"}
-                          alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
-                          fill
-                          sizes="(max-width: 640px) 100vw, 640px"
-                          className="object-contain"
-                          priority
-                        />
-                      </div>
+                    <div key={index} className="relative h-[80px] w-full">
+                      <Image
+                        src={partner.imageUrl || "/placeholder.svg"}
+                        alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 640px"
+                        className="object-contain"
+                        priority
+                      />
                     </div>
                   ))}
                 </div>

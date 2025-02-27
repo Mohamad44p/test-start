@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import db from "@/app/db/db";
 import DynamicHero from "@/components/programs/dynamic-hero";
 import DynamicTabs from "@/components/programs/dynamic-tabs";
+import NavbarPositionSetter from './NavbarPositionSetter';
 
 export const dynamic = "force-dynamic"
 
@@ -40,6 +41,40 @@ async function getProgram(slug: string) {
   }
 }
 
+function HashNavigationScript() {
+  return (
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `
+          (function() {
+            function handleHashChange() {
+              const hash = window.location.hash.replace('#', '');
+              if (hash) {
+                setTimeout(() => {
+                  const element = document.getElementById(hash);
+                  if (element) {
+                    const navbarHeight = 100;
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+                    
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }, 300);
+              }
+            }
+            
+            window.addEventListener('load', handleHashChange);
+            window.addEventListener('hashchange', handleHashChange);
+          })();
+        `
+      }}
+    />
+  );
+}
+
 export default async function DynamicProgramPage(
   props: {
     params: Promise<{ lang: string; slug: string }>
@@ -69,16 +104,20 @@ export default async function DynamicProgramPage(
   }, {} as Record<string, any[]>)
 
   return (
-    <main className="min-h-screen flex flex-col">
-      {heroWithProgram && <DynamicHero hero={heroWithProgram} lang={params.lang} />}
-      {program.ProgramTab && (
-        <DynamicTabs 
-          tabs={program.ProgramTab} 
-          lang={params.lang} 
-          faqCategories={program.faqCategories}
-          faqsByCategory={faqsByCategory}
-        />
-      )}
-    </main>
+    <>
+      <NavbarPositionSetter />
+      <HashNavigationScript />
+      <main className="min-h-screen flex flex-col">
+        {heroWithProgram && <DynamicHero hero={heroWithProgram} lang={params.lang} />}
+        {program.ProgramTab && (
+          <DynamicTabs 
+            tabs={program.ProgramTab} 
+            lang={params.lang} 
+            faqCategories={program.faqCategories}
+            faqsByCategory={faqsByCategory}
+          />
+        )}
+      </main>
+    </>
   );
 }
