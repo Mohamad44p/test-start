@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {  ChevronDown } from 'lucide-react'
 import { AVAILABLE_ICONS, ICON_CATEGORIES, type IconName, type CategoryName } from '@/config/icons'
+import React from 'react'
 
 interface IconSelectorProps {
   value: string
@@ -43,11 +44,11 @@ export function IconSelector({ value, onChange }: IconSelectorProps) {
   const filteredIcons = Object.entries(AVAILABLE_ICONS).filter(([name]) => {
     const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesCategory = selectedCategory === 'all' || 
-      ICON_CATEGORIES[selectedCategory as CategoryName]?.includes(name)
+      (ICON_CATEGORIES[selectedCategory as CategoryName] as readonly string[])?.includes(name)
     return matchesSearch && matchesCategory
   })
 
-  const IconComponent = value ? AVAILABLE_ICONS[value as IconName] : null
+  const IconComponent = value ? (AVAILABLE_ICONS[value as IconName] as React.ComponentType<{ className?: string }>) : null
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -118,7 +119,7 @@ export function IconSelector({ value, onChange }: IconSelectorProps) {
                   setOpen(false)
                 }}
               >
-                <Icon className="h-4 w-4" />
+                {React.createElement(Icon as React.ComponentType<{ className?: string }>, { className: "h-4 w-4" })}
               </Button>
             ))}
           </div>

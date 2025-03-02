@@ -28,6 +28,7 @@ import { UpdateVideoGalleryInput, updateVideoGallerySchema } from "@/lib/schema/
 import { MultiVideoUpload } from "@/lib/multi-video-upload";
 import { Loader2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getYoutubeVideoId } from "@/lib/utils";
 
 interface EditVideoGalleryFormProps {
   id: string;

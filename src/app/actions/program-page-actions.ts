@@ -11,6 +11,8 @@ export async function getPrograms(): Promise<ProgramsResponse> {
         name_en: true,
         name_ar: true,
         categoryId: true,
+        createdAt: true,
+        updatedAt: true,
         category: {
           select: {
             id: true,

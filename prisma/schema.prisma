@@ -101,6 +101,9 @@ model HeroStep {
   tagline_ar     String
   description_en String
   description_ar String
+  button_title_en String  @default("Get Started")
+  button_title_ar String  @default("ابدأ الآن")
+  button_link     String  @default("#")
   color          String
   imageUrl       String
   order          Int

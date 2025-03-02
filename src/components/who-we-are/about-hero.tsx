@@ -7,7 +7,6 @@ import type { AboutUsData } from "@/app/actions/pages/about-us-actions"
 import { Card } from "@/components/ui/card"
 import { getImageUrl } from "@/lib/utils/image-url"
 import { AVAILABLE_ICONS, type IconName } from "@/config/icons"
-import type { LucideIcon } from "lucide-react"
 
 interface AboutHeroProps {
   aboutUsData: AboutUsData
@@ -110,7 +109,7 @@ interface AboutCardProps {
 }
 
 const AboutCard = ({ card, index, currentLang, isVisible }: AboutCardProps) => {
-  const Icon: LucideIcon | undefined = AVAILABLE_ICONS[card.icon as IconName]
+  const Icon = AVAILABLE_ICONS[card.icon as IconName] as React.ComponentType<{ className?: string }>
 
   if (!Icon || !isVisible) {
     return null

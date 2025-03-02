@@ -36,7 +36,10 @@ export function HeroStepFormClient({ initialData, onSubmit, isProcessing = false
       description_ar: initialData?.description_ar || '',
       color: initialData?.color || '#000000',
       imageUrl: initialData?.imageUrl || '',
-      order: initialData?.order || 1
+      order: initialData?.order || 1,
+      button_title_en: initialData?.button_title_en || 'Get Started',
+      button_title_ar: initialData?.button_title_ar || 'ابدأ الآن',
+      button_link: initialData?.button_link || '#',
     },
     mode: 'onChange'
   })
@@ -133,6 +136,19 @@ export function HeroStepFormClient({ initialData, onSubmit, isProcessing = false
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="button_title_en"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Button Title (English)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter button text in English" {...field} value={field.value || ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </TabsContent>
 
           <TabsContent value="arabic" className="space-y-4">
@@ -193,8 +209,46 @@ export function HeroStepFormClient({ initialData, onSubmit, isProcessing = false
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="button_title_ar"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Button Title (Arabic)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="أدخل نص الزر بالعربية" 
+                      {...field} 
+                      value={field.value || ''} 
+                      className="text-right"
+                      dir="rtl"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </TabsContent>
         </Tabs>
+
+        <FormField
+          control={form.control}
+          name="button_link"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Button Link</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="Enter button link (e.g., /contact or https://example.com)" 
+                  {...field}
+                  value={field.value || '#'} 
+                />
+              </FormControl>
+              <FormDescription>Enter a URL or path for the button link.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

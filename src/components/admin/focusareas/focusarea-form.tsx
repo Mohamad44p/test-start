@@ -25,6 +25,8 @@ const cardSchema = z.object({
 const focusareaSchema = z.object({
   titleEn: z.string().min(1, "Title in English is required"),
   titleAr: z.string().min(1, "Title in Arabic is required"),
+  descriptionEn: z.string().default(""),
+  descriptionAr: z.string().default(""),
   cards: z.array(cardSchema).min(1, "At least 1 card is required").max(6, "Maximum 6 cards are allowed"),
 })
 
@@ -43,6 +45,8 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
     defaultValues: initialData || {
       titleEn: "",
       titleAr: "",
+      descriptionEn: "",
+      descriptionAr: "",
       cards: [{ titleEn: "", titleAr: "", imageUrl: "" }],
     },
   })
@@ -113,6 +117,19 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="descriptionEn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description (English)</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </TabsContent>
               <TabsContent value="ar" className="space-y-4">
                 <FormField
@@ -123,6 +140,19 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
                       <FormLabel>Title (Arabic)</FormLabel>
                       <FormControl>
                         <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="descriptionAr"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description (Arabic)</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

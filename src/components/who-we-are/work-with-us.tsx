@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { CalendarIcon } from 'lucide-react'
 import type { WorkWithUsListing } from '@/app/actions/pages/work-with-us-actions'
 import { format } from 'date-fns'
-import { AVAILABLE_ICONS } from '@/config/icons'
+import { AVAILABLE_ICONS, IconName } from '@/config/icons'
 import { useLanguage } from "@/context/LanguageContext"
 
 const containerVariants = {
@@ -159,7 +159,7 @@ interface ListingCardProps {
 function ListingCard({ listing, variant, translations }: ListingCardProps) {
   const { currentLang } = useLanguage()
   const isArabic = currentLang === 'ar'
-  const Icon = AVAILABLE_ICONS[listing.iconName] || AVAILABLE_ICONS.briefcase
+  const Icon = AVAILABLE_ICONS[listing.iconName as IconName] as React.ComponentType<{ className?: string }>
 
   const formattedDate = isArabic
     ? new Date(listing.deadline).toLocaleDateString('ar-SA', {

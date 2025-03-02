@@ -3,7 +3,6 @@
 import ReusableHero from "./reusable-hero";
 import type { ProgramsHero } from "@/types/programs-hero";
 import { AVAILABLE_ICONS, type IconName } from '@/config/icons';
-import type { LucideIcon } from 'lucide-react';
 
 interface DynamicHeroProps {
   hero: ProgramsHero;
@@ -13,7 +12,7 @@ interface DynamicHeroProps {
 export default function DynamicHero({ hero, lang }: DynamicHeroProps) {
   const getIconComponent = (iconName: string | null): React.ReactNode => {
     if (!iconName) return null;
-    const Icon: LucideIcon | undefined = AVAILABLE_ICONS[iconName as IconName];
+    const Icon = AVAILABLE_ICONS[iconName as IconName] as React.ComponentType<{ className?: string }>;
     if (!Icon) {
       console.error(`Icon not found: ${iconName}`);
       return null;
@@ -49,7 +48,7 @@ export default function DynamicHero({ hero, lang }: DynamicHeroProps) {
       title={lang === 'ar' ? hero.title_ar : hero.title_en}
       highlightedWord={lang === 'ar' ? hero.highlightWord_ar : hero.highlightWord_en}
       description={lang === 'ar' ? hero.description_ar : hero.description_en}
-      objectives={lang === 'ar' ? hero.objectives_ar : hero.objectives_en}
+      objectives={(lang === 'ar' ? hero.objectives_ar : hero.objectives_en) ?? undefined}
       primaryButtonText={lang === 'ar' ? "تقدم الآن" : "Apply Now"}
       secondaryButtonText={lang === 'ar' ? "معايير الأهلية" : "Eligibility Criteria"}
       imageSrc={hero.imageUrl || '/default-hero.png'}

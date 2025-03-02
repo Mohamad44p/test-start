@@ -5,7 +5,6 @@ import { motion } from "framer-motion"
 import { useLanguage } from "@/context/LanguageContext"
 import type { StatData, LanguageType } from "@/types/stats"
 import { AVAILABLE_ICONS, type IconName } from "@/config/icons"
-import type { LucideIcon } from 'lucide-react'
 
 interface StatsCountUpProps {
   stats: StatData[]
@@ -42,7 +41,7 @@ export default function StatsCountUp({ stats }: StatsCountUpProps) {
 
 function Stat({ name_en, name_ar, value, icon,  currentLang }: StatData & { currentLang: LanguageType }) {
   const { count, ref, controls } = useCountUp(value)
-  const Icon: LucideIcon | undefined = AVAILABLE_ICONS[icon as IconName]
+  const Icon = AVAILABLE_ICONS[icon as IconName] as React.ComponentType<{ className?: string }>
 
   const formatNumber = (num: number) => {
     const hasDecimal = num % 1 !== 0;

@@ -157,7 +157,10 @@ export async function getDashboardData() {
       createdAt: format(new Date(post.createdAt), 'MMM dd, yyyy')
     })),
     topPrograms,
-    recentComplaints,
+    recentComplaints: recentComplaints.map(complaint => ({
+      ...complaint,
+      submittedAt: format(new Date(complaint.submittedAt), 'MMM dd, yyyy')
+    })),
     teamMemberCount,
     faqCount,
     partnerCount,
@@ -170,7 +173,9 @@ export async function getDashboardData() {
     workWithUsCount,
     contactSubmissions,
     recentWorkWithUs,
-    programCategories,
+    programCategories: programCategories.map(category => ({
+      name: category.name_en
+    })),
     programTabsCount,
     monthlyStats: monthlyStats.map((stat: MonthlyStats) => ({
       month: format(new Date(stat.month), 'MMM yyyy'),

@@ -12,8 +12,6 @@ export type FocusareaData = {
   cards: {
     titleEn: string
     titleAr: string
-    descriptionEn: string
-    descriptionAr: string
     imageUrl: string
   }[]
 }
@@ -44,9 +42,7 @@ export async function createFocusarea(data: FocusareaData) {
       ...focusareaData,
       cards: {
         create: cards.map(card => ({
-          ...card,
-          descriptionEn: card.descriptionEn,
-          descriptionAr: card.descriptionAr,
+          ...card
         })),
       },
     },

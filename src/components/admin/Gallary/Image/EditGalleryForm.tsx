@@ -75,8 +75,8 @@ export default function EditGalleryForm({ gallery }: EditGalleryFormProps) {
         formData.append("date", data.date);
         data.imageUrls.forEach((url, index) => {
             formData.append("imageUrls", url);
-            formData.append("imageTitles_en", data.imageTitles_en[index] || "");
-            formData.append("imageTitles_ar", data.imageTitles_ar[index] || "");
+            formData.append("imageTitles_en", data.imageTitles_en![index] || "");
+            formData.append("imageTitles_ar", data.imageTitles_ar![index] || "");
         });
         data.deletedImageIds.forEach(id => formData.append("deletedImageIds", id));
 

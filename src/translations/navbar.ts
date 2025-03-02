@@ -14,6 +14,7 @@ const navbarTranslations: NavbarTranslations = {
     contactUs: "Contact Us",
     menuItems: {
       programs: {
+        programs: [],
         buildingCapabilities: "Building Capabilities",
         upskill: "UPSKILL",
         elevate: "Elevate",
@@ -53,6 +54,7 @@ const navbarTranslations: NavbarTranslations = {
     contactUs: "اتصل بنا",
     menuItems: {
       programs: {
+        programs: [],
         buildingCapabilities: "بناء القدرات",
         upskill: "تطوير المهارات",
         elevate: "إرتقاء",

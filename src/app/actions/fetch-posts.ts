@@ -2,7 +2,8 @@
 
 import { cache } from 'react'
 import db from '../db/db'
-import { type BlogPost, type PostType, type ApiResponse, toPostType } from '@/types/blog'
+import { type BlogPost, type ApiResponse, toPostType } from '@/types/blog'
+import { type PostTypeValue } from '@/lib/schema/schema'
 
 export const getFeaturedPosts = cache(async (): Promise<ApiResponse<BlogPost[]>> => {
   try {
@@ -50,7 +51,7 @@ export const getFeaturedPosts = cache(async (): Promise<ApiResponse<BlogPost[]>>
   }
 })
 
-export async function getPostsByType(type: PostType | string) {
+export async function getPostsByType(type: PostTypeValue | string) {
   try {
     const postType = typeof type === 'string' ? type.toLowerCase() : type;
     const posts = await db.post.findMany({
@@ -135,7 +136,7 @@ export async function getPostBySlug(slug: string) {
 }
 
 export const getRelatedPosts = cache(async (
-  type: PostType | string, 
+  type: PostTypeValue | string, 
   currentSlug: string,
   limit = 3
 ): Promise<ApiResponse<BlogPost[]>> => {

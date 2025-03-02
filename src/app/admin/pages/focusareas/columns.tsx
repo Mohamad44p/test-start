@@ -36,8 +36,6 @@ export type Focusarea = {
     id: string;
     titleEn: string;
     titleAr: string;
-    descriptionEn: string;
-    descriptionAr: string;
     imageUrl: string;
   }[];
 };

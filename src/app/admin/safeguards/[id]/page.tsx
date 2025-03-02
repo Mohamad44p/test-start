@@ -22,11 +22,19 @@ export default async function EditSafeguardPage(
     notFound()
   }
 
+  const transformedData = {
+    ...safeguard,
+    imageUrl: safeguard.imageUrl || undefined,
+    attachmentUrl: safeguard.attachmentUrl || undefined,
+    longDescription_en: safeguard.longDescription_en || undefined,
+    longDescription_ar: safeguard.longDescription_ar || undefined
+  }
+
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">Edit Safeguard</h1>
       <SafeguardForm
-        initialData={safeguard}
+        initialData={transformedData}
         mode="edit"
         id={id}
         buttonText="Update Safeguard"

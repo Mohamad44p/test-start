@@ -29,6 +29,8 @@ export interface VideoGallery {
 }
 
 export interface FormattedVideoGallery extends Omit<PrismaVideoGallery, 'createdAt'> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  videos: any;
   createdAt: string;
 }
 

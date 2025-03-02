@@ -5,7 +5,6 @@ import AboutUsContent from "@/components/who-we-are/about-us-content"
 
 export const dynamic = "force-dynamic"
 
-
 export default async function AboutPage() {
   const aboutUsData = await getAboutUs()
   const focusareasData = await getFocusareas()
@@ -15,6 +14,17 @@ export default async function AboutPage() {
     return <div>Error loading data</div>
   }
 
-  return <AboutUsContent aboutUsData={aboutUsData} focusareasData={focusareasData} teamMembersData={teamMembersData} />
+  const transformedAboutUs = {
+    ...aboutUsData,
+    cards: aboutUsData.cards.map(card => ({
+      titleEn: card.titleEn || "",
+      titleAr: card.titleAr || "",
+      descriptionEn: card.descriptionEn || "",
+      descriptionAr: card.descriptionAr || "",
+      icon: card.icon || ""
+    }))
+  }
+
+  return <AboutUsContent aboutUsData={transformedAboutUs} focusareasData={focusareasData} teamMembersData={teamMembersData} />
 }
 

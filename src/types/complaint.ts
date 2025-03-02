@@ -30,9 +30,10 @@ export interface ComplaintAttachment {
 
 export interface ComplaintNote {
   id: string;
-  text: string;
+  authorName: string;
+  content: string;
   createdAt: Date;
-  createdBy: string;
+  updatedAt: Date;
   complaintId: string;
 }
 

@@ -63,17 +63,7 @@ export interface ProgramWithTabs {
 // Update ProgramsResponse interface
 export interface ProgramsResponse {
   success: boolean;
-  programs: Array<{
-    id: string;
-    name_en: string;
-    name_ar: string;
-    categoryId: string | null; // Allow null
-    category: {
-      id: string;
-      name_en: string;
-      name_ar: string;
-    } | null; // Allow null
-  }>;
+  programs: SimpleProgramType[];
   error?: string;
 }
 
@@ -106,6 +96,9 @@ export interface SimpleProgramType {
   id: string;
   name_en: string;
   name_ar: string;
+  createdAt: Date;
+  updatedAt: Date;
+  categoryId: string | null;
 }
 
 

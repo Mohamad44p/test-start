@@ -1,95 +1,113 @@
-"use client"
+"use client";
 
-import { motion, AnimatePresence, useAnimation } from "framer-motion"
-import Image from "next/image"
-import { useState, useEffect, useRef, useCallback } from "react"
-import { RainbowButton } from "../../ui/rainbow-button"
-import { Navbar } from "../Nav/Navbar"
-import AnimatedNetworkBackground from "../Nav/AnimatedBackground"
-import { useLanguage } from "@/context/LanguageContext"
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
+import Image from "next/image";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { RainbowButton } from "../../ui/rainbow-button";
+import { Navbar } from "../Nav/Navbar";
+import AnimatedNetworkBackground from "../Nav/AnimatedBackground";
+import { useLanguage } from "@/context/LanguageContext";
 
-const STEP_DURATION = 5000
+const STEP_DURATION = 5000;
 
 interface HeroStepData {
-  title_en: string
-  title_ar: string
-  tagline_en: string
-  tagline_ar: string
-  description_en: string
-  description_ar: string
-  color: string
-  imageUrl: string
+  title_en: string;
+  title_ar: string;
+  tagline_en: string;
+  tagline_ar: string;
+  description_en: string;
+  description_ar: string;
+  button_title_en: string;
+  button_title_ar: string;
+  button_link: string;
+  color: string;
+  imageUrl: string;
 }
 
 interface ProcessedStep {
-  title: string
-  tagline: string
-  description: string
-  color: string
-  imageUrl: string
+  title: string;
+  tagline: string;
+  description: string;
+  buttonTitle: string;
+  buttonLink: string;
+  color: string;
+  imageUrl: string;
 }
 
 interface HeroProps {
-  steps: Record<number, HeroStepData>
+  steps: Record<number, HeroStepData>;
 }
 
 const Hero = ({ steps }: HeroProps) => {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [key, setKey] = useState(0)
-  const controls = useAnimation()
-  const progressControls = useAnimation()
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { currentLang } = useLanguage()
+  const [currentStep, setCurrentStep] = useState(0);
+  const [key, setKey] = useState(0);
+  const controls = useAnimation();
+  const progressControls = useAnimation();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { currentLang } = useLanguage();
 
   const currentSteps: ProcessedStep[] = Object.values(steps).map((step) => ({
-    title: currentLang === 'ar' ? step.title_ar : step.title_en,
-    tagline: currentLang === 'ar' ? step.tagline_ar : step.tagline_en,
-    description: currentLang === 'ar' ? step.description_ar : step.description_en,
+    title: currentLang === "ar" ? step.title_ar : step.title_en,
+    tagline: currentLang === "ar" ? step.tagline_ar : step.tagline_en,
+    description:
+      currentLang === "ar" ? step.description_ar : step.description_en,
+    buttonTitle:
+      currentLang === "ar"
+        ? step.button_title_ar || "ابدأ الآن"
+        : step.button_title_en || "Get Started Now",
+    buttonLink: step.button_link || "#",
     color: step.color,
     imageUrl: step.imageUrl,
-  }))
+  }));
 
   const nextStep = useCallback(() => {
-    setCurrentStep((prev) => (prev + 1) % currentSteps.length)
-    setKey((prev) => prev + 1)
-  }, [currentSteps.length])
+    setCurrentStep((prev) => (prev + 1) % currentSteps.length);
+    setKey((prev) => prev + 1);
+  }, [currentSteps.length]);
 
   useEffect(() => {
-    const interval = setInterval(nextStep, STEP_DURATION)
-    return () => clearInterval(interval)
-  }, [nextStep])
+    const interval = setInterval(nextStep, STEP_DURATION);
+    return () => clearInterval(interval);
+  }, [nextStep]);
 
   useEffect(() => {
     controls.start({
       backgroundColor: `${currentSteps[currentStep].color}10`,
       transition: { duration: 0.5, ease: "easeInOut" },
-    })
+    });
 
-    progressControls.set({ width: "0%" })
+    progressControls.set({ width: "0%" });
     progressControls.start({
       width: "100%",
       transition: { duration: STEP_DURATION / 1000, ease: "linear" },
-    })
-  }, [currentStep, controls, progressControls, currentSteps])
+    });
+  }, [currentStep, controls, progressControls, currentSteps]);
 
   const handleTabClick = (index: number) => {
-    setCurrentStep(index)
-    setKey((prev) => prev + 1)
-  }
+    setCurrentStep(index);
+    setKey((prev) => prev + 1);
+  };
 
   const gradientStyle = {
     backgroundImage: `
-      radial-gradient(circle at 50% -100px, ${currentSteps[currentStep].color}10, transparent 400px),
-      radial-gradient(circle at 100% 50%, ${currentSteps[(currentStep + 1) % currentSteps.length].color}05, transparent 400px),
-      radial-gradient(circle at 0% 100%, ${currentSteps[(currentStep + 2) % currentSteps.length].color}05, transparent 400px)
+      radial-gradient(circle at 50% -100px, ${
+        currentSteps[currentStep].color
+      }10, transparent 400px),
+      radial-gradient(circle at 100% 50%, ${
+        currentSteps[(currentStep + 1) % currentSteps.length].color
+      }05, transparent 400px),
+      radial-gradient(circle at 0% 100%, ${
+        currentSteps[(currentStep + 2) % currentSteps.length].color
+      }05, transparent 400px)
     `,
-  }
+  };
 
   return (
     <motion.div
       ref={containerRef}
-      className={`relative min-h-screen overflow-hidden transition-all duration-500 ease-in-out ${currentLang === "ar" ? "rtl" : "ltr"
-        }`}
+      className={`relative min-h-screen overflow-hidden transition-all duration-500 ease-in-out ${
+        currentLang === "ar" ? "rtl" : "ltr"
+      }`}
       animate={{
         backgroundColor: `${currentSteps[currentStep].color}05`,
         transition: { duration: 0.5, ease: "easeInOut" },
@@ -131,9 +149,14 @@ const Hero = ({ steps }: HeroProps) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.6 }}
-                    className="block bg-clip-text text-transparent py-5 leading-[1.2] tracking-wider"
+                    className="block bg-clip-text text-transparent py-5 leading-[1.1] tracking-wider"
                     style={{
-                      backgroundImage: `linear-gradient(135deg, ${currentSteps[currentStep].color}, ${currentSteps[(currentStep + 1) % currentSteps.length].color})`,
+                      backgroundImage: `linear-gradient(135deg, ${
+                        currentSteps[currentStep].color
+                      }, ${
+                        currentSteps[(currentStep + 1) % currentSteps.length]
+                          .color
+                      })`,
                     }}
                   >
                     {currentSteps[currentStep].title}
@@ -158,8 +181,9 @@ const Hero = ({ steps }: HeroProps) => {
               >
                 <RainbowButton
                   className="w-full sm:w-auto px-8 py-4 text-lg font-semibold shadow-lg shadow-current/20 hover:shadow-xl hover:shadow-current/30 transition-all duration-300"
+                  href={currentSteps[currentStep].buttonLink}
                 >
-                  {currentLang === "ar" ? " ابدأ الآن " : " Get Started Now "}
+                  {currentSteps[currentStep].buttonTitle}
                 </RainbowButton>
               </motion.div>
             </motion.div>
@@ -178,7 +202,9 @@ const Hero = ({ steps }: HeroProps) => {
                 <div className="absolute inset-0 p-2 sm:p-4">
                   <div className="relative w-full h-full rounded-xl overflow-hidden">
                     <Image
-                      src={currentSteps[currentStep].imageUrl || "/placeholder.svg"}
+                      src={
+                        currentSteps[currentStep].imageUrl || "/placeholder.svg"
+                      }
                       alt={currentSteps[currentStep].title}
                       fill
                       sizes="(max-width: 640px) 90vw,
@@ -189,10 +215,10 @@ const Hero = ({ steps }: HeroProps) => {
                       quality={85}
                       className="object-contain object-center transform transition-transform duration-300 hover:scale-102"
                       style={{
-                        WebkitBackfaceVisibility: 'hidden',
-                        backfaceVisibility: 'hidden',
-                        maxWidth: '100%',
-                        maxHeight: '100%'
+                        WebkitBackfaceVisibility: "hidden",
+                        backfaceVisibility: "hidden",
+                        maxWidth: "100%",
+                        maxHeight: "100%",
                       }}
                     />
                   </div>
@@ -205,10 +231,14 @@ const Hero = ({ steps }: HeroProps) => {
                 {currentSteps.map((step, index) => (
                   <motion.button
                     key={index}
-                    className={`text-[12px] font-medium px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all duration-300 flex-grow md:flex-grow-0 ${index === currentStep ? "text-white shadow-lg" : "bg-white/50 hover:bg-white/80"
-                      }`}
+                    className={`text-[16px] font-medium px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all duration-300 flex-grow md:flex-grow-0 ${
+                      index === currentStep
+                        ? "text-white shadow-lg"
+                        : "bg-white/50 hover:bg-white/80"
+                    }`}
                     style={{
-                      backgroundColor: index === currentStep ? step.color : "transparent",
+                      backgroundColor:
+                        index === currentStep ? step.color : "transparent",
                       border: `2px solid ${step.color}`,
                       color: index === currentStep ? "white" : step.color,
                     }}
@@ -220,7 +250,7 @@ const Hero = ({ steps }: HeroProps) => {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleTabClick(index)}
                   >
-                    {step.title}
+                    {step.tagline}
                   </motion.button>
                 ))}
               </div>
@@ -238,8 +268,7 @@ const Hero = ({ steps }: HeroProps) => {
         </div>
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default Hero
-
+export default Hero;

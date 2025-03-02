@@ -2,8 +2,6 @@ export type FocusareaCard = {
   id: string
   titleEn: string
   titleAr: string
-  descriptionEn: string
-  descriptionAr: string
   imageUrl: string
   focusareaId: string
   createdAt: Date

@@ -10,10 +10,22 @@ export default async function EditAboutUsPage(props: { params: Promise<{ id: str
     notFound()
   }
 
+  const transformedData = {
+    ...aboutUs,
+    cards: aboutUs.cards.map(card => ({
+      ...card,
+      icon: card.icon || "",
+      titleEn: card.titleEn || "",
+      titleAr: card.titleAr || "",
+      descriptionEn: card.descriptionEn || "",
+      descriptionAr: card.descriptionAr || ""
+    }))
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Edit About Us</h1>
-      <AboutUsForm initialData={aboutUs} />
+      <AboutUsForm initialData={transformedData} />
     </div>
   )
 }

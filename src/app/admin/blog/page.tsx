@@ -11,7 +11,15 @@ async function fetchBlogs() {
     },
   });
 
-  return blogs;
+  return blogs.map(blog => ({
+    ...blog,
+    content_en: blog.content_en || "",
+    content_ar: blog.content_ar || "",
+    description_en: blog.description_en || "",
+    description_ar: blog.description_ar || "",
+    imageUrl: blog.imageUrl || "",
+    pdfUrl: blog.pdfUrl || ""
+  }));
 }
 
 export default async function Blogs() {

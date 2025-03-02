@@ -18,6 +18,9 @@ export default async function HeroWrapper() {
         tagline_ar: step.tagline_ar,
         description_en: step.description_en,
         description_ar: step.description_ar,
+        button_title_en: step.button_title_en || "Get Started Now",
+        button_title_ar: step.button_title_ar || "ابدأ الآن",
+        button_link: step.button_link || "#",
         color: step.color,
         imageUrl: step.imageUrl,
       }

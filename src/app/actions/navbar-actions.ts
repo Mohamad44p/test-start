@@ -24,7 +24,14 @@ export async function getNavbarPrograms(): Promise<NavbarProgramsResponse> {
                 id: true,
                 title_en: true,
                 title_ar: true,
-                slug: true
+                slug: true,
+                content_en: true,
+                content_ar: true,
+                processFile: true,
+                programPageId: true,
+                createdAt: true,
+                updatedAt: true,
+                buttons: true
               }
             }
           }

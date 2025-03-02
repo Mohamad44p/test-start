@@ -161,8 +161,7 @@ export function SafeguardForm({ initialData, mode, id, buttonText = "Save Safegu
                   <FormControl>
                     <ImageUpload
                       onUpload={(url) => field.onChange(url)}
-                      defaultValue={field.value || undefined}
-                      maxFiles={1}
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />

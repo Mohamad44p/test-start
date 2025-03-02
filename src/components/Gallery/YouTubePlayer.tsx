@@ -1,14 +1,59 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react';
 import { VideoControls } from './VideoControls';
+
+// Add type declaration for YouTube API
+declare global {
+  interface Window {
+    YT: {
+      Player: any;
+      PlayerState?: {
+        UNSTARTED: number;
+        ENDED: number;
+        PLAYING: number;
+        PAUSED: number;
+        BUFFERING: number;
+        CUED: number;
+      };
+    };
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
+
+// Define YouTube player event types
+interface YouTubePlayerEvent {
+  target: YouTubePlayer;
+}
+
+interface YouTubeStateChangeEvent {
+  data: number;
+  target: YouTubePlayer;
+}
+
+interface YouTubePlayer {
+  playVideo: () => void;
+  pauseVideo: () => void;
+  stopVideo: () => void;
+  seekTo: (seconds: number, allowSeekAhead: boolean) => void;
+  getPlayerState: () => number;
+  getCurrentTime: () => number;
+  getDuration: () => number;
+  mute: () => void;
+  unMute: () => void;
+  isMuted: () => boolean;
+  setVolume: (volume: number) => void;
+  getVolume: () => number;
+  destroy?: () => void;
+}
 
 interface YouTubePlayerProps {
   videoId: string;
 }
 
 export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
-  const playerRef = useRef<YT.Player | null>(null);
+  const playerRef = useRef<YouTubePlayer | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -64,16 +109,16 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
             modestbranding: 1
           },
           events: {
-            onReady: (event: YT.PlayerEvent) => {
+            onReady: (event: YouTubePlayerEvent) => {
               setPlayerReady(true);
               setDuration(event.target.getDuration());
               event.target.setVolume(50);
             },
-            onStateChange: (event: YT.OnStateChangeEvent) => {
-              setIsPlaying(event.data === window.YT.PlayerState.PLAYING);
+            onStateChange: (event: YouTubeStateChangeEvent) => {
+              setIsPlaying(event.data === 1);
               
-              if (event.data === window.YT.PlayerState.ENDED) {
-                event.target.seekTo(0);
+              if (event.data === 0) {
+                event.target.seekTo(0, true);
                 setIsPlaying(false);
               }
             }

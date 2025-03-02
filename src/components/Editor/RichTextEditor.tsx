@@ -56,6 +56,7 @@ export function RichTextEditor({ content, onChange, dir = "ltr" }: RichTextEdito
         spellcheck: "false",
       },
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     onUpdate: useCallback(
       debounce(({ editor }) => {
         if (editor) {

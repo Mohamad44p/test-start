@@ -41,9 +41,9 @@ export async function createGallery(formData: FormData) {
         images: {
           create: validatedFields.data.imageUrls.map((url, index) => ({
             url,
-            title_en: validatedFields.data.imageTitles_en[index] || null,
-            title_ar: validatedFields.data.imageTitles_ar[index] || null,
-            featured: validatedFields.data.imageFeatured[index] || false,
+            title_en: (validatedFields.data.imageTitles_en ?? [])[index] || null,
+            title_ar: (validatedFields.data.imageTitles_ar ?? [])[index] || null,
+            featured: (validatedFields.data.imageFeatured ?? [])[index] || false,
           })),
         },
       },

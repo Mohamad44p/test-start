@@ -7,14 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { cn } from "@/lib/utils"
 
-
-declare global {
-  interface Window {
-    YT: any;
-    onYouTubeIframeAPIReady: () => void;
-  }
-}
-
 interface VideoControlsProps {
   videoId: string
   className?: string
@@ -29,7 +21,7 @@ export function AdminVideoControls({ videoId, className, type }: VideoControlsPr
   const [duration, setDuration] = React.useState(0)
   const videoRef = React.useRef<HTMLVideoElement | null>(null)
   const iframeRef = React.useRef<HTMLIFrameElement | null>(null)
-  const [youtubePlayer, setYoutubePlayer] = React.useState<any>(null);
+  const [youtubePlayer, setYoutubePlayer] = React.useState<any>(null)
 
   React.useEffect(() => {
     const video = document.getElementById(videoId) as HTMLVideoElement
@@ -62,7 +54,7 @@ export function AdminVideoControls({ videoId, className, type }: VideoControlsPr
   React.useEffect(() => {
     if (type === 'youtube') {
       // Load YouTube API script if not already loaded
-      if (!window.YT) {
+      if (!(window as any).YT) {
         const tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         const firstScriptTag = document.getElementsByTagName('script')[0];
@@ -72,10 +64,11 @@ export function AdminVideoControls({ videoId, className, type }: VideoControlsPr
       // Initialize player when API is ready
       const initPlayer = () => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const player = new window.YT.Player(videoId, {
+        new (window as any).YT.Player(videoId, {
           events: {
             onStateChange: (event: any) => {
-              setIsPlaying(event.data === window.YT.PlayerState.PLAYING);
+              // YouTube PlayerState: PLAYING = 1
+              setIsPlaying(event.data === 1);
             },
             onReady: (event: any) => {
               setYoutubePlayer(event.target);
@@ -85,10 +78,10 @@ export function AdminVideoControls({ videoId, className, type }: VideoControlsPr
         });
       };
 
-      if (window.YT && window.YT.Player) {
+      if ((window as any).YT && (window as any).YT.Player) {
         initPlayer();
       } else {
-        window.onYouTubeIframeAPIReady = initPlayer;
+        (window as any).onYouTubeIframeAPIReady = initPlayer;
       }
     }
   }, [videoId, type]);

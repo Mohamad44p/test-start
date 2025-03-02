@@ -2,6 +2,7 @@ import { ContentGrid } from "@/components/News-blog/content-grid"
 import { FeaturedPosts } from "@/components/News-blog/FeaturedPosts"
 import { getFeaturedPosts, getPostsByType } from "@/app/actions/fetch-posts"
 import { PostType } from "@/lib/schema/schema";
+import { PostTypeValue } from "@/lib/schema/schema";
 
 export default async function BlogPage(props: { params: Promise<{ lang: string }> }) {
   const params = await props.params;
@@ -32,6 +33,12 @@ export default async function BlogPage(props: { params: Promise<{ lang: string }
     ? 'اكتشف أحدث المقالات والأخبار'
     : 'Discover our latest articles and news'
 
+  const transformedPosts = postsResponse.data?.map(post => ({
+    ...post,
+    type: post.type as PostTypeValue,
+    imageUrl: post.imageUrl || ""
+  })) || []
+
   return (
     <>
       {featuredResponse.data && featuredResponse.data.length > 0 && (
@@ -40,7 +47,7 @@ export default async function BlogPage(props: { params: Promise<{ lang: string }
       <ContentGrid 
         title={title}
         subtitle={subtitle}
-        items={postsResponse.data || []}
+        items={transformedPosts}
       />
     </>
   )

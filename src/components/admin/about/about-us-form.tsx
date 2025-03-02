@@ -90,6 +90,14 @@ export function AboutUsForm({ initialData }: AboutUsFormProps) {
       const formData = {
         ...data,
         imageUrl: data.imageUrl || null,
+        cards: data.cards.map(card => ({
+          ...card,
+          titleEn: card.titleEn || "",
+          titleAr: card.titleAr || "",
+          descriptionEn: card.descriptionEn || "",
+          descriptionAr: card.descriptionAr || "",
+          icon: card.icon || "Star"
+        }))
       }
 
       if (initialData) {

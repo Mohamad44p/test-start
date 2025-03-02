@@ -9,8 +9,6 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
       where: { id: params.id },
       data: {
         status: data.status,
-        assignedToName: data.assignedToName,
-        assignedToEmail: data.assignedToEmail,
         updatedAt: new Date(),
       },
     })

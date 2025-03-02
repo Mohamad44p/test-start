@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { CreatePostInput, createPostSchema, PostType } from "@/lib/schema/schema"
+import { CreatePostInput, createPostSchema, PostType, PostTypeValue } from "@/lib/schema/schema"
 import { editPost } from "@/app/actions/edit-post"
 import { ImageUpload } from "@/lib/ImageUpload"
 import { useToast } from "@/hooks/use-toast"
@@ -81,18 +81,18 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
     resolver: zodResolver(createPostSchema),
     defaultValues: {
       slug: blog.slug,
-      type: blog.type as PostType,
+      type: blog.type as PostTypeValue,
       title_en: blog.title_en,
       title_ar: blog.title_ar,
       description_en: blog.description_en || "",
       description_ar: blog.description_ar || "",
-      content_en: blog.content_en,
-      content_ar: blog.content_ar,
-      imageUrl: blog.imageUrl || "",
+      content_en: blog.content_en || "",
+      content_ar: blog.content_ar || "",
+      imageUrl: blog.imageUrl,
       readTime: blog.readTime || "",
       published: blog.published,
       featured: blog.featured,
-      tags: blog.tags.map(tag => tag.id.toString()),
+      tags: blog.tags.map(tag => tag.id.toString())
     },
   })
 
@@ -217,6 +217,7 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
                           <Textarea
                             placeholder="Enter English description"
                             {...field}
+                            value={field.value || ""}
                             className="w-full min-h-[100px] resize-y"
                           />
                         </FormControl>
@@ -232,7 +233,7 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
                         <FormLabel>Content (English)</FormLabel>
                         <FormControl>
                           <RichTextEditor
-                            content={field.value}
+                            content={field.value || ""}
                             onChange={field.onChange}
                             dir="ltr"
                             placeholder="Write your content in English..."
@@ -269,6 +270,7 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
                           <Textarea
                             placeholder="Enter Arabic description"
                             {...field}
+                            value={field.value || ""}
                             className="w-full min-h-[100px] resize-y text-right"
                             dir="rtl"
                           />
