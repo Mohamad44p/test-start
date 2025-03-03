@@ -2,20 +2,41 @@ import { getAboutUs, deleteAboutUs } from '@/app/actions/pages/about-us-actions'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AVAILABLE_ICONS } from '@/config/icons'
-import {Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { DataActions } from '@/components/shared/data-actions'
+import { DatabaseErrorDisplay } from '@/components/admin/shared/DatabaseErrorDisplay'
 
-export default async function AboutPage() {
-  const aboutUs = await getAboutUs()
+export default async function AboutPage(props) {
+  let aboutUs = null;
+  let error = null;
+  
+  try {
+    aboutUs = await getAboutUs();
+  } catch (err) {
+    error = err instanceof Error ? err.message : 'Failed to connect to the database';
+    console.error('Error fetching about us data:', err);
+  }
+
+  // Handle database connection error
+  if (error) {
+    return (
+      <DatabaseErrorDisplay
+        title="About Us Page"
+        error={error}
+        createHref="/admin/pages/about/create"
+        createLabel="Create About Us"
+      />
+    );
+  }
 
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">About Us Page</h1>
         {!aboutUs ? (
-          <Link  prefetch passHref href="/admin/pages/about/create" className={buttonVariants({ variant: "default" })}>
+          <Link prefetch passHref href="/admin/pages/about/create" className={buttonVariants({ variant: "default" })}>
             <Plus className="h-4 w-4 mr-2" />
             Create About Us
           </Link>
@@ -63,7 +84,7 @@ export default async function AboutPage() {
           </Card>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {aboutUs.cards.map((card) => {
+            {aboutUs.cards && aboutUs.cards.map((card) => {
               const IconComponent = card.icon ? AVAILABLE_ICONS[card.icon] as React.ElementType : null
               return (
                 <Card key={card.id}>

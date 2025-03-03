@@ -65,7 +65,7 @@ export default function ProgramsSec({ programs }: ProgramsSecProps) {
           <div className="w-32 h-1.5 bg-gradient-to-r from-[#1b316e] to-[#862996] mx-auto rounded-full mb-16" />
         </motion.div>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3 px-4">
+        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3 px-4" style={{ direction: 'ltr' }}>
           {programs.map((program) => (
             <div key={program.id} className="program-card">
               <ProgramCard

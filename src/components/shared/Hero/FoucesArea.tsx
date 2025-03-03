@@ -55,7 +55,7 @@ const ServiceCard = ({
           <Image
             src={getImageUrl(card.imageUrl) || "/placeholder.svg"}
             fill
-            className="transition-transform object-cover duration-300 group-hover:scale-110"
+            className="transition-transform object-contain duration-300 group-hover:scale-110"
             alt={currentLang === "ar" ? card.titleAr : card.titleEn}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>

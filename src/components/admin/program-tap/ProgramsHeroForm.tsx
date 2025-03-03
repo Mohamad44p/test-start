@@ -117,6 +117,17 @@ export default function ProgramsHeroForm({ programsHero, programs: initialProgra
   async function onSubmit(data: CreateProgramsHeroInput) {
     setIsSubmitting(true)
     try {
+      // Ensure data is a valid object
+      if (!data || typeof data !== 'object') {
+        toast({
+          title: "Validation Error",
+          description: "Invalid form data",
+          variant: "destructive",
+        })
+        setIsSubmitting(false)
+        return
+      }
+
       // Add validation for eligibility content
       if (!data.eligibility_en?.trim() && !data.eligibility_ar?.trim()) {
         toast({
@@ -128,24 +139,79 @@ export default function ProgramsHeroForm({ programsHero, programs: initialProgra
         return
       }
 
-      const cleanedData = Object.fromEntries(
-        Object.entries(data).map(([key, value]) => [key, value === "" ? null : value]),
-      ) as CreateProgramsHeroInput
+      // Clean the data by removing empty strings and converting them to null
+      const cleanedData = Object.entries(data).reduce((acc, [key, value]) => {
+        if (value === "") {
+          acc[key] = null
+        } else if (Array.isArray(value)) {
+          acc[key] = value[0] === "" ? null : value[0]
+        } else {
+          acc[key] = value
+        }
+        return acc
+      }, {} as Record<string, any>) as CreateProgramsHeroInput
 
-      const result = programsHero
-        ? await updateProgramsHero({ ...cleanedData, id: programsHero.id })
-        : await createProgramsHero(cleanedData)
+      console.log("Submitting data:", cleanedData)
 
-      if (result.success) {
+      let result
+      try {
+        if (programsHero) {
+          result = await updateProgramsHero({ 
+            ...cleanedData, 
+            id: programsHero.id 
+          })
+        } else {
+          result = await createProgramsHero(cleanedData)
+        }
+      } catch (submitError) {
+        console.error("Error during submission:", submitError)
+        
+        // Try alternative approach with FormData if the direct approach fails
+        try {
+          console.log("Trying FormData approach...")
+          const formData = new FormData()
+          
+          // Add all fields to FormData
+          Object.entries(cleanedData).forEach(([key, value]) => {
+            if (value !== null && value !== undefined) {
+              formData.append(key, value.toString())
+            }
+          })
+          
+          if (programsHero) {
+            formData.append('id', programsHero.id)
+            result = await updateProgramsHero(formData as any)
+          } else {
+            result = await createProgramsHero(formData as any)
+          }
+        } catch (formDataError) {
+          console.error("FormData approach also failed:", formDataError)
+          toast({
+            title: "Submission Error",
+            description: "Failed to submit form data. Please try again.",
+            variant: "destructive",
+          })
+          setIsSubmitting(false)
+          return
+        }
+      }
+
+      if (result?.success) {
         toast({
           title: `Programs hero ${programsHero ? "updated" : "created"}`,
           description: `The programs hero has been ${programsHero ? "updated" : "created"} successfully.`,
         })
         router.push("/admin/programs-hero")
-      } else if (result.error) {
+      } else if (result?.error) {
         toast({
           title: "Error",
           description: result.error,
+          variant: "destructive",
+        })
+      } else {
+        toast({
+          title: "Error",
+          description: "Unknown error occurred",
           variant: "destructive",
         })
       }

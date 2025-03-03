@@ -10,14 +10,14 @@ export const teamTableConfig = {
   
   sortableColumns: ["nameEn", "nameAr", "createdAt", "updatedAt"],
 
-  // Add these required properties
+  // Required properties for TableConfig interface
   statusOptions: [
     { value: "ACTIVE", label: "Active" },
     { value: "INACTIVE", label: "Inactive" }
-  ] as const,
+  ],
 
   statusColors: {
     ACTIVE: "success",
     INACTIVE: "destructive"
-  } as const,
+  },
 } as const

@@ -4,6 +4,7 @@ import { HeroStepListClient } from "./HeroStepListClient"
 import { useState } from "react"
 import { toast } from "@/hooks/use-toast"
 import { ApiResponse, HeroStep, HeroStepInput } from '@/types/hero'
+import { createHeroStep, updateHeroStep, deleteHeroStep } from '@/app/actions/pages/hero'
 
 export function HeroPageClient({ initialSteps }: { initialSteps: HeroStep[] }) {
   const [steps, setSteps] = useState<HeroStep[]>(initialSteps)
@@ -12,19 +13,10 @@ export function HeroPageClient({ initialSteps }: { initialSteps: HeroStep[] }) {
   const handleCreate = async (data: HeroStepInput): Promise<HeroStep> => {
     setIsProcessing(true)
     try {
-      const response = await fetch('/api/hero', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          order: Number(data.order)
-        }),
-      })
-
-      const result = await response.json() as ApiResponse<HeroStep>
+      const result = await createHeroStep(data)
       
       if (!result.success || !result.data) {
-        throw new Error('Failed to create hero step')
+        throw new Error(typeof result.error === 'string' ? result.error : 'Failed to create hero step')
       }
       
       setSteps(prev => [...prev, result.data!])
@@ -45,19 +37,13 @@ export function HeroPageClient({ initialSteps }: { initialSteps: HeroStep[] }) {
   const handleUpdate = async (id: number, data: HeroStepInput) => {
     setIsProcessing(true)
     try {
-      const response = await fetch(`/api/hero/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          order: Number(data.order) 
-        }),
-      })
-      const result = await response.json()
+      const result = await updateHeroStep(id, data)
       
-      if (!result.success) throw new Error(result.error)
+      if (!result.success) {
+        throw new Error(typeof result.error === 'string' ? result.error : 'Failed to update hero step')
+      }
       
-      setSteps(steps.map(step => step.id === id ? result.data : step))
+      setSteps(steps.map(step => step.id === id ? result.data! : step))
       return result.data
     } catch (error) {
       toast({
@@ -74,12 +60,11 @@ export function HeroPageClient({ initialSteps }: { initialSteps: HeroStep[] }) {
   const handleDelete = async (id: number) => {
     setIsProcessing(true)
     try {
-      const response = await fetch(`/api/hero/${id}`, {
-        method: 'DELETE',
-      })
-      const result = await response.json()
+      const result = await deleteHeroStep(id)
       
-      if (!result.success) throw new Error(result.error)
+      if (!result.success) {
+        throw new Error(typeof result.error === 'string' ? result.error : 'Failed to delete hero step')
+      }
       
       setSteps(steps.filter(step => step.id !== id))
     } catch (error) {

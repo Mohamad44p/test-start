@@ -2,6 +2,7 @@
 
 import db from "@/app/db/db";
 import { revalidatePath } from "next/cache";
+import { safeDbOperation } from "@/lib/db-utils";
 
 export type AboutUsData = {
   titleEn: string;
@@ -22,60 +23,99 @@ export type AboutUsData = {
 };
 
 export async function getAboutUs() {
-  return db.aboutUs.findFirst({
-    include: {
-      cards: true,
-    },
-  });
+  const result = await safeDbOperation(
+    () => db.aboutUs.findFirst({
+      include: {
+        cards: true,
+      },
+    }),
+    'Failed to fetch about us data'
+  );
+  
+  if (result.error) {
+    throw new Error(result.error);
+  }
+  
+  return result.data;
 }
 
 export async function getAboutUsById(id: string) {
-  return db.aboutUs.findUnique({
-    where: { id },
-    include: {
-      cards: true,
-    },
-  });
+  const result = await safeDbOperation(
+    () => db.aboutUs.findUnique({
+      where: { id },
+      include: {
+        cards: true,
+      },
+    }),
+    `Failed to fetch about us with id ${id}`
+  );
+  
+  if (result.error) {
+    throw new Error(result.error);
+  }
+  
+  return result.data;
 }
 
 export async function createAboutUs(data: AboutUsData) {
   const { cards, ...aboutUsData } = data;
 
-  const createdAboutUs = await db.aboutUs.create({
-    data: {
-      ...aboutUsData,
-      cards: {
-        create: cards,
+  const result = await safeDbOperation(
+    () => db.aboutUs.create({
+      data: {
+        ...aboutUsData,
+        cards: {
+          create: cards,
+        },
       },
-    },
-  });
-
+    }),
+    'Failed to create about us'
+  );
+  
+  if (result.error) {
+    throw new Error(result.error);
+  }
+  
   revalidatePath("/admin/pages/about");
-  return createdAboutUs;
+  return result.data;
 }
 
 export async function updateAboutUs(id: string, data: AboutUsData) {
   const { cards, ...aboutUsData } = data;
 
-  const updatedAboutUs = await db.aboutUs.update({
-    where: { id },
-    data: {
-      ...aboutUsData,
-      cards: {
-        deleteMany: {},
-        create: cards,
+  const result = await safeDbOperation(
+    () => db.aboutUs.update({
+      where: { id },
+      data: {
+        ...aboutUsData,
+        cards: {
+          deleteMany: {},
+          create: cards,
+        },
       },
-    },
-  });
-
+    }),
+    `Failed to update about us with id ${id}`
+  );
+  
+  if (result.error) {
+    throw new Error(result.error);
+  }
+  
   revalidatePath("/admin/pages/about");
-  return updatedAboutUs;
+  return result.data;
 }
 
 export async function deleteAboutUs(id: string) {
-  await db.aboutUs.delete({
-    where: { id },
-  });
-
+  const result = await safeDbOperation(
+    () => db.aboutUs.delete({
+      where: { id },
+    }),
+    `Failed to delete about us with id ${id}`
+  );
+  
+  if (result.error) {
+    throw new Error(result.error);
+  }
+  
   revalidatePath("/admin/pages/about");
 }

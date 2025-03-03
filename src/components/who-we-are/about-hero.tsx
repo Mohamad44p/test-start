@@ -67,15 +67,14 @@ const AboutHero = ({ aboutUsData }: AboutHeroProps) => {
             className="lg:w-1/2"
           >
             {aboutUsData.imageUrl && (
-              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+              <div className="relative w-full aspect-[3/3] rounded-2xl overflow-hidden">
                 <Image
-                  src={getImageUrl(aboutUsData.imageUrl) || "/placeholder.svg"}
+                  src={getImageUrl(aboutUsData.imageUrl) || "/TechLogo.svg"}
                   alt={currentLang === "ar" ? aboutUsData.titleAr : aboutUsData.titleEn}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
               </div>
             )}
           </motion.div>

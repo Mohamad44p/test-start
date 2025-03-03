@@ -115,6 +115,7 @@ export default async function DynamicProgramPage(
             lang={params.lang} 
             faqCategories={program.faqCategories}
             faqsByCategory={faqsByCategory}
+            programName={params.lang === "ar" ? program.name_ar : program.name_en}
           />
         )}
       </main>
