@@ -9,6 +9,11 @@ export default async function HeroWrapper() {
     return <div>Error loading hero content</div>
   }
 
+  // Check if there are any hero steps
+  if (response.data.length === 0) {
+    return <div>No hero content available</div>
+  }
+
   const steps = response.data.reduce(
     (acc, step) => {
       acc[step.order] = {
@@ -29,6 +34,13 @@ export default async function HeroWrapper() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     {} as Record<number, any>,
   )
+
+  // Ensure there's at least one step with index 0
+  if (!steps[0] && Object.keys(steps).length > 0) {
+    // Use the first available step as step 0
+    const firstKey = Math.min(...Object.keys(steps).map(Number))
+    steps[0] = steps[firstKey]
+  }
 
   return <Hero steps={steps} />
 }
