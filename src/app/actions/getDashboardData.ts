@@ -96,10 +96,10 @@ export async function getDashboardData() {
     db.partnerPage.count(),
     db.safeguard.count(),
     db.$queryRaw<PostByMonth[]>`
-      SELECT DATE_TRUNC('month', "createdAt")::date as month, COUNT(*)::bigint as count
-      FROM "Post"
-      WHERE "createdAt" >= NOW() - INTERVAL '1 year'
-      GROUP BY DATE_TRUNC('month', "createdAt")
+      SELECT DATE_FORMAT(createdAt, '%Y-%m-01') as month, COUNT(*) as count
+      FROM Post
+      WHERE createdAt >= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+      GROUP BY DATE_FORMAT(createdAt, '%Y-%m-01')
       ORDER BY month ASC
     `,
     db.contactSubmission.count(),
@@ -122,22 +122,28 @@ export async function getDashboardData() {
     db.programTab.count(),
     db.$queryRaw<MonthlyStats[]>`
       SELECT 
-        DATE_TRUNC('month', d)::date as month,
-        COUNT(DISTINCT p.id)::bigint as posts,
-        COUNT(DISTINCT i.id)::bigint as images,
-        COUNT(DISTINCT v.id)::bigint as videos,
-        COUNT(DISTINCT c.id)::bigint as complaints
-      FROM generate_series(
-        DATE_TRUNC('month', NOW() - INTERVAL '11 months'),
-        DATE_TRUNC('month', NOW()),
-        '1 month'::interval
+        d.date as month,
+        COUNT(DISTINCT p.id) as posts,
+        COUNT(DISTINCT i.id) as images,
+        COUNT(DISTINCT v.id) as videos,
+        COUNT(DISTINCT c.id) as complaints
+      FROM (
+        SELECT DATE_FORMAT(
+          DATE_SUB(NOW(), INTERVAL n MONTH),
+          '%Y-%m-01'
+        ) as date
+        FROM (
+          SELECT 0 as n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3
+          UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7
+          UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11
+        ) months
       ) d
-      LEFT JOIN "Post" p ON DATE_TRUNC('month', p."createdAt") = DATE_TRUNC('month', d)
-      LEFT JOIN "Image" i ON DATE_TRUNC('month', i."createdAt") = DATE_TRUNC('month', d)
-      LEFT JOIN "Video" v ON DATE_TRUNC('month', v."createdAt") = DATE_TRUNC('month', d)
-      LEFT JOIN "Complaint" c ON DATE_TRUNC('month', c."submittedAt") = DATE_TRUNC('month', d)
-      GROUP BY DATE_TRUNC('month', d)
-      ORDER BY month ASC
+      LEFT JOIN Post p ON DATE_FORMAT(p.createdAt, '%Y-%m-01') = d.date
+      LEFT JOIN Image i ON DATE_FORMAT(i.createdAt, '%Y-%m-01') = d.date
+      LEFT JOIN Video v ON DATE_FORMAT(v.createdAt, '%Y-%m-01') = d.date
+      LEFT JOIN Complaint c ON DATE_FORMAT(c.submittedAt, '%Y-%m-01') = d.date
+      GROUP BY d.date
+      ORDER BY d.date ASC
     `,
   ])
 
