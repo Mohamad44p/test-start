@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "npx prisma generate",
-    "seed:faq": "tsx prisma/seed-faq.ts"
+    "seed:faq": "tsx prisma/seed-faq.ts",
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@gsap/react": "^2.1.1",

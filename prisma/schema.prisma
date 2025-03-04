@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,337 +5,6 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-}
-
-model Post {
-  id             Int      @id @default(autoincrement())
-  slug           String   @unique
-  type           String
-  title_en       String
-  title_ar       String
-  description_en String?  @db.Text
-  description_ar String?  @db.Text
-  content_en     String?  @db.Text
-  content_ar     String?  @db.Text
-  imageUrl       String?
-  readTime       String?
-  published      Boolean  @default(false)
-  featured       Boolean  @default(false)
-  authorId       Int?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  pdfUrl         String?
-
-  tags Tag[]
-}
-
-model Tag {
-  id      Int    @id @default(autoincrement())
-  name_en String
-  name_ar String
-  slug    String @unique
-  posts   Post[]
-}
-
-model Gallery {
-  id        String   @id @default(cuid())
-  title_en  String
-  title_ar  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  images    Image[]
-}
-
-model Image {
-  id        String   @id @default(cuid())
-  url       String
-  title_en  String?
-  title_ar  String?
-  featured  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  galleryId String
-  gallery   Gallery  @relation(fields: [galleryId], references: [id])
-}
-
-model VideoGallery {
-  id        String   @id @default(cuid())
-  title_en  String
-  title_ar  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  videos    Video[]
-}
-
-enum VideoType {
-  youtube
-  local
-  blob
-}
-
-model Video {
-  id             String       @id @default(cuid())
-  url            String
-  title_en       String
-  title_ar       String
-  description_en String?      @db.Text
-  description_ar String?      @db.Text
-  type           VideoType    @default(local)
-  thumbnail      String? // This will be null when not set
-  featured       Boolean      @default(false)
-  createdAt      DateTime     @default(now())
-  galleryId      String
-  gallery        VideoGallery @relation(fields: [galleryId], references: [id])
-}
-
-model HeroStep {
-  id             Int      @id @default(autoincrement())
-  title_en       String
-  title_ar       String
-  tagline_en     String
-  tagline_ar     String
-  description_en String
-  description_ar String
-  button_title_en String  @default("Get Started")
-  button_title_ar String  @default("ابدأ الآن")
-  button_link     String  @default("#")
-  color          String
-  imageUrl       String
-  order          Int
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  @@index([order])
-}
-
-model Stat {
-  id        String @id @default(cuid())
-  name_en   String
-  name_ar   String
-  value     Float  // Changed from Int to Float
-  icon      String
-  suffix_en String @default("total")
-  suffix_ar String @default("إجمالي")
-}
-
-model Program {
-  id             String   @id @default(cuid())
-  name_en        String
-  name_ar        String
-  description_en String   @db.Text
-  description_ar String   @db.Text
-  imageUrl       String
-  nameColor      String   @default("#1b316e")
-  descColor      String   @default("#862996")
-  order          Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
-
-  @@index([order])
-}
-
-model Footer {
-  id                String    @id @default(cuid())
-  techStartTitle_en String    @default("TechStart")
-  techStartTitle_ar String    @default("تك ستارت")
-  titleColor        String    @default("#1b316e")
-  gradientColor     String    @default("#862996")
-  instagram         String?
-  linkedin          String?
-  facebook          String?
-  youtube           String?
-  twitter           String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @default(now())
-  partners          Partner[]
-}
-
-model Partner {
-  id        String      @id @default(cuid())
-  type      PartnerType
-  imageUrl  String
-  name_en   String
-  name_ar   String
-  order     Int         @default(0)
-  footerId  String
-  footer    Footer      @relation(fields: [footerId], references: [id])
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @default(now())
-
-  @@index([order])
-}
-
-enum PartnerType {
-  PROJECT_OF
-  FUNDED_BY
-  IMPLEMENTED_BY
-}
-
-model Beneficiary {
-  id                 String   @id @default(cuid())
-  title_en           String
-  title_ar           String
-  description_en     String
-  description_ar     String
-  longDescription_en String   @db.Text
-  longDescription_ar String   @db.Text
-  imageUrl           String
-  ctaText            String
-  ctaLink            String
-  categoryId         String
-  category           Category @relation(fields: [categoryId], references: [id])
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-}
-
-model Category {
-  id            String        @id @default(cuid())
-  name_en       String
-  name_ar       String
-  slug          String        @unique
-  beneficiaries Beneficiary[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @default(now())
-}
-
-model AboutUs {
-  id            String   @id @default(cuid())
-  titleEn       String
-  titleAr       String
-  descriptionEn String   @db.Text
-  descriptionAr String   @db.Text
-  imageUrl      String?
-  card1Visible  Boolean  @default(true)
-  card2Visible  Boolean  @default(true)
-  card3Visible  Boolean  @default(true)
-  cards         Card[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
-}
-
-model Card {
-  id            String  @id @default(cuid())
-  titleEn       String?
-  titleAr       String?
-  descriptionEn String?
-  descriptionAr String?
-  icon          String?
-  aboutUs       AboutUs @relation(fields: [aboutUsId], references: [id], onDelete: Cascade)
-  aboutUsId     String
-}
-
-model Focusarea {
-  id            String          @id @default(cuid())
-  titleEn       String
-  titleAr       String
-  descriptionEn String          @default("")
-  descriptionAr String          @default("")
-  cards         FocusareaCard[]
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @default(now())
-}
-
-model FocusareaCard {
-  id          String    @id @default(cuid())
-  titleEn     String
-  titleAr     String
-  imageUrl    String
-  focusarea   Focusarea @relation(fields: [focusareaId], references: [id], onDelete: Cascade)
-  focusareaId String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now())
-}
-
-model TeamMember {
-  id         String   @id @default(cuid())
-  nameEn     String
-  nameAr     String
-  jobTitleEn String
-  jobTitleAr String
-  imageUrl   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
-}
-
-enum WorkType {
-  Procurement
-  Recruitment
-}
-
-model WorkWithUs {
-  id            String   @id @default(cuid())
-  type          WorkType
-  titleEn       String
-  titleAr       String
-  iconName      String
-  descriptionEn String
-  descriptionAr String
-  tags          String
-  deadline      DateTime
-  applyLink     String? // Add this field
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
-}
-
-model ContactSubmission {
-  id        String   @id @default(cuid())
-  name      String
-  email     String
-  subject   String
-  message   String
-  status    String   @default("new") // Add this line
-  createdAt DateTime @default(now())
-}
-
-model Complaint {
-  id                      String                @id @default(cuid())
-  complaintNumber         String                @unique
-  type                    String
-  status                  String                @default("PENDING")
-  submittedAt             DateTime              @default(now())
-  updatedAt               DateTime              @updatedAt
-  complainantType         String?
-  complainantName         String?
-  complainantGender       String?
-  complainantEmail        String?
-  complainantPhone        String?
-  firmName                String?
-  firmEmail               String?
-  firmPhone               String?
-  description             String                @db.Text
-  entityAgainst           String
-  filedInCourt            Boolean
-  hasPreviousComplaint    Boolean
-  previousComplaintEntity String?
-  previousComplaintDate   DateTime?
-  facts                   String                @db.Text
-  confirmed               Boolean
-  attachments             ComplaintAttachment[]
-  notes                   ComplaintNote[]
-}
-
-model ComplaintAttachment {
-  id          String    @id @default(cuid())
-  complaintId String
-  complaint   Complaint @relation(fields: [complaintId], references: [id])
-  fileUrl     String
-  fileName    String
-  fileType    String
-  fileSize    Int
-  uploadedAt  DateTime  @default(now())
-
-  @@index([complaintId])
-}
-
-model ComplaintNote {
-  id          String    @id @default(cuid())
-  complaintId String
-  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
-  authorName  String
-  content     String    @db.Text
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now())
-
-  @@index([complaintId])
 }
 
 model Safeguard {
@@ -367,8 +30,232 @@ model Safeguard {
   @@map("safeguards")
 }
 
-model HomeBanner {
-  id            String   @id @default(cuid())
+model aboutus {
+  id            String   @id
+  titleEn       String
+  titleAr       String
+  descriptionEn String   @db.Text
+  descriptionAr String   @db.Text
+  imageUrl      String?
+  card1Visible  Boolean  @default(true)
+  card2Visible  Boolean  @default(true)
+  card3Visible  Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+  card          card[]
+}
+
+model beneficiary {
+  id                 String   @id
+  title_en           String
+  title_ar           String
+  description_en     String
+  description_ar     String
+  longDescription_en String   @db.Text
+  longDescription_ar String   @db.Text
+  imageUrl           String
+  ctaText            String
+  ctaLink            String
+  categoryId         String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime
+  category           category @relation(fields: [categoryId], references: [id], map: "Beneficiary_categoryId_fkey")
+
+  @@index([categoryId], map: "Beneficiary_categoryId_fkey")
+}
+
+model card {
+  id            String  @id
+  titleEn       String?
+  titleAr       String?
+  descriptionEn String?
+  descriptionAr String?
+  icon          String?
+  aboutUsId     String
+  aboutus       aboutus @relation(fields: [aboutUsId], references: [id], onDelete: Cascade, map: "Card_aboutUsId_fkey")
+
+  @@index([aboutUsId], map: "Card_aboutUsId_fkey")
+}
+
+model category {
+  id          String        @id
+  name_en     String
+  name_ar     String
+  slug        String        @unique(map: "Category_slug_key")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now())
+  beneficiary beneficiary[]
+}
+
+model complaint {
+  id                      String                @id
+  complaintNumber         String                @unique(map: "Complaint_complaintNumber_key")
+  type                    String
+  status                  String                @default("PENDING")
+  submittedAt             DateTime              @default(now())
+  updatedAt               DateTime
+  complainantType         String?
+  complainantName         String?
+  complainantGender       String?
+  complainantEmail        String?
+  complainantPhone        String?
+  firmName                String?
+  firmEmail               String?
+  firmPhone               String?
+  description             String                @db.Text
+  entityAgainst           String
+  filedInCourt            Boolean
+  hasPreviousComplaint    Boolean
+  previousComplaintEntity String?
+  previousComplaintDate   DateTime?
+  facts                   String                @db.Text
+  confirmed               Boolean
+  complaintattachment     complaintattachment[]
+  complaintnote           complaintnote[]
+}
+
+model complaintattachment {
+  id          String    @id
+  complaintId String
+  fileUrl     String
+  fileName    String
+  fileType    String
+  fileSize    Int
+  uploadedAt  DateTime  @default(now())
+  complaint   complaint @relation(fields: [complaintId], references: [id], map: "ComplaintAttachment_complaintId_fkey")
+
+  @@index([complaintId], map: "ComplaintAttachment_complaintId_idx")
+}
+
+model complaintnote {
+  id          String    @id
+  complaintId String
+  authorName  String
+  content     String    @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+  complaint   complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade, map: "ComplaintNote_complaintId_fkey")
+
+  @@index([complaintId], map: "ComplaintNote_complaintId_idx")
+}
+
+model contactsubmission {
+  id        String   @id
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+}
+
+model faqcategory {
+  id            String         @id
+  nameEn        String
+  nameAr        String
+  slug          String         @unique(map: "FaqCategory_slug_key")
+  order         Int            @default(0)
+  programId     String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now())
+  programspages programspages? @relation(fields: [programId], references: [id], map: "FaqCategory_programId_fkey")
+  faqitem       faqitem[]
+
+  @@index([order], map: "FaqCategory_order_idx")
+  @@index([programId], map: "FaqCategory_programId_idx")
+  @@index([slug], map: "FaqCategory_slug_idx")
+}
+
+model faqitem {
+  id            String         @id
+  questionEn    String
+  questionAr    String
+  answerEn      String         @db.Text
+  answerAr      String         @db.Text
+  order         Int            @default(0)
+  categoryId    String
+  programId     String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now())
+  faqcategory   faqcategory    @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "FaqItem_categoryId_fkey")
+  programspages programspages? @relation(fields: [programId], references: [id], map: "FaqItem_programId_fkey")
+
+  @@index([categoryId], map: "FaqItem_categoryId_idx")
+  @@index([order], map: "FaqItem_order_idx")
+  @@index([programId], map: "FaqItem_programId_idx")
+}
+
+model focusarea {
+  id            String          @id
+  titleEn       String
+  titleAr       String
+  descriptionEn String          @default("")
+  descriptionAr String          @default("")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now())
+  focusareacard focusareacard[]
+}
+
+model focusareacard {
+  id          String    @id
+  titleEn     String
+  titleAr     String
+  imageUrl    String
+  focusareaId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+  focusarea   focusarea @relation(fields: [focusareaId], references: [id], onDelete: Cascade, map: "FocusareaCard_focusareaId_fkey")
+
+  @@index([focusareaId], map: "FocusareaCard_focusareaId_fkey")
+}
+
+model footer {
+  id                String    @id
+  techStartTitle_en String    @default("TechStart")
+  techStartTitle_ar String    @default("تك ستارت")
+  titleColor        String    @default("#1b316e")
+  gradientColor     String    @default("#862996")
+  instagram         String?
+  linkedin          String?
+  facebook          String?
+  youtube           String?
+  twitter           String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @default(now())
+  partner           partner[]
+}
+
+model gallery {
+  id        String   @id
+  title_en  String
+  title_ar  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  image     image[]
+}
+
+model herostep {
+  id              Int      @id @default(autoincrement())
+  title_en        String
+  title_ar        String
+  tagline_en      String
+  tagline_ar      String
+  description_en  String
+  description_ar  String
+  button_title_en String   @default("Get Started")
+  button_title_ar String   @default("ابدأ الآن")
+  button_link     String   @default("#")
+  color           String
+  imageUrl        String
+  order           Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime
+
+  @@index([order], map: "HeroStep_order_idx")
+}
+
+model homebanner {
+  id            String   @id
   title_en      String
   title_ar      String
   bgColor       String   @default("#f3f4f6")
@@ -380,130 +267,99 @@ model HomeBanner {
   updatedAt     DateTime @default(now())
 }
 
-enum ComplaintType {
-  REGULAR
-  ANONYMOUS
+model image {
+  id        String   @id
+  url       String
+  title_en  String?
+  title_ar  String?
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  galleryId String
+  gallery   gallery  @relation(fields: [galleryId], references: [id], map: "Image_galleryId_fkey")
+
+  @@index([galleryId], map: "Image_galleryId_fkey")
 }
 
-enum ComplaintStatus {
-  PENDING
-  IN_REVIEW
-  RESOLVED
-  REJECTED
+model partner {
+  id        String       @id
+  type      partner_type
+  imageUrl  String
+  name_en   String
+  name_ar   String
+  order     Int          @default(0)
+  footerId  String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @default(now())
+  footer    footer       @relation(fields: [footerId], references: [id], map: "Partner_footerId_fkey")
+
+  @@index([footerId], map: "Partner_footerId_fkey")
+  @@index([order], map: "Partner_order_idx")
 }
 
-model FaqCategory {
-  id        String         @id @default(cuid())
-  nameEn    String
-  nameAr    String
-  slug      String         @unique
-  order     Int            @default(0)
-  programId String?
-  program   ProgramsPages? @relation(fields: [programId], references: [id])
-  faqs      FaqItem[]
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @default(now())
-
-  @@index([slug])
-  @@index([order])
-  @@index([programId])
-}
-
-model FaqItem {
-  id         String         @id @default(cuid())
-  questionEn String
-  questionAr String
-  answerEn   String         @db.Text
-  answerAr   String         @db.Text
-  order      Int            @default(0)
-  categoryId String
-  category   FaqCategory    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  programId  String? // Add this field
-  program    ProgramsPages? @relation(fields: [programId], references: [id])
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @default(now())
-
-  @@index([categoryId])
-  @@index([order])
-  @@index([programId])
-}
-
-model PartnerPage {
-  id         String      @id @default(cuid())
+model partnerpage {
+  id         String           @id
   title_en   String
   title_ar   String
   imageUrl   String
   websiteUrl String
-  type       PartnerType
+  type       partnerpage_type
   order      Int
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @default(now())
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @default(now())
 }
 
-model ProgramTab {
-  id            String         @id @default(cuid())
-  title_en      String
-  title_ar      String
-  slug          String         @unique
-  content_en    String         @db.Text
-  content_ar    String         @db.Text
-  processFile   String?        
-  buttons       TabButton[]   
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  programPage   ProgramsPages? @relation(fields: [programPageId], references: [id])
-  programPageId String?
-
-  @@index([programPageId])
+model post {
+  id             Int      @id @default(autoincrement())
+  slug           String   @unique(map: "Post_slug_key")
+  type           String
+  title_en       String
+  title_ar       String
+  description_en String?  @db.Text
+  description_ar String?  @db.Text
+  content_en     String?  @db.Text
+  content_ar     String?  @db.Text
+  imageUrl       String?
+  readTime       String?
+  published      Boolean  @default(false)
+  featured       Boolean  @default(false)
+  authorId       Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime
+  pdfUrl         String?
+  tag            tag[]    @relation("posttotag")
 }
 
-model TabButton {
-  id          String     @id @default(cuid())
-  name_en     String
-  name_ar     String
-  content_en  String     @db.Text
-  content_ar  String     @db.Text
-  order       Int        @default(0)
-  programTab  ProgramTab @relation(fields: [tabId], references: [id], onDelete: Cascade)
-  tabId       String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @default(now())
+model program {
+  id             String   @id
+  name_en        String
+  name_ar        String
+  description_en String   @db.Text
+  description_ar String   @db.Text
+  imageUrl       String
+  nameColor      String   @default("#1b316e")
+  descColor      String   @default("#862996")
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
 
-  @@index([tabId])
-  @@index([order])
+  @@index([order], map: "Program_order_idx")
 }
 
-model ProgramsPages {
-  id            String           @id @default(cuid())
+model programcategory {
+  id            String          @id
   name_en       String
   name_ar       String
-  categoryId    String?
-  category      ProgramCategory? @relation(fields: [categoryId], references: [id])
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @default(now())
-  ProgramTab    ProgramTab[]
-  ProgramsHero  ProgramsHero[]
-  faqs          FaqItem[]
-  faqCategories FaqCategory[]
+  order         Int             @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now())
+  programspages programspages[]
 
-  @@index([categoryId])
+  @@index([order], map: "ProgramCategory_order_idx")
 }
 
-model ProgramCategory {
-  id        String          @id @default(cuid())
-  name_en   String
-  name_ar   String
-  order     Int             @default(0)
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @default(now())
-  programs  ProgramsPages[]
-
-  @@index([order])
-}
-
-model ProgramsHero {
-  id                  String         @id @default(cuid())
-  name                String         @unique
+model programshero {
+  id                  String         @id
+  name                String         @unique(map: "ProgramsHero_name_key")
   tagline_en          String
   tagline_ar          String
   title_en            String
@@ -538,17 +394,159 @@ model ProgramsHero {
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @default(now())
   programPageId       String?
-  programPage         ProgramsPages? @relation(fields: [programPageId], references: [id])
+  programspages       programspages? @relation(fields: [programPageId], references: [id], map: "ProgramsHero_programPageId_fkey")
 
-  @@index([programPageId])
+  @@index([programPageId], map: "ProgramsHero_programPageId_idx")
 }
 
-model UploadedItem {
-  id        String   @id @default(cuid())
+model programspages {
+  id              String           @id
+  name_en         String
+  name_ar         String
+  categoryId      String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @default(now())
+  faqcategory     faqcategory[]
+  faqitem         faqitem[]
+  programshero    programshero[]
+  programcategory programcategory? @relation(fields: [categoryId], references: [id], map: "ProgramsPages_categoryId_fkey")
+  programtab      programtab[]
+
+  @@index([categoryId], map: "ProgramsPages_categoryId_idx")
+}
+
+model programtab {
+  id            String         @id
+  title_en      String
+  title_ar      String
+  slug          String         @unique(map: "ProgramTab_slug_key")
+  content_en    String         @db.Text
+  content_ar    String         @db.Text
+  processFile   String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime
+  programPageId String?
+  programspages programspages? @relation(fields: [programPageId], references: [id], map: "ProgramTab_programPageId_fkey")
+  tabbutton     tabbutton[]
+
+  @@index([programPageId], map: "ProgramTab_programPageId_idx")
+}
+
+model stat {
+  id        String @id
+  name_en   String
+  name_ar   String
+  value     Float
+  icon      String
+  suffix_en String @default("total")
+  suffix_ar String @default("إجمالي")
+}
+
+model tabbutton {
+  id         String     @id
+  name_en    String
+  name_ar    String
+  content_en String     @db.Text
+  content_ar String     @db.Text
+  order      Int        @default(0)
+  tabId      String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @default(now())
+  programtab programtab @relation(fields: [tabId], references: [id], onDelete: Cascade, map: "TabButton_tabId_fkey")
+
+  @@index([order], map: "TabButton_order_idx")
+  @@index([tabId], map: "TabButton_tabId_idx")
+}
+
+model tag {
+  id      Int    @id @default(autoincrement())
+  name_en String
+  name_ar String
+  slug    String @unique(map: "Tag_slug_key")
+  post    post[] @relation("posttotag")
+}
+
+model teammember {
+  id         String   @id
+  nameEn     String
+  nameAr     String
+  jobTitleEn String
+  jobTitleAr String
+  imageUrl   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+}
+
+model uploadeditem {
+  id        String   @id
   name      String
   url       String
   type      String
   mimeType  String
   size      Int
   createdAt DateTime @default(now())
+}
+
+model video {
+  id             String       @id
+  url            String
+  title_en       String
+  title_ar       String
+  description_en String?      @db.Text
+  description_ar String?      @db.Text
+  type           video_type   @default(local)
+  thumbnail      String?
+  featured       Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  galleryId      String
+  videogallery   videogallery @relation(fields: [galleryId], references: [id], map: "Video_galleryId_fkey")
+
+  @@index([galleryId], map: "Video_galleryId_fkey")
+}
+
+model videogallery {
+  id        String   @id
+  title_en  String
+  title_ar  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  video     video[]
+}
+
+model workwithus {
+  id            String          @id
+  type          workwithus_type
+  titleEn       String
+  titleAr       String
+  iconName      String
+  descriptionEn String
+  descriptionAr String
+  tags          String
+  deadline      DateTime
+  applyLink     String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now())
+}
+
+enum workwithus_type {
+  Procurement
+  Recruitment
+}
+
+enum partner_type {
+  PROJECT_OF
+  FUNDED_BY
+  IMPLEMENTED_BY
+}
+
+enum partnerpage_type {
+  PROJECT_OF
+  FUNDED_BY
+  IMPLEMENTED_BY
+}
+
+enum video_type {
+  youtube
+  local
+  blob
 }
